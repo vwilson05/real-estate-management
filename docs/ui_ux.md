@@ -128,29 +128,16 @@ This document outlines the design guidelines and principles for the Real Estate 
     - Stacking and queuing
     - Keyboard navigation support
     - Accessible by default
+    - Consistent with theme
+    - Error boundary integration
+    - Form validation feedback
 - **Modals & Overlays:** Utilize modals for additional details without disrupting the main workflow.
+  - **AlertDialog:** For confirmations and important actions
+  - **Dialog:** For forms and detailed information
+  - **Sheet:** For mobile-friendly side panels
 - **Feedback Animations:** Introduce subtle animations that provide feedback on user interactions (e.g., hover effects, button clicks).
-
-## Prototyping & Tools
-- **High-Fidelity Prototypes:** Utilize design tools like Figma, Sketch, or Adobe XD for creating detailed prototypes.
-- **Wireframing:** Develop wireframes to map out user journeys and validate layouts before moving to full design.
-- **User Journey Mapping:** Create user journey maps to understand and optimize the interactions across the app.
-
-## Implementation Considerations
-- **CSS Frameworks:** Use Tailwind CSS for utility-first styling and theme support.
-- **Component Libraries:** Leverage Tremor for data visualization and UI components.
-- **Decoupled UI Layer:** Ensure the UI layer is separated from business logic, allowing for easier updates and maintenance.
-- **Theme Implementation:** Use CSS variables with HSL values for consistent theming across the application.
-- **Border Styling:** The `border-border` class is used to apply the theme's border color to elements. This is defined in the Tailwind configuration and uses the CSS variable `--border` for consistent styling across light and dark modes.
-- **Component Architecture:** Follow a modular approach with components organized by functionality:
-  - UI components in `src/components/ui/`
-  - Feature-specific components in `src/components/[feature]/`
-  - Layout components in `src/components/layout/`
-- **React Hooks:** Use React hooks like `useState` and `useEffect` for managing component state and side effects.
-- **Next.js Integration:** Leverage Next.js features like client-side navigation and server-side rendering for optimal performance.
-
-## Final Thoughts
-Focus on continuous improvement by gathering user feedback, analyzing usage patterns, and iterating on the design to ensure that the final product remains clean, modern, and exceptionally intuitive.
+- **Loading States:** Show loading indicators during data fetching and form submissions.
+- **Error States:** Display clear error messages with recovery options.
 
 ## Form Components
 
@@ -170,6 +157,8 @@ Features:
 - Styled with Tailwind CSS
 - Responsive and customizable
 - Supports disabled states
+- Required field indication
+- Error state styling
 
 ### Select
 The Select component provides a customizable dropdown menu for selecting options. It's built on top of Radix UI's select primitive and supports keyboard navigation, screen readers, and custom styling.
@@ -204,3 +193,101 @@ Features:
 - Customizable trigger and content
 - Support for disabled states
 - Animated transitions
+- Error state handling
+- Required field indication
+
+### DatePicker
+The DatePicker component provides a user-friendly interface for selecting dates. It's built on top of the native date input with additional styling and validation.
+
+```tsx
+import { DatePicker } from "@/components/ui/date-picker"
+
+// Usage example
+<DatePicker
+  value={date}
+  onChange={setDate}
+  placeholder="Select a date"
+/>
+```
+
+Features:
+- Native date input integration
+- Consistent styling with theme
+- Validation support
+- Error state handling
+- Required field indication
+- Disabled state support
+- Placeholder text
+- Custom date format
+
+### Map
+The Map component displays property locations using Leaflet and OpenStreetMap. It handles missing coordinates gracefully and provides a consistent user experience.
+
+```tsx
+import { PropertyMap } from "@/components/properties/PropertyMap"
+
+// Usage example
+<PropertyMap
+  properties={properties}
+  center={defaultCenter}
+  zoom={defaultZoom}
+/>
+```
+
+Features:
+- Interactive map display
+- Property markers with popups
+- Graceful handling of missing coordinates
+- Responsive design
+- Theme-aware styling
+- Loading state
+- Error state with fallback
+- Custom marker icons
+- Cluster support for multiple properties
+
+### IssueList
+The IssueList component displays issues in a table format with status badges and priority indicators.
+
+```tsx
+import { IssueList } from "@/components/issues/IssueList"
+
+// Usage example
+<IssueList
+  issues={issues}
+  onStatusChange={handleStatusChange}
+  onPriorityChange={handlePriorityChange}
+/>
+```
+
+Features:
+- Sortable columns
+- Filterable data
+- Status badges with color coding
+- Priority indicators
+- Responsive design
+- Loading state
+- Empty state
+- Error state
+- Pagination support
+- Row actions
+
+## Prototyping & Tools
+- **High-Fidelity Prototypes:** Utilize design tools like Figma, Sketch, or Adobe XD for creating detailed prototypes.
+- **Wireframing:** Develop wireframes to map out user journeys and validate layouts before moving to full design.
+- **User Journey Mapping:** Create user journey maps to understand and optimize the interactions across the app.
+
+## Implementation Considerations
+- **CSS Frameworks:** Use Tailwind CSS for utility-first styling and theme support.
+- **Component Libraries:** Leverage Tremor for data visualization and UI components.
+- **Decoupled UI Layer:** Ensure the UI layer is separated from business logic, allowing for easier updates and maintenance.
+- **Theme Implementation:** Use CSS variables with HSL values for consistent theming across the application.
+- **Border Styling:** The `border-border` class is used to apply the theme's border color to elements. This is defined in the Tailwind configuration and uses the CSS variable `--border` for consistent styling across light and dark modes.
+- **Component Architecture:** Follow a modular approach with components organized by functionality:
+  - UI components in `src/components/ui/`
+  - Feature-specific components in `src/components/[feature]/`
+  - Layout components in `src/components/layout/`
+- **React Hooks:** Use React hooks like `useState` and `useEffect` for managing component state and side effects.
+- **Next.js Integration:** Leverage Next.js features like client-side navigation and server-side rendering for optimal performance.
+
+## Final Thoughts
+Focus on continuous improvement by gathering user feedback, analyzing usage patterns, and iterating on the design to ensure that the final product remains clean, modern, and exceptionally intuitive.
