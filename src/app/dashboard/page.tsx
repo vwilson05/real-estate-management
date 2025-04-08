@@ -15,8 +15,6 @@ interface DashboardMetrics {
   totalValue: number;
   monthlyIncome: number;
   activeRepairs: number;
-  occupancyRate: number;
-  averageRent: number;
 }
 
 export default function DashboardPage() {
@@ -118,23 +116,6 @@ export default function DashboardPage() {
                 <div className="text-2xl font-bold">{formatCurrency(metrics?.monthlyIncome || 0)}</div>
                 <p className="text-xs text-muted-foreground">
                   This month&apos;s rental income
-                </p>
-              </>
-            )}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Occupancy Rate</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <Skeleton className="h-8 w-24" />
-            ) : (
-              <>
-                <div className="text-2xl font-bold">{formatPercentage(metrics?.occupancyRate || 0)}</div>
-                <p className="text-xs text-muted-foreground">
-                  Current occupancy
                 </p>
               </>
             )}

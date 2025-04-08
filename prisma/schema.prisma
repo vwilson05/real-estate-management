@@ -7,22 +7,45 @@ datasource db {
   url      = "file:./dev.db"
 }
 
+enum IssueStatus {
+  OPEN
+  IN_PROGRESS
+  BLOCKED
+  RESOLVED
+  CLOSED
+}
+
+enum IssuePriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum IssueType {
+  MAINTENANCE
+  REPAIR
+  COMPLAINT
+  INSPECTION
+  OTHER
+}
+
 model Issue {
-  id          String    @id @default(cuid())
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id          String       @id @default(cuid())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
   title       String
   description String?
   dueDate     DateTime?
-  status      String    @default("OPEN")
-  priority    String    @default("MEDIUM")
-  type        String
+  status      IssueStatus  @default(OPEN)
+  priority    IssuePriority @default(MEDIUM)
+  type        IssueType
   propertyId  String
   repairId    String?
   tenantId    String?
-  tenant      Tenant?   @relation(fields: [tenantId], references: [id])
-  repair      Repair?   @relation(fields: [repairId], references: [id])
-  property    Property  @relation(fields: [propertyId], references: [id])
+  tenant      Tenant?      @relation(fields: [tenantId], references: [id])
+  repair      Repair?      @relation(fields: [repairId], references: [id])
+  property    Property     @relation(fields: [propertyId], references: [id])
 }
 
 model Property {

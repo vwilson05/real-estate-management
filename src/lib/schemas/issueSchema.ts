@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-export const issueStatusEnum = z.enum(["OPEN", "IN_PROGRESS", "DONE", "BLOCKED"]);
-export const issuePriorityEnum = z.enum(["LOW", "MEDIUM", "HIGH"]);
-export const issueTypeEnum = z.enum(["TAX", "REPAIR", "TENANT_ACTION", "MAINTENANCE", "REMINDER", "OTHER"]);
+export const issueStatusEnum = z.enum(["OPEN", "IN_PROGRESS", "BLOCKED", "RESOLVED", "CLOSED"]);
+export const issuePriorityEnum = z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]);
+export const issueTypeEnum = z.enum(["MAINTENANCE", "REPAIR", "COMPLAINT", "INSPECTION", "OTHER"]);
 
 export const issueSchema = z.object({
   title: z.string().min(1, "Title is required"),

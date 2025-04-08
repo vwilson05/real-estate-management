@@ -1,4 +1,9 @@
-import { IssueStatus, IssuePriority, IssueType } from "@prisma/client";
+import { z } from "zod";
+import { issueStatusEnum, issuePriorityEnum, issueTypeEnum } from "@/lib/schemas/issueSchema";
+
+export type IssueStatus = z.infer<typeof issueStatusEnum>;
+export type IssuePriority = z.infer<typeof issuePriorityEnum>;
+export type IssueType = z.infer<typeof issueTypeEnum>;
 
 export interface Issue {
   id: string;

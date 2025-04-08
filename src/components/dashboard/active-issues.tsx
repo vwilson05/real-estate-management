@@ -18,13 +18,19 @@ interface Issue {
   }
 }
 
+interface IssuesData {
+  topIssues: Issue[];
+  totalOpenIssues: number;
+}
+
 export function ActiveIssues() {
-  const { data: issues, isLoading, error } = useQuery<Issue[]>({
+  const { data, isLoading, error } = useQuery<IssuesData>({
     queryKey: ["dashboard", "issues"],
     queryFn: async () => {
       const response = await fetch("/api/dashboard/issues")
       if (!response.ok) {
-        throw new Error("Failed to fetch issues")
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || "Failed to fetch issues")
       }
       return response.json()
     },
@@ -60,7 +66,7 @@ export function ActiveIssues() {
     )
   }
 
-  if (!issues?.length) {
+  if (!data?.topIssues?.length) {
     return (
       <div className="text-center text-sm text-muted-foreground">
         No active issues
@@ -96,6 +102,10 @@ export function ActiveIssues() {
 
   return (
     <div className="space-y-4">
+      <div className="text-2xl font-bold">{data.totalOpenIssues}</div>
+      <p className="text-xs text-muted-foreground mb-4">
+        Open Issues
+      </p>
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium">Active Issues</h3>
         <Link href="/issues">
@@ -106,7 +116,7 @@ export function ActiveIssues() {
         </Link>
       </div>
       <div className="space-y-4">
-        {issues.map((issue) => (
+        {data.topIssues.map((issue) => (
           <div key={issue.id} className="flex items-center justify-between">
             <div className="space-y-1">
               <p className="text-sm font-medium leading-none">{issue.title}</p>
