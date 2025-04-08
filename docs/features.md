@@ -12,6 +12,9 @@
 - Property details view
 - Edit and delete functionality
 - Interactive property map with Leaflet and OpenStreetMap integration
+  - Handles properties with missing coordinates gracefully
+  - Filters out invalid coordinates before creating markers
+  - Provides error handling for map initialization issues
 **Components:**
 - `PropertyList`: Displays properties in a table format
 - `PropertyForm`: Form for creating and editing properties
@@ -25,6 +28,7 @@
 - Add property comparison feature
 - Add clustering for multiple properties in the same area
 - Implement map filters and search
+- Add geocoding to automatically get coordinates from addresses
 
 ### 2. Financial Tracking
 **Status:** In Progress

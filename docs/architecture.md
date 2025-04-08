@@ -38,7 +38,7 @@ This document details the overall architecture of the Real Estate Portfolio Trac
 - **Custom Components:** Feature-specific components in `src/components/[feature]/`
   - PropertyList: List of properties with actions
   - PropertyForm: Form for creating/editing properties
-  - PropertyMap: Interactive map for property locations
+  - PropertyMap: Interactive map for property locations with error handling for missing coordinates
   - TransactionList: List of transactions
   - TransactionForm: Form for creating transactions
   - Dashboard: Overview of portfolio performance

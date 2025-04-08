@@ -4,7 +4,18 @@
 ## Current Issues
 
 ### High Priority
-1. **Repairs API OrderBy Field Error**
+1. **Property Map Invalid Coordinates Error**
+   - Status: In Progress
+   - Description: Error in PropertyMap component: "Invalid LatLng object: (undefined, undefined)"
+   - Error: "Invalid LatLng object: (undefined, undefined)"
+   - Impact: Map component fails to render when properties have missing coordinates
+   - Root Cause: The map component was trying to create markers with undefined latitude and longitude values
+   - Next Steps:
+     - Add validation to check for valid coordinates before creating markers
+     - Provide a fallback for properties without coordinates
+     - Update documentation to reflect the fix
+
+2. **Repairs API OrderBy Field Error**
    - Status: In Progress
    - Description: Error in the repairs API route when trying to order by estimatedCompletionDate
    - Error: "Unknown argument `estimatedCompletionDate`. Available options are marked with ?"
@@ -15,7 +26,7 @@
      - Update API route to use correct field name
      - Regenerate Prisma client
 
-2. **Dashboard Active Repairs Bug**
+3. **Dashboard Active Repairs Bug**
    - Status: Resolved
    - Description: Error in the dashboard overview component when accessing activeRepairs.length
    - Error: "TypeError: Cannot read properties of undefined (reading 'length')"
@@ -27,7 +38,7 @@
      - Created local variables to safely access these properties
      - Updated all references to use the safe variables
 
-3. **Repair Creation Not Working**
+4. **Repair Creation Not Working**
    - Status: Resolved
    - Description: Clicking "Save Repair" button had no effect and repairs were not being saved to the database
    - Impact: Users could not create new repairs
@@ -38,7 +49,7 @@
      - Improved error message display in the UI
      - Added proper type definitions for error handling
 
-4. **Foreign Key Constraint Violation in Repairs**
+5. **Foreign Key Constraint Violation in Repairs**
    - Status: Resolved
    - Description: Unable to create repairs due to foreign key constraint violation
    - Error: "Foreign key constraint violated: `foreign key`"
@@ -51,7 +62,7 @@
      - Added validation for empty property list
      - Added better error messages for users
 
-5. **SQLite Database Read-Only Mode**
+6. **SQLite Database Read-Only Mode**
    - Status: Resolved
    - Description: SQLite database was in read-only mode, preventing write operations
    - Error: "attempt to write a readonly database"
@@ -62,7 +73,7 @@
      - Database is now writable and functioning correctly
    - **IMPORTANT NOTE:** Future database operations should preserve existing data. Never use commands that delete or reset data without explicit user approval.
 
-6. **Project Structure Cleanup**
+7. **Project Structure Cleanup**
    - Status: In Progress
    - Description: Consolidate and organize project structure
    - Resolution: 
@@ -70,7 +81,7 @@
      - Consolidated configuration files
      - Updated documentation
 
-7. **Form Validation**
+8. **Form Validation**
    - Status: In Progress
    - Description: Implement comprehensive form validation
    - Next Steps:
@@ -78,7 +89,7 @@
      - Improve error message display
      - Add form validation for all features
 
-8. **API Implementation**
+9. **API Implementation**
    - Status: In Progress
    - Description: Need to implement CRUD operations for all entities
    - Next Steps:
@@ -87,16 +98,16 @@
      - Add request validation
      - Add response caching
 
-9. **Performance Optimization**
-   - Status: In Progress
-   - Description: Ensure fast and responsive application
-   - Next Steps:
-     - Implement proper caching strategies
-     - Optimize bundle size
-     - Add performance monitoring
-     - Add error boundaries
+10. **Performance Optimization**
+    - Status: In Progress
+    - Description: Ensure fast and responsive application
+    - Next Steps:
+      - Implement proper caching strategies
+      - Optimize bundle size
+      - Add performance monitoring
+      - Add error boundaries
 
-10. **Documentation**
+11. **Documentation**
     - Status: Ongoing
     - Description: Keep documentation up to date with implementation
     - Next Steps:

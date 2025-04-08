@@ -20,8 +20,8 @@ const icon = L.icon({
 interface Property {
   id: string;
   address: string;
-  latitude: number;
-  longitude: number;
+  latitude?: number;
+  longitude?: number;
   name: string;
 }
 
@@ -67,18 +67,31 @@ export function PropertyMap({ properties, className, ...props }: PropertyMapProp
     markers.current.forEach(marker => marker.remove());
     markers.current = [];
 
-    // Add markers for each property
-    properties.forEach((property) => {
-      const marker = L.marker([property.latitude, property.longitude], { icon })
-        .bindPopup(`<h3>${property.name}</h3><p>${property.address}</p>`)
-        .addTo(map.current!);
-      
-      markers.current.push(marker);
+    // Filter properties with valid coordinates
+    const validProperties = properties.filter(
+      property => 
+        property.latitude !== undefined && 
+        property.longitude !== undefined && 
+        !isNaN(property.latitude) && 
+        !isNaN(property.longitude)
+    );
+
+    // Add markers for each property with valid coordinates
+    validProperties.forEach((property) => {
+      try {
+        const marker = L.marker([property.latitude!, property.longitude!], { icon })
+          .bindPopup(`<h3>${property.name}</h3><p>${property.address}</p>`)
+          .addTo(map.current!);
+        
+        markers.current.push(marker);
+      } catch (error) {
+        console.error(`Error adding marker for property ${property.id}:`, error);
+      }
     });
 
-    // If there are properties, fit the map to show all markers
-    if (properties.length > 0) {
-      const bounds = L.latLngBounds(properties.map(p => [p.latitude, p.longitude]));
+    // If there are valid properties, fit the map to show all markers
+    if (validProperties.length > 0) {
+      const bounds = L.latLngBounds(validProperties.map(p => [p.latitude!, p.longitude!]));
       map.current.fitBounds(bounds, { padding: [50, 50] });
     }
   }, [properties, mapError]);
