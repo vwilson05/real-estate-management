@@ -30,15 +30,19 @@ export async function GET() {
         },
       });
       
+      console.log(`Month ${i}: Found ${monthlyTransactions.length} transactions`);
+      
       // Calculate income and expenses for this month
       const monthlyIncome = monthlyTransactions
-        .filter(t => t.type === "INCOME")
+        .filter(t => t.type.toUpperCase() === "INCOME")
         .reduce((sum, transaction) => sum + transaction.amount, 0);
         
       const monthlyExpenses = monthlyTransactions
-        .filter(t => t.type === "EXPENSE")
+        .filter(t => t.type.toUpperCase() === "EXPENSE")
         .reduce((sum, transaction) => sum + transaction.amount, 0);
         
+      console.log(`Month ${i}: Income: ${monthlyIncome}, Expenses: ${monthlyExpenses}`);
+      
       // Calculate net income
       const netIncome = monthlyIncome - monthlyExpenses;
       
@@ -81,6 +85,49 @@ export async function GET() {
         momExpensesChange: momExpensesChange,
         momNetIncomeChange: momNetIncomeChange
       });
+    }
+    
+    // If we don't have any data for the current month, fetch the most recent month's data
+    if (monthlyData.length > 0 && monthlyData[monthlyData.length - 1].income === 0) {
+      // Get the most recent transactions
+      const recentTransactions = await db.transaction.findMany({
+        orderBy: {
+          date: 'desc'
+        },
+        take: 10,
+      });
+      
+      if (recentTransactions.length > 0) {
+        // Get the most recent transaction date
+        const mostRecentDate = recentTransactions[0].date;
+        const mostRecentMonth = new Date(mostRecentDate.getFullYear(), mostRecentDate.getMonth(), 1);
+        const mostRecentMonthEnd = new Date(mostRecentDate.getFullYear(), mostRecentDate.getMonth() + 1, 0);
+        
+        // Get transactions for the most recent month
+        const mostRecentMonthTransactions = await db.transaction.findMany({
+          where: {
+            date: {
+              gte: mostRecentMonth,
+              lte: mostRecentMonthEnd,
+            },
+          },
+        });
+        
+        // Calculate income and expenses for the most recent month
+        const mostRecentIncome = mostRecentMonthTransactions
+          .filter(t => t.type.toUpperCase() === "INCOME")
+          .reduce((sum, transaction) => sum + transaction.amount, 0);
+          
+        const mostRecentExpenses = mostRecentMonthTransactions
+          .filter(t => t.type.toUpperCase() === "EXPENSE")
+          .reduce((sum, transaction) => sum + transaction.amount, 0);
+          
+        // Update the current month's data
+        monthlyData[monthlyData.length - 1].income = mostRecentIncome;
+        monthlyData[monthlyData.length - 1].expenses = mostRecentExpenses;
+        monthlyData[monthlyData.length - 1].netIncome = mostRecentIncome - mostRecentExpenses;
+        monthlyData[monthlyData.length - 1].month = mostRecentMonth.toLocaleDateString('en-US', { month: 'short' });
+      }
     }
     
     return NextResponse.json(monthlyData);
