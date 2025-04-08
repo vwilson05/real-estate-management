@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { TextInput, Select, SelectItem, Button } from "@tremor/react";
+import { useEffect, useState } from "react";
 
 const propertySchema = z.object({
   address: z.string().min(1, "Address is required"),
@@ -21,6 +21,12 @@ interface PropertyFormProps {
 }
 
 export default function PropertyForm({ initialData, onSubmit, isLoading }: PropertyFormProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const {
     register,
     handleSubmit,
@@ -30,49 +36,227 @@ export default function PropertyForm({ initialData, onSubmit, isLoading }: Prope
     defaultValues: initialData,
   });
 
+  if (!mounted) {
+    return null;
+  }
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div>
-        <TextInput
-          placeholder="Address"
-          {...register("address")}
-          error={!!errors.address}
-          errorMessage={errors.address?.message}
-        />
+    <form onSubmit={handleSubmit(onSubmit)} className="property-form">
+      <style jsx>{`
+        .property-form {
+          display: flex;
+          flex-direction: column;
+          gap: 2rem;
+        }
+        
+        .form-section {
+          background-color: transparent;
+          border: 1px solid hsl(var(--border));
+          border-radius: 0.5rem;
+          padding: 1.5rem;
+        }
+        
+        .section-title {
+          font-size: 1.125rem;
+          font-weight: 600;
+          color: hsl(var(--foreground));
+          margin-bottom: 1rem;
+        }
+        
+        .form-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+        }
+        
+        @media (min-width: 768px) {
+          .form-grid {
+            grid-template-columns: 1fr 1fr;
+          }
+        }
+        
+        .form-field {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+        
+        .form-label {
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: hsl(var(--foreground));
+        }
+        
+        .required {
+          color: hsl(0, 84%, 60%);
+          margin-left: 0.25rem;
+        }
+        
+        .form-input,
+        .form-select {
+          width: 100%;
+          padding: 0.75rem 1rem;
+          border: 1px solid hsl(var(--border));
+          border-radius: 0.375rem;
+          background-color: hsl(var(--background));
+          color: hsl(var(--foreground));
+          font-size: 0.875rem;
+        }
+        
+        .form-input:focus,
+        .form-select:focus {
+          outline: none;
+          border-color: hsl(var(--primary));
+          box-shadow: 0 0 0 1px hsl(var(--primary));
+        }
+        
+        .form-select {
+          appearance: none;
+          padding-right: 2.5rem;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='hsl(var(--foreground))' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: right 0.75rem center;
+          background-size: 1rem;
+        }
+        
+        .helper-text {
+          font-size: 0.75rem;
+          color: hsl(var(--muted-foreground));
+        }
+        
+        .error-message {
+          font-size: 0.75rem;
+          color: hsl(0, 84%, 60%);
+          margin-top: 0.25rem;
+        }
+        
+        .form-actions {
+          display: flex;
+          justify-content: flex-end;
+          padding-top: 1.5rem;
+          border-top: 1px solid hsl(var(--border));
+          margin-top: 0.5rem;
+        }
+        
+        .submit-button {
+          min-width: 120px;
+          padding: 0.75rem 1.5rem;
+          background-color: hsl(var(--primary));
+          color: hsl(var(--primary-foreground));
+          border: none;
+          border-radius: 0.375rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        
+        .submit-button:hover {
+          background-color: hsl(var(--primary) / 0.9);
+        }
+        
+        .submit-button:focus {
+          outline: none;
+          box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--primary));
+        }
+        
+        .submit-button:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      `}</style>
+
+      {/* Location Information Section */}
+      <div className="form-section">
+        <h3 className="section-title">Location Information</h3>
+        <div className="form-grid">
+          <div className="form-field">
+            <label htmlFor="address" className="form-label">
+              Street Address<span className="required">*</span>
+            </label>
+            <input
+              id="address"
+              type="text"
+              placeholder="123 Main Street"
+              className="form-input"
+              {...register("address")}
+            />
+            {errors.address && (
+              <div className="error-message">{errors.address.message}</div>
+            )}
+            <p className="helper-text">Enter the complete street address</p>
+          </div>
+          <div className="form-field">
+            <label htmlFor="state" className="form-label">
+              State<span className="required">*</span>
+            </label>
+            <input
+              id="state"
+              type="text"
+              placeholder="CA"
+              className="form-input"
+              {...register("state")}
+            />
+            {errors.state && (
+              <div className="error-message">{errors.state.message}</div>
+            )}
+            <p className="helper-text">Enter the two-letter state code</p>
+          </div>
+        </div>
       </div>
-      <div>
-        <TextInput
-          placeholder="State"
-          {...register("state")}
-          error={!!errors.state}
-          errorMessage={errors.state?.message}
-        />
+
+      {/* Property Details Section */}
+      <div className="form-section">
+        <h3 className="section-title">Property Details</h3>
+        <div className="form-grid">
+          <div className="form-field">
+            <label htmlFor="type" className="form-label">
+              Property Type<span className="required">*</span>
+            </label>
+            <select
+              id="type"
+              className="form-select"
+              {...register("type")}
+            >
+              <option value="">Select property type</option>
+              <option value="Single Family">Single Family</option>
+              <option value="Multi Family">Multi Family</option>
+              <option value="Commercial">Commercial</option>
+              <option value="Land">Land</option>
+            </select>
+            {errors.type && (
+              <div className="error-message">{errors.type.message}</div>
+            )}
+            <p className="helper-text">Select the type of property</p>
+          </div>
+          <div className="form-field">
+            <label htmlFor="marketValue" className="form-label">
+              Market Value ($)<span className="required">*</span>
+            </label>
+            <input
+              id="marketValue"
+              type="number"
+              placeholder="500000"
+              className="form-input"
+              {...register("marketValue", { valueAsNumber: true })}
+            />
+            {errors.marketValue && (
+              <div className="error-message">{errors.marketValue.message}</div>
+            )}
+            <p className="helper-text">Enter the current market value in dollars</p>
+          </div>
+        </div>
       </div>
-      <div>
-        <Select
-          placeholder="Property Type"
-          {...register("type")}
-          error={!!errors.type}
-          errorMessage={errors.type?.message}
+
+      {/* Form Actions */}
+      <div className="form-actions">
+        <button 
+          type="submit" 
+          className="submit-button"
+          disabled={isLoading}
         >
-          <SelectItem value="Single Family">Single Family</SelectItem>
-          <SelectItem value="Multi Family">Multi Family</SelectItem>
-          <SelectItem value="Commercial">Commercial</SelectItem>
-          <SelectItem value="Land">Land</SelectItem>
-        </Select>
+          {isLoading ? "Saving..." : (initialData ? "Update Property" : "Create Property")}
+        </button>
       </div>
-      <div>
-        <TextInput
-          type="number"
-          placeholder="Market Value"
-          {...register("marketValue", { valueAsNumber: true })}
-          error={!!errors.marketValue}
-          errorMessage={errors.marketValue?.message}
-        />
-      </div>
-      <Button type="submit" loading={isLoading}>
-        {initialData ? "Update Property" : "Create Property"}
-      </Button>
     </form>
   );
 } 
