@@ -146,3 +146,35 @@ This architecture ensures that:
 - Geocoding is performed on the server side, avoiding client-side issues with CORS and API rate limits
 - The client-side code is kept simple and focused on UI concerns
 - The server-side implementation can be updated independently of the client-side code
+
+## Database Schema
+
+### Issue Model
+- Fields: id, title, description, dueDate, status, priority, type
+- Relations: property (required), repair (optional), tenant (optional)
+- Enums: IssueStatus, IssuePriority, IssueType
+
+## API Routes
+
+### Issues API
+- GET /api/issues - List issues with filtering and sorting
+- POST /api/issues - Create a new issue
+
+## React Query Hooks
+
+### Issue Hooks
+- useIssues - Fetch and filter issues
+- useCreateIssue - Create new issues
+
+## Custom Components
+
+### Issue Components
+- IssueList - Display issues in a table with status badges
+- IssueForm - Form for creating new issues
+- IssuesClient - Client-side wrapper for issues functionality
+
+## Directory Structure
+
+### New Directories
+- src/lib/schemas/ - Zod validation schemas
+  - issueSchema.ts - Issue validation schema

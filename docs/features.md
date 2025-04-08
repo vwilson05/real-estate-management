@@ -135,6 +135,22 @@
 - Implement performance metrics
 - Add custom date range selection
 
+### Issue Tracking (In Progress)
+
+Track and manage issues, tasks, and reminders across properties:
+
+- Create, view, and manage issues with title, description, due date, status, priority, and type
+- Link issues to properties, repairs, and tenants
+- Filter issues by property, status, priority, type, and due date
+- Sort issues by various fields
+- Status tracking (Open, In Progress, Done, Blocked)
+- Priority levels (Low, Medium, High)
+- Issue types (Tax, Repair, Tenant Action, Maintenance, Reminder, Other)
+- Real-time updates using React Query
+- Modern UI with shadcn/ui components
+- Form validation using Zod
+- Responsive layout for all devices
+
 ## UI Components
 
 ### 1. Base Components

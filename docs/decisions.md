@@ -112,4 +112,50 @@
 - Implement property search
 - Add tenant management features
 - Implement document management
-- Add tax reporting features 
+- Add tax reporting features
+
+## Issue Tracking Implementation
+
+### Decision
+Implement a comprehensive issue tracking system to manage tasks, reminders, and issues across properties.
+
+### Context
+- Need to track various types of tasks and issues related to properties
+- Want to link issues with properties, repairs, and tenants
+- Need to support different priorities and statuses
+- Must be easy to filter and sort
+
+### Solution
+1. Database Design:
+   - Created Issue model with fields for title, description, due date
+   - Used enums for status, priority, and type to ensure data consistency
+   - Added relations to Property (required), Repair (optional), and Tenant (optional)
+
+2. API Design:
+   - RESTful endpoints for CRUD operations
+   - Support for filtering and sorting via query parameters
+   - Validation using Zod schemas
+
+3. UI Components:
+   - Split view with form and list
+   - Used shadcn/ui components for consistency
+   - Status and priority badges for visual clarity
+   - Responsive grid layout
+
+4. State Management:
+   - Used React Query for server state
+   - Implemented custom hooks for data fetching and mutations
+   - Real-time updates through query invalidation
+
+### Consequences
+Positive:
+- Centralized issue tracking across the application
+- Consistent data structure with enums
+- Flexible filtering and sorting
+- Modern and responsive UI
+- Type-safe implementation
+
+Negative:
+- Additional complexity in the database schema
+- More API endpoints to maintain
+- Increased bundle size from new components 
