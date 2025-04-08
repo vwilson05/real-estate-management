@@ -11,15 +11,20 @@
 - Property creation form with validation
 - Property details view
 - Edit and delete functionality
+- Interactive property map with Mapbox integration
 **Components:**
 - `PropertyList`: Displays properties in a table format
 - `PropertyForm`: Form for creating and editing properties
 - `PropertyCard`: Card view for property details
+- `PropertyMap`: Interactive map displaying property locations
+- `PropertyMapClient`: Client-side wrapper for the map component
 **Next Steps:**
 - Implement property detail views
 - Add property images support
 - Implement property search functionality
 - Add property comparison feature
+- Add clustering for multiple properties in the same area
+- Implement map filters and search
 
 ### 2. Financial Tracking
 **Status:** In Progress

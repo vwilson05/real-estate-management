@@ -22,6 +22,7 @@ This document details the overall architecture of the Real Estate Portfolio Trac
 - **State Management:** React Query for server state
 - **Form Handling:** React Hook Form with Zod validation
 - **Theme:** Dark mode support with next-themes
+- **Maps:** Mapbox GL JS for interactive property maps
 
 ## Core Components
 
@@ -37,6 +38,7 @@ This document details the overall architecture of the Real Estate Portfolio Trac
 - **Custom Components:** Feature-specific components in `src/components/[feature]/`
   - PropertyList: List of properties with actions
   - PropertyForm: Form for creating/editing properties
+  - PropertyMap: Interactive map for property locations
   - TransactionList: List of transactions
   - TransactionForm: Form for creating transactions
   - Dashboard: Overview of portfolio performance
