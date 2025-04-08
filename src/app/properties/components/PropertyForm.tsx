@@ -7,15 +7,20 @@ import { useEffect, useState } from "react";
 
 const propertySchema = z.object({
   address: z.string().min(1, "Address is required"),
+  city: z.string().min(1, "City is required"),
   state: z.string().min(1, "State is required"),
+  zipCode: z.string().min(1, "ZIP code is required"),
   type: z.string().min(1, "Property type is required"),
   marketValue: z.number().min(0, "Market value must be positive"),
+  purchasePrice: z.number().min(0, "Purchase price must be positive"),
+  purchaseDate: z.string().min(1, "Purchase date is required"),
+  description: z.string().nullable(),
 });
 
 type PropertyFormData = z.infer<typeof propertySchema>;
 
 interface PropertyFormProps {
-  initialData?: PropertyFormData;
+  initialData?: Partial<PropertyFormData>;
   onSubmit: (data: PropertyFormData) => void;
   isLoading?: boolean;
 }
@@ -33,7 +38,18 @@ export default function PropertyForm({ initialData, onSubmit, isLoading }: Prope
     formState: { errors },
   } = useForm<PropertyFormData>({
     resolver: zodResolver(propertySchema),
-    defaultValues: initialData,
+    defaultValues: {
+      address: "",
+      city: "",
+      state: "",
+      zipCode: "",
+      type: "",
+      marketValue: 0,
+      purchasePrice: 0,
+      purchaseDate: new Date().toISOString().split('T')[0],
+      description: null,
+      ...initialData,
+    },
   });
 
   if (!mounted) {
@@ -93,7 +109,8 @@ export default function PropertyForm({ initialData, onSubmit, isLoading }: Prope
         }
         
         .form-input,
-        .form-select {
+        .form-select,
+        .form-textarea {
           width: 100%;
           padding: 0.75rem 1rem;
           border: 1px solid hsl(var(--border));
@@ -104,7 +121,8 @@ export default function PropertyForm({ initialData, onSubmit, isLoading }: Prope
         }
         
         .form-input:focus,
-        .form-select:focus {
+        .form-select:focus,
+        .form-textarea:focus {
           outline: none;
           border-color: hsl(var(--primary));
           box-shadow: 0 0 0 1px hsl(var(--primary));
@@ -117,6 +135,11 @@ export default function PropertyForm({ initialData, onSubmit, isLoading }: Prope
           background-repeat: no-repeat;
           background-position: right 0.75rem center;
           background-size: 1rem;
+        }
+        
+        .form-textarea {
+          min-height: 100px;
+          resize: vertical;
         }
         
         .helper-text {
@@ -186,6 +209,22 @@ export default function PropertyForm({ initialData, onSubmit, isLoading }: Prope
             <p className="helper-text">Enter the complete street address</p>
           </div>
           <div className="form-field">
+            <label htmlFor="city" className="form-label">
+              City<span className="required">*</span>
+            </label>
+            <input
+              id="city"
+              type="text"
+              placeholder="San Francisco"
+              className="form-input"
+              {...register("city")}
+            />
+            {errors.city && (
+              <div className="error-message">{errors.city.message}</div>
+            )}
+            <p className="helper-text">Enter the city name</p>
+          </div>
+          <div className="form-field">
             <label htmlFor="state" className="form-label">
               State<span className="required">*</span>
             </label>
@@ -200,6 +239,22 @@ export default function PropertyForm({ initialData, onSubmit, isLoading }: Prope
               <div className="error-message">{errors.state.message}</div>
             )}
             <p className="helper-text">Enter the two-letter state code</p>
+          </div>
+          <div className="form-field">
+            <label htmlFor="zipCode" className="form-label">
+              ZIP Code<span className="required">*</span>
+            </label>
+            <input
+              id="zipCode"
+              type="text"
+              placeholder="94105"
+              className="form-input"
+              {...register("zipCode")}
+            />
+            {errors.zipCode && (
+              <div className="error-message">{errors.zipCode.message}</div>
+            )}
+            <p className="helper-text">Enter the ZIP code</p>
           </div>
         </div>
       </div>
@@ -243,6 +298,59 @@ export default function PropertyForm({ initialData, onSubmit, isLoading }: Prope
               <div className="error-message">{errors.marketValue.message}</div>
             )}
             <p className="helper-text">Enter the current market value in dollars</p>
+          </div>
+          <div className="form-field">
+            <label htmlFor="purchasePrice" className="form-label">
+              Purchase Price ($)<span className="required">*</span>
+            </label>
+            <input
+              id="purchasePrice"
+              type="number"
+              placeholder="450000"
+              className="form-input"
+              {...register("purchasePrice", { valueAsNumber: true })}
+            />
+            {errors.purchasePrice && (
+              <div className="error-message">{errors.purchasePrice.message}</div>
+            )}
+            <p className="helper-text">Enter the purchase price in dollars</p>
+          </div>
+          <div className="form-field">
+            <label htmlFor="purchaseDate" className="form-label">
+              Purchase Date<span className="required">*</span>
+            </label>
+            <input
+              id="purchaseDate"
+              type="date"
+              className="form-input"
+              {...register("purchaseDate")}
+            />
+            {errors.purchaseDate && (
+              <div className="error-message">{errors.purchaseDate.message}</div>
+            )}
+            <p className="helper-text">Select the purchase date</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Additional Information Section */}
+      <div className="form-section">
+        <h3 className="section-title">Additional Information</h3>
+        <div className="form-grid">
+          <div className="form-field" style={{ gridColumn: "1 / -1" }}>
+            <label htmlFor="description" className="form-label">
+              Description
+            </label>
+            <textarea
+              id="description"
+              placeholder="Enter any additional details about the property"
+              className="form-textarea"
+              {...register("description")}
+            />
+            {errors.description && (
+              <div className="error-message">{errors.description.message}</div>
+            )}
+            <p className="helper-text">Enter any additional details about the property</p>
           </div>
         </div>
       </div>

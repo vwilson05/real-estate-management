@@ -3,15 +3,33 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 
+// Define the property schema to match the Prisma model
 const propertySchema = z.object({
   address: z.string().min(1, "Address is required"),
   state: z.string().min(1, "State is required"),
   type: z.string().min(1, "Property type is required"),
   marketValue: z.number().min(0, "Market value must be positive"),
+  city: z.string().optional().default(""),
+  zipCode: z.string().optional().default(""),
+  purchasePrice: z.number().optional().default(0),
+  purchaseDate: z.string().optional().default(new Date().toISOString()),
+  description: z.string().optional().nullable(),
 });
 
-export type Property = z.infer<typeof propertySchema> & {
+// Define the Property type based on the Prisma model
+export type Property = {
   id: string;
+  createdAt: string;
+  updatedAt: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  type: string;
+  marketValue: number;
+  purchasePrice: number;
+  purchaseDate: string;
+  description?: string | null;
 };
 
 async function fetchProperties(): Promise<Property[]> {
@@ -31,7 +49,7 @@ async function fetchProperties(): Promise<Property[]> {
   return response.json();
 }
 
-async function createProperty(data: Omit<Property, "id">): Promise<Property> {
+async function createProperty(data: Omit<Property, "id" | "createdAt" | "updatedAt">): Promise<Property> {
   // Validate the data before sending
   propertySchema.parse(data);
   

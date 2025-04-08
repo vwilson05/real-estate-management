@@ -1,55 +1,25 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import fs from 'fs';
-import path from 'path';
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 const propertySchema = z.object({
   address: z.string().min(1, "Address is required"),
   state: z.string().min(1, "State is required"),
   type: z.string().min(1, "Property type is required"),
   marketValue: z.number().min(0, "Market value must be positive"),
+  // Add optional fields with defaults
+  city: z.string().optional().default(""),
+  zipCode: z.string().optional().default(""),
+  purchasePrice: z.number().optional().default(0),
+  purchaseDate: z.string().optional().default(new Date().toISOString()),
+  description: z.string().optional().nullable(),
 });
-
-type Property = z.infer<typeof propertySchema> & {
-  id: string;
-};
-
-// File-based storage
-const dataFilePath = path.join(process.cwd(), 'data', 'properties.json');
-
-// Ensure the data directory exists
-const dataDir = path.join(process.cwd(), 'data');
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
-}
-
-// Initialize the properties file if it doesn't exist
-if (!fs.existsSync(dataFilePath)) {
-  fs.writeFileSync(dataFilePath, JSON.stringify([]));
-}
-
-// Helper functions for file operations
-function readProperties(): Property[] {
-  try {
-    const data = fs.readFileSync(dataFilePath, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    console.error("Error reading properties:", error);
-    return [];
-  }
-}
-
-function writeProperties(properties: Property[]): void {
-  try {
-    fs.writeFileSync(dataFilePath, JSON.stringify(properties, null, 2));
-  } catch (error) {
-    console.error("Error writing properties:", error);
-  }
-}
 
 export async function GET() {
   try {
-    const properties = readProperties();
+    const properties = await prisma.property.findMany();
     return NextResponse.json(properties);
   } catch (error) {
     console.error("Error fetching properties:", error);
@@ -68,19 +38,15 @@ export async function POST(request: Request) {
     const validatedData = propertySchema.parse(body);
     console.log("Validated property data:", validatedData);
     
-    const newProperty = {
-      id: Date.now().toString(),
+    // Convert purchaseDate string to Date object if it exists
+    const propertyData = {
       ...validatedData,
+      purchaseDate: validatedData.purchaseDate ? new Date(validatedData.purchaseDate) : new Date(),
     };
     
-    // Read existing properties
-    const properties = readProperties();
-    
-    // Add the new property
-    properties.push(newProperty);
-    
-    // Write back to file
-    writeProperties(properties);
+    const newProperty = await prisma.property.create({
+      data: propertyData,
+    });
     
     console.log("Created new property:", newProperty);
     

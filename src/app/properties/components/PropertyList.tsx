@@ -63,6 +63,7 @@ export default function PropertyList() {
         <TableHead>
           <TableRow>
             <TableHeaderCell>Address</TableHeaderCell>
+            <TableHeaderCell>City</TableHeaderCell>
             <TableHeaderCell>State</TableHeaderCell>
             <TableHeaderCell>Type</TableHeaderCell>
             <TableHeaderCell>Market Value</TableHeaderCell>
@@ -73,6 +74,7 @@ export default function PropertyList() {
           {properties.map((property: Property) => (
             <TableRow key={property.id}>
               <TableCell>{property.address}</TableCell>
+              <TableCell>{property.city}</TableCell>
               <TableCell>{property.state}</TableCell>
               <TableCell>{property.type}</TableCell>
               <TableCell>${property.marketValue.toLocaleString()}</TableCell>
