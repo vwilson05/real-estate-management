@@ -1,140 +1,126 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    // Get the current date
+    // Get the URL and parse the query parameters
+    const url = new URL(request.url);
+    const yearParam = url.searchParams.get('year');
+    
+    // Get the target year (default to current year if not specified)
     const now = new Date();
-    const currentYear = now.getFullYear();
+    let targetYear = now.getFullYear();
     
-    // Create an array to store monthly income data
-    const monthlyData = [];
+    // If year parameter is provided, use it
+    if (yearParam) {
+      const parsedYear = parseInt(yearParam, 10);
+      if (!isNaN(parsedYear)) {
+        targetYear = parsedYear;
+      }
+    }
     
-    // Track YTD totals
-    let ytdIncome = 0;
-    let ytdExpenses = 0;
+    // Get transactions for the entire target year
+    const endDate = new Date(targetYear, 11, 31); // December 31st of target year
+    const startDate = new Date(targetYear, 0, 1); // January 1st of target year
     
-    // Fetch income data for the last 6 months
-    for (let i = 5; i >= 0; i--) {
-      // Calculate the first and last day of the month
-      const firstDayOfMonth = new Date(currentYear, now.getMonth() - i, 1);
-      const lastDayOfMonth = new Date(currentYear, now.getMonth() - i + 1, 0);
-      
-      // Get transactions for this month
-      const monthlyTransactions = await db.transaction.findMany({
-        where: {
-          date: {
-            gte: firstDayOfMonth,
-            lte: lastDayOfMonth,
-          },
+    const transactions = await db.transaction.findMany({
+      where: {
+        date: {
+          gte: startDate,
+          lte: endDate,
         },
-      });
-      
-      console.log(`Month ${i}: Found ${monthlyTransactions.length} transactions`);
-      
-      // Calculate income and expenses for this month
-      const monthlyIncome = monthlyTransactions
-        .filter(t => t.type.toUpperCase() === "INCOME")
-        .reduce((sum, transaction) => sum + transaction.amount, 0);
-        
-      const monthlyExpenses = monthlyTransactions
-        .filter(t => t.type.toUpperCase() === "EXPENSE")
-        .reduce((sum, transaction) => sum + transaction.amount, 0);
-        
-      console.log(`Month ${i}: Income: ${monthlyIncome}, Expenses: ${monthlyExpenses}`);
+      },
+      orderBy: {
+        date: 'asc',
+      },
+    });
+    
+    // Initialize monthly data
+    const monthlyData = Array.from({ length: 12 }, (_, i) => ({
+      month: i + 1,
+      monthName: new Date(targetYear, i, 1).toLocaleDateString('en-US', { month: 'short' }),
+      income: 0,
+      expenses: 0,
+      netIncome: 0,
+      momIncomeChange: 0,
+      momExpensesChange: 0,
+      momNetIncomeChange: 0,
+    }));
+    
+    // Calculate monthly income and expenses
+    transactions.forEach(transaction => {
+      const month = transaction.date.getMonth();
+      if (transaction.type.toUpperCase() === "INCOME") {
+        monthlyData[month].income += transaction.amount;
+      } else if (transaction.type.toUpperCase() === "EXPENSE") {
+        monthlyData[month].expenses += transaction.amount;
+      }
+    });
+    
+    // Calculate net income and month-over-month changes
+    for (let i = 0; i < 12; i++) {
+      // Make expenses negative for chart visualization
+      monthlyData[i].expenses = -monthlyData[i].expenses;
       
       // Calculate net income
-      const netIncome = monthlyIncome - monthlyExpenses;
-      
-      // Update YTD totals
-      ytdIncome += monthlyIncome;
-      ytdExpenses += monthlyExpenses;
+      monthlyData[i].netIncome = monthlyData[i].income + monthlyData[i].expenses; // Since expenses are now negative
       
       // Calculate month-over-month changes (if we have previous month data)
-      let momIncomeChange = 0;
-      let momExpensesChange = 0;
-      let momNetIncomeChange = 0;
-      
-      if (monthlyData.length > 0) {
-        const prevMonth = monthlyData[monthlyData.length - 1];
+      if (i > 0) {
+        const prevMonth = monthlyData[i - 1];
         
-        // Calculate percentage changes
-        momIncomeChange = prevMonth.income > 0 
-          ? ((monthlyIncome - prevMonth.income) / prevMonth.income) * 100 
+        // Calculate percentage changes (use absolute values for expenses since they're negative)
+        monthlyData[i].momIncomeChange = prevMonth.income > 0 
+          ? ((monthlyData[i].income - prevMonth.income) / prevMonth.income) * 100 
           : 0;
           
-        momExpensesChange = prevMonth.expenses > 0 
-          ? ((monthlyExpenses - prevMonth.expenses) / prevMonth.expenses) * 100 
+        monthlyData[i].momExpensesChange = prevMonth.expenses < 0 
+          ? ((Math.abs(monthlyData[i].expenses) - Math.abs(prevMonth.expenses)) / Math.abs(prevMonth.expenses)) * 100 
           : 0;
           
-        momNetIncomeChange = prevMonth.netIncome !== 0 
-          ? ((netIncome - prevMonth.netIncome) / Math.abs(prevMonth.netIncome)) * 100 
+        monthlyData[i].momNetIncomeChange = prevMonth.netIncome !== 0 
+          ? ((monthlyData[i].netIncome - prevMonth.netIncome) / Math.abs(prevMonth.netIncome)) * 100 
           : 0;
       }
-      
-      // Add to the result array
-      monthlyData.push({
-        month: firstDayOfMonth.toLocaleDateString('en-US', { month: 'short' }),
-        income: monthlyIncome,
-        expenses: monthlyExpenses,
-        netIncome: netIncome,
-        ytdIncome: ytdIncome,
-        ytdExpenses: ytdExpenses,
-        ytdNetIncome: ytdIncome - ytdExpenses,
-        momIncomeChange: momIncomeChange,
-        momExpensesChange: momExpensesChange,
-        momNetIncomeChange: momNetIncomeChange
-      });
     }
     
-    // If we don't have any data for the current month, fetch the most recent month's data
-    if (monthlyData.length > 0 && monthlyData[monthlyData.length - 1].income === 0) {
-      // Get the most recent transactions
-      const recentTransactions = await db.transaction.findMany({
+    // Calculate year-to-date totals (use absolute values for expenses)
+    const ytdIncome = monthlyData.reduce((sum, month) => sum + month.income, 0);
+    const ytdExpenses = monthlyData.reduce((sum, month) => sum + Math.abs(month.expenses), 0);
+    const ytdNetIncome = ytdIncome - ytdExpenses;
+    
+    // If no transactions found for the target year, get the most recent year's data
+    if (transactions.length === 0) {
+      // Get the most recent transaction
+      const recentTransaction = await db.transaction.findFirst({
         orderBy: {
           date: 'desc'
-        },
-        take: 10,
+        }
       });
       
-      if (recentTransactions.length > 0) {
+      if (recentTransaction) {
         // Get the most recent transaction date
-        const mostRecentDate = recentTransactions[0].date;
-        const mostRecentMonth = new Date(mostRecentDate.getFullYear(), mostRecentDate.getMonth(), 1);
-        const mostRecentMonthEnd = new Date(mostRecentDate.getFullYear(), mostRecentDate.getMonth() + 1, 0);
+        const mostRecentDate = recentTransaction.date;
+        const mostRecentYear = mostRecentDate.getFullYear();
         
-        // Get transactions for the most recent month
-        const mostRecentMonthTransactions = await db.transaction.findMany({
-          where: {
-            date: {
-              gte: mostRecentMonth,
-              lte: mostRecentMonthEnd,
-            },
-          },
-        });
-        
-        // Calculate income and expenses for the most recent month
-        const mostRecentIncome = mostRecentMonthTransactions
-          .filter(t => t.type.toUpperCase() === "INCOME")
-          .reduce((sum, transaction) => sum + transaction.amount, 0);
-          
-        const mostRecentExpenses = mostRecentMonthTransactions
-          .filter(t => t.type.toUpperCase() === "EXPENSE")
-          .reduce((sum, transaction) => sum + transaction.amount, 0);
-          
-        // Update the current month's data
-        monthlyData[monthlyData.length - 1].income = mostRecentIncome;
-        monthlyData[monthlyData.length - 1].expenses = mostRecentExpenses;
-        monthlyData[monthlyData.length - 1].netIncome = mostRecentIncome - mostRecentExpenses;
-        monthlyData[monthlyData.length - 1].month = mostRecentMonth.toLocaleDateString('en-US', { month: 'short' });
+        // Recursively call this function with the most recent year
+        const response = await fetch(`${request.url.split('?')[0]}?year=${mostRecentYear}`);
+        const data = await response.json();
+        return NextResponse.json(data);
       }
     }
     
-    return NextResponse.json(monthlyData);
+    return NextResponse.json({
+      monthlyData,
+      ytdIncome,
+      ytdExpenses,
+      ytdNetIncome,
+      targetYear,
+    });
   } catch (error) {
-    console.error("Error calculating monthly income data:", error);
+    console.error("Error calculating monthly income:", error);
     return NextResponse.json(
-      { error: "Failed to calculate monthly income data" },
+      { error: "Failed to calculate monthly income" },
       { status: 500 }
     );
   }

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     // Get all properties
     const properties = await db.property.findMany();
@@ -10,10 +10,25 @@ export async function GET() {
     const totalProperties = properties.length;
     const totalValue = properties.reduce((sum, property) => sum + property.marketValue, 0);
     
-    // Get transactions for the current month
+    // Get the URL and parse the query parameters
+    const url = new URL(request.url);
+    const yearParam = url.searchParams.get('year');
+    
+    // Get transactions for the specified month or current month
     const now = new Date();
-    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    let targetYear = now.getFullYear();
+    let targetMonth = now.getMonth();
+    
+    // If year parameter is provided, use it
+    if (yearParam) {
+      const parsedYear = parseInt(yearParam, 10);
+      if (!isNaN(parsedYear)) {
+        targetYear = parsedYear;
+      }
+    }
+    
+    const firstDayOfMonth = new Date(targetYear, targetMonth, 1);
+    const lastDayOfMonth = new Date(targetYear, targetMonth + 1, 0);
     
     let monthlyTransactions = await db.transaction.findMany({
       where: {
@@ -27,7 +42,7 @@ export async function GET() {
     // Filter for income transactions (case-insensitive)
     monthlyTransactions = monthlyTransactions.filter(t => t.type.toUpperCase() === "INCOME");
     
-    // If no transactions found for the current month, get the most recent month's transactions
+    // If no transactions found for the specified month, get the most recent month's transactions
     if (monthlyTransactions.length === 0) {
       // Get the most recent transaction
       const recentTransaction = await db.transaction.findFirst({
@@ -77,6 +92,8 @@ export async function GET() {
       totalValue,
       monthlyIncome,
       activeRepairs,
+      targetYear,
+      targetMonth: targetMonth + 1, // 1-based month for display
     });
   } catch (error) {
     console.error("Error calculating dashboard metrics:", error);

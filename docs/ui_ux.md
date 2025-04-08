@@ -23,9 +23,9 @@ This document outlines the design guidelines and principles for the Real Estate 
 - **Complementary Colors:** Select colors that are harmonious in both themes, enhancing readability and visual comfort.
 - **Color Psychology:** Use colors strategically to convey meaning and importance:
   - Primary: Blue (#3B82F6) for main actions and brand identity
-  - Success: Green for positive values and actions
+  - Success: Green (#22C55E) for positive values and actions
   - Warning: Yellow for cautionary information
-  - Error: Red for destructive actions and errors
+  - Error: Red (#EF4444) for destructive actions and errors
   - Neutral: Gray scales for secondary information
 
 ### Typography & Iconography
@@ -90,6 +90,13 @@ This document outlines the design guidelines and principles for the Real Estate 
   - Donut charts for distribution data
   - Bar charts for comparisons
   - Line charts for continuous data
+  - **Financial Dashboard Visualization:**
+    - Income: Green bars (#22C55E) going up on the Y-axis
+    - Expenses: Red bars (#EF4444) going down on the Y-axis (negative values)
+    - NOI (Net Operating Income): Blue line (#3B82F6) showing the trend
+    - Stacked bars for income and expenses to show the relationship
+    - Interactive tooltips showing exact values
+    - Month-over-month change indicators with up/down arrows and percentage values
 
 ### Visuals & Media
 - **Responsive Images:** Support responsive images for property visuals and media content.
@@ -255,61 +262,119 @@ import { IssueList } from "@/components/issues/IssueList"
 <IssueList
   issues={issues}
   onStatusChange={handleStatusChange}
-  onPriorityChange={handlePriorityChange}
 />
 ```
 
 Features:
-- Sortable columns
-- Filterable data
+- Tabular data presentation
 - Status badges with color coding
 - Priority indicators
+- Sorting and filtering
+- Pagination
 - Responsive design
 - Loading state
-- Empty state
 - Error state
-- Pagination support
-- Row actions
+- Empty state
+- Action buttons
+- Row selection
+- Bulk actions
 
-### TenantForm
+### Dashboard Components
+The dashboard components provide an overview of the portfolio's performance and key metrics.
 
-**Location**: `src/app/tenants/components/TenantForm.tsx`
+#### Overview
+The Overview component displays financial metrics and charts for the portfolio.
 
-**Description**: A form component for creating and editing tenants.
-
-**Features**:
-- Input validation using Zod
-- Date pickers for lease dates
-- Property selection dropdown
-- Loading states during submission
-- Success/error handling
-
-**Usage**:
 ```tsx
-<TenantForm 
-  initialData={tenantData} // Optional: For editing existing tenant
-  tenantId={tenantId} // Optional: For editing existing tenant
-  onSuccess={() => setIsFormOpen(false)} // Optional: Callback on successful submission
-/>
+import { Overview } from "@/components/dashboard/overview"
+
+// Usage example
+<Overview />
 ```
 
-### TenantList
+Features:
+- Monthly income, expenses, and NOI cards
+- Month-over-month change indicators with up/down arrows
+- Year-to-date totals
+- Financial chart with:
+  - Income as green bars going up
+  - Expenses as red bars going down
+  - NOI as a blue line showing the trend
+- Interactive tooltips
+- Responsive design
+- Loading state
+- Error state
+- Empty state
 
-**Location**: `src/app/tenants/components/TenantList.tsx`
+#### RecentTransactions
+The RecentTransactions component displays a list of recent transactions.
 
-**Description**: A table component displaying all tenants with actions.
-
-**Features**:
-- Responsive table layout
-- View, Edit, and Delete actions
-- Confirmation dialog for deletion
-- Empty state handling
-- Formatted currency and dates
-
-**Usage**:
 ```tsx
-<TenantList tenants={tenants} />
+import { RecentTransactions } from "@/components/dashboard/recent-transactions"
+
+// Usage example
+<RecentTransactions />
 ```
+
+Features:
+- List of recent transactions
+- Transaction type indicators
+- Amount formatting
+- Date formatting
+- Property association
+- Category display
+- Description display
+- Responsive design
+- Loading state
+- Error state
+- Empty state
+- View all link
+
+#### ActiveRepairs
+The ActiveRepairs component displays a list of active repairs.
+
+```tsx
+import { ActiveRepairs } from "@/components/dashboard/active-repairs"
+
+// Usage example
+<ActiveRepairs />
+```
+
+Features:
+- List of active repairs
+- Status badges
+- Cost formatting
+- Estimated completion date
+- Property association
+- Item description
+- Location display
+- Responsive design
+- Loading state
+- Error state
+- Empty state
+
+#### ActiveIssues
+The ActiveIssues component displays a list of active issues.
+
+```tsx
+import { ActiveIssues } from "@/components/dashboard/active-issues"
+
+// Usage example
+<ActiveIssues />
+```
+
+Features:
+- List of active issues
+- Status badges
+- Priority indicators
+- Due date display
+- Property association
+- Issue description
+- Responsive design
+- Loading state
+- Error state
+- Empty state
+- View all link
 
 ## Prototyping & Tools
 - **High-Fidelity Prototypes:** Utilize design tools like Figma, Sketch, or Adobe XD for creating detailed prototypes.

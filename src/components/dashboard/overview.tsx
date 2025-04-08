@@ -1,29 +1,35 @@
 "use client"
 
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from "recharts"
+import { Bar, Line, ComposedChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from "recharts"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useQuery } from "@tanstack/react-query"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowDownIcon, ArrowUpIcon } from "lucide-react"
 
-interface MonthlyIncome {
-  month: string;
+interface MonthlyData {
+  month: number;
+  monthName: string;
   income: number;
   expenses: number;
   netIncome: number;
-  ytdIncome: number;
-  ytdExpenses: number;
-  ytdNetIncome: number;
   momIncomeChange: number;
   momExpensesChange: number;
   momNetIncomeChange: number;
 }
 
+interface MonthlyIncomeResponse {
+  monthlyData: MonthlyData[];
+  ytdIncome: number;
+  ytdExpenses: number;
+  ytdNetIncome: number;
+  targetYear: number;
+}
+
 export function Overview() {
-  const { data: monthlyData, isLoading, error } = useQuery<MonthlyIncome[]>({
+  const { data, isLoading, error } = useQuery<MonthlyIncomeResponse>({
     queryKey: ["monthlyIncome"],
     queryFn: async () => {
-      const response = await fetch('/api/dashboard/monthly-income');
+      const response = await fetch('/api/dashboard/monthly-income?year=2025');
       if (!response.ok) {
         throw new Error('Failed to fetch monthly income data');
       }
@@ -63,7 +69,7 @@ export function Overview() {
     );
   }
 
-  if (!monthlyData || monthlyData.length === 0) {
+  if (!data || !data.monthlyData || data.monthlyData.length === 0) {
     return (
       <div className="flex h-[350px] items-center justify-center text-muted-foreground">
         No income data available
@@ -71,8 +77,8 @@ export function Overview() {
     );
   }
 
-  // Get the most recent month's data for metrics
-  const currentMonth = monthlyData[monthlyData.length - 1];
+  // Get April's data (month index 3)
+  const currentMonth = data.monthlyData[3]; // April is index 3 (0-based)
 
   return (
     <div className="space-y-4">
@@ -88,7 +94,7 @@ export function Overview() {
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(currentMonth.income)}</div>
             <p className="text-xs text-muted-foreground">
-              YTD: {formatCurrency(currentMonth.ytdIncome)}
+              YTD: {formatCurrency(data.ytdIncome)}
             </p>
           </CardContent>
         </Card>
@@ -103,7 +109,7 @@ export function Overview() {
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(currentMonth.expenses)}</div>
             <p className="text-xs text-muted-foreground">
-              YTD: {formatCurrency(currentMonth.ytdExpenses)}
+              YTD: {formatCurrency(data.ytdExpenses)}
             </p>
           </CardContent>
         </Card>
@@ -118,16 +124,16 @@ export function Overview() {
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(currentMonth.netIncome)}</div>
             <p className="text-xs text-muted-foreground">
-              YTD: {formatCurrency(currentMonth.ytdNetIncome)}
+              YTD: {formatCurrency(data.ytdNetIncome)}
             </p>
           </CardContent>
         </Card>
       </div>
       <div className="h-[350px]">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={monthlyData}>
+          <ComposedChart data={data.monthlyData}>
             <XAxis
-              dataKey="month"
+              dataKey="monthName"
               stroke="#888888"
               fontSize={12}
               tickLine={false}
@@ -142,7 +148,7 @@ export function Overview() {
             />
             <Tooltip 
               formatter={(value: number, name: string) => {
-                const formattedValue = formatCurrency(value);
+                const formattedValue = formatCurrency(Math.abs(value));
                 if (name === 'income') return [formattedValue, 'Income'];
                 if (name === 'expenses') return [formattedValue, 'Expenses'];
                 return [formattedValue, 'NOI'];
@@ -155,20 +161,24 @@ export function Overview() {
               name="Income"
               fill="#22c55e"
               radius={[4, 4, 0, 0]}
+              stackId="stack"
             />
             <Bar
               dataKey="expenses"
               name="Expenses"
-              fill="#3b82f6"
+              fill="#ef4444"
               radius={[4, 4, 0, 0]}
+              stackId="stack"
             />
-            <Bar
+            <Line
+              type="monotone"
               dataKey="netIncome"
               name="NOI"
-              fill="#f59e0b"
-              radius={[4, 4, 0, 0]}
+              stroke="#3b82f6"
+              strokeWidth={2}
+              dot={{ fill: '#3b82f6', r: 4 }}
             />
-          </BarChart>
+          </ComposedChart>
         </ResponsiveContainer>
       </div>
     </div>
