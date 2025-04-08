@@ -65,6 +65,9 @@ This document details the overall architecture of the Real Estate Portfolio Trac
 src/
 ├── app/                    # Next.js app directory
 │   ├── api/               # API routes
+│   │   ├── issues/        # Issues API routes
+│   │   └── tenants/       # Tenants API routes
+│   │   └── calendar/      # Calendar API routes
 │   ├── dashboard/         # Dashboard pages
 │   ├── properties/        # Property pages
 │   └── transactions/      # Transaction pages
@@ -347,3 +350,94 @@ src/
 - Date pickers for lease dates
 - Property selection dropdown
 - Responsive design
+
+## Calendar Architecture
+
+### Database Schema
+```prisma
+model CalendarEvent {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  start       DateTime
+  end         DateTime?
+  allDay      Boolean   @default(false)
+  type        String
+  propertyId  String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  property    Property  @relation(fields: [propertyId], references: [id])
+}
+```
+
+### API Routes
+- `GET /api/calendar` - List calendar events with filtering
+  - Query parameters: start, end, propertyId, type
+  - Includes property relation
+- `POST /api/calendar` - Create new calendar event
+  - Validates input using Zod schema
+  - Checks property existence
+- `GET /api/calendar/[id]` - Get single calendar event
+  - Includes property relation
+- `PATCH /api/calendar/[id]` - Update calendar event
+  - Partial updates supported
+  - Validates date formats
+- `DELETE /api/calendar/[id]` - Delete calendar event
+
+### React Query Hooks
+- `useCalendarEvents` - Fetch and filter calendar events
+  - Supports date range filtering
+  - Includes property relation
+  - Real-time updates
+- `useCreateCalendarEvent` - Create new calendar events
+  - Optimistic updates
+  - Error handling
+- `useUpdateCalendarEvent` - Update existing calendar events
+  - Partial updates
+  - Validation
+- `useDeleteCalendarEvent` - Delete calendar events
+  - Confirmation dialog
+  - Cache updates
+
+### UI Components
+- `Calendar` - Main calendar component using FullCalendar
+  - Multiple view options (month, week, day, list)
+  - Event display with property information
+  - View switching controls
+  - Responsive design
+- `CalendarEventForm` - Form for creating/editing calendar events
+  - Zod validation
+  - Property selection
+  - Date and time pickers
+  - Event type selection
+- `CalendarClient` - Client-side wrapper
+  - State management
+  - Error handling
+  - Loading states
+
+### Directory Structure
+```
+src/
+├── app/
+│   ├── api/
+│   │   └── calendar/
+│   │       ├── route.ts
+│   │       └── [id]/
+│   │           └── route.ts
+│   └── calendar/
+│       └── page.tsx
+├── components/
+│   └── calendar/
+│       ├── Calendar.tsx
+│       └── CalendarEventForm.tsx
+└── types/
+    └── calendar.ts
+```
+
+### FullCalendar Integration
+- Uses FullCalendar React component
+- Customized theme to match application design
+- Responsive layout for mobile and desktop
+- Event handling for creation, editing, and deletion
+- View switching with state management
+- Property relation display in events

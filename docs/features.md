@@ -144,6 +144,42 @@
 - Implement performance metrics
 - Add custom date range selection
 
+### 6. Calendar Management
+**Status:** Complete
+**Description:** Track and manage events, appointments, and deadlines across properties.
+**Implementation:**
+- CalendarEvent model with fields (title, description, start, end, allDay, type, propertyId)
+- FullCalendar integration for interactive calendar view
+- Calendar event creation form with Zod validation
+- API endpoints for calendar event CRUD operations
+- React Query integration for data fetching and caching
+- Support for different calendar views (month, week, day, list)
+**Components:**
+- `Calendar`: Main calendar component using FullCalendar
+- `CalendarEventForm`: Form for creating and editing calendar events
+- `CalendarClient`: Client-side wrapper for state management
+**API Endpoints:**
+- GET `/api/calendar`: Retrieve all calendar events with filtering
+- POST `/api/calendar`: Create a new calendar event
+- GET `/api/calendar/[id]`: Retrieve a single calendar event
+- PATCH `/api/calendar/[id]`: Update a calendar event
+- DELETE `/api/calendar/[id]`: Delete a calendar event
+**Features:**
+- Multiple calendar views (month, week, day, list)
+- Event creation with property association
+- Event editing and deletion
+- Event filtering by property and type
+- All-day event support
+- Event types (Repair, Maintenance, Inspection, Tax, Other)
+- Responsive design for mobile and desktop
+**Next Steps:**
+- Add recurring event support
+- Implement event reminders
+- Add event color coding by type
+- Implement event drag-and-drop for rescheduling
+- Add event search functionality
+- Implement event sharing
+
 ### Issue Tracking
 **Status:** In Progress
 **Description:** Track and manage issues, tasks, and reminders across properties.

@@ -12,6 +12,7 @@ const navigation = [
   { name: "Repairs", href: "/repairs" },
   { name: "Issues", href: "/issues" },
   { name: "Tenants", href: "/tenants" },
+  { name: "Calendar", href: "/calendar" },
 ]
 
 export function MobileNav() {
