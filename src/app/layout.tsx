@@ -63,6 +63,12 @@ export default function RootLayout({
                         Repairs
                       </Link>
                       <Link
+                        href="/issues"
+                        className="text-foreground/60 transition-colors hover:text-foreground/80"
+                      >
+                        Issues
+                      </Link>
+                      <Link
                         href="/tenants"
                         className="text-foreground/60 transition-colors hover:text-foreground/80"
                       >

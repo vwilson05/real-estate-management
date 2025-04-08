@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Overview } from "@/components/dashboard/overview"
 import { RecentTransactions } from "@/components/dashboard/recent-transactions"
 import { ActiveRepairs } from "@/components/dashboard/active-repairs"
+import { ActiveIssues } from "@/components/dashboard/active-issues"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useQuery } from "@tanstack/react-query"
@@ -170,6 +171,15 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <ActiveRepairs />
+          </CardContent>
+        </Card>
+        <Card className="col-span-3">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Issues</CardTitle>
+            <AlertCircle className="h-4 w-4 text-red-500" />
+          </CardHeader>
+          <CardContent>
+            <ActiveIssues />
           </CardContent>
         </Card>
       </div>
