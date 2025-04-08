@@ -40,6 +40,17 @@ export function PropertyMap({ properties, className, ...props }: PropertyMapProp
         // Dynamically import Leaflet
         const L = await import('leaflet');
 
+        // Define the default icon
+        const defaultIcon = L.icon({
+          iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+          iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+          shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+          iconSize: [25, 41], // Standard Leaflet icon size
+          iconAnchor: [12, 41], // Point of the icon which will correspond to marker's location
+          popupAnchor: [1, -34], // Point from which the popup should open relative to the iconAnchor
+          shadowSize: [41, 41] // Size of the shadow
+        });
+
         // Initialize the map if not already initialized
         if (!map.current && mapContainer.current) {
           // Create map
@@ -66,11 +77,11 @@ export function PropertyMap({ properties, className, ...props }: PropertyMapProp
 
         console.log('Valid properties for markers:', validProperties);
 
-        // Add markers for each property
+        // Add markers for each property using the defined icon
         validProperties.forEach((property) => {
           try {
             console.log(`Adding marker for property ${property.id} at ${property.latitude}, ${property.longitude}`);
-            const marker = L.marker([property.latitude!, property.longitude!])
+            const marker = L.marker([property.latitude!, property.longitude!], { icon: defaultIcon })
               .bindPopup(`<h3>${property.address}</h3>`)
               .addTo(map.current);
             markers.current.push(marker);
