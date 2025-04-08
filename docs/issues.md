@@ -117,6 +117,19 @@
       - Add code comments
       - Maintain README
 
+12. **Issue Creation DateTime Validation Error**
+   - Status: Resolved
+   - Description: Error when creating new issues due to invalid datetime format
+   - Error: Invalid datetime format in issue creation
+   - Impact: Users could not create new issues with due dates
+   - Root Cause: Mismatch between HTML date input format (YYYY-MM-DD) and schema validation (datetime)
+   - Resolution:
+     - Updated issue schema to properly handle date input format
+     - Added proper date format validation
+     - Implemented date to datetime transformation
+     - Added better error messages for invalid dates
+     - Updated documentation to reflect the changes
+
 ### Medium Priority
 1. **API Implementation**
    - Status: In Progress

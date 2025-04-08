@@ -7,7 +7,10 @@ export const issueTypeEnum = z.enum(["MAINTENANCE", "REPAIR", "COMPLAINT", "INSP
 export const issueSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
-  dueDate: z.string().datetime().optional(),
+  dueDate: z.string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format. Use YYYY-MM-DD")
+    .transform((date) => date ? `${date}T00:00:00.000Z` : undefined)
+    .optional(),
   status: issueStatusEnum.default("OPEN"),
   priority: issuePriorityEnum.default("MEDIUM"),
   type: issueTypeEnum,
