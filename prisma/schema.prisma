@@ -13,6 +13,48 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum IssueStatus {
+  OPEN
+  IN_PROGRESS
+  DONE
+  BLOCKED
+}
+
+enum IssuePriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum IssueType {
+  TAX
+  REPAIR
+  TENANT_ACTION
+  MAINTENANCE
+  REMINDER
+  OTHER
+}
+
+model Issue {
+  id          String       @id @default(cuid())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  title       String
+  description String?
+  dueDate     DateTime?
+  status      IssueStatus  @default(OPEN)
+  priority    IssuePriority @default(MEDIUM)
+  type        IssueType
+  
+  // Relations
+  property    Property     @relation(fields: [propertyId], references: [id])
+  propertyId  String
+  repair      Repair?      @relation(fields: [repairId], references: [id])
+  repairId    String?
+  tenant      Tenant?      @relation(fields: [tenantId], references: [id])
+  tenantId    String?
+}
+
 model Property {
   id          String   @id @default(uuid())
   createdAt   DateTime @default(now())
@@ -33,6 +75,7 @@ model Property {
   transactions Transaction[]
   repairs     Repair[]
   tenants     Tenant[]
+  issues      Issue[]
 }
 
 model Transaction {
@@ -63,6 +106,7 @@ model Repair {
   estimatedCompletionDate DateTime
   property               Property @relation(fields: [propertyId], references: [id])
   propertyId             String
+  issues                 Issue[]
 }
 
 model Tenant {
@@ -79,4 +123,5 @@ model Tenant {
   // Relations
   property    Property @relation(fields: [propertyId], references: [id])
   propertyId  String
+  issues      Issue[]
 }

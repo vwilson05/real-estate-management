@@ -864,3 +864,20 @@ The `node-geocoder` library's fetch adapter is not compatible with the Next.js s
 3. Test the geocoding functionality to ensure it works correctly
 
 **Status**: In Progress
+
+## Resolved Issues
+
+### Property Map Display Issues (RESOLVED)
+- **Issue:** Properties were not appearing as markers on the map on the `/properties` page
+- **Root Cause:** 
+  1. Leaflet CSS was not being loaded correctly
+  2. Marker icons were not properly initialized
+  3. Icon images were not being loaded from CDN
+- **Solution:**
+  1. Added Leaflet CSS to root layout for consistent loading
+  2. Simplified map initialization logic
+  3. Explicitly defined marker icon configuration using CDN URLs
+  4. Added proper error handling and logging
+  5. Fixed TypeScript issues with null checks
+- **Resolution Date:** [Current Date]
+- **Resolution PR:** #[PR_NUMBER] - Fix property map marker display issues
