@@ -50,6 +50,18 @@ export async function POST(request: Request) {
     const body = await request.json();
     const validatedData = repairSchema.parse(body);
 
+    // Check if property exists
+    const property = await prisma.property.findUnique({
+      where: { id: validatedData.propertyId },
+    });
+
+    if (!property) {
+      return NextResponse.json(
+        { error: "Property not found", details: "The specified property does not exist" },
+        { status: 404 }
+      );
+    }
+
     const repair = await prisma.repair.create({
       data: validatedData,
       include: {

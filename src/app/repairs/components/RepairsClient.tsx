@@ -37,11 +37,33 @@ interface RepairsClientProps {
   initialRepairs: Repair[];
 }
 
+// Define the ApiError interface to match what's in RepairForm
+interface ApiError extends Error {
+  response?: {
+    data?: {
+      error?: string;
+      details?: string;
+    };
+  };
+}
+
 export function RepairsClient({
   initialProperties,
   initialRepairs,
 }: RepairsClientProps) {
   const queryClient = useQueryClient();
+
+  const { data: properties = initialProperties } = useQuery<Property[]>({
+    queryKey: ["properties"],
+    queryFn: async () => {
+      const response = await fetch("/api/properties");
+      if (!response.ok) {
+        throw new Error("Failed to fetch properties");
+      }
+      return response.json();
+    },
+    initialData: initialProperties,
+  });
 
   const { data: repairs = initialRepairs } = useQuery<Repair[]>({
     queryKey: ["repairs"],
@@ -52,6 +74,7 @@ export function RepairsClient({
       }
       return response.json();
     },
+    initialData: initialRepairs,
   });
 
   const { mutateAsync: createRepair } = useMutation({
@@ -63,12 +86,24 @@ export function RepairsClient({
         },
         body: JSON.stringify(data),
       });
+      
+      const responseData = await response.json();
+      
       if (!response.ok) {
-        throw new Error("Failed to create repair");
+        const error = new Error(responseData.error || "Failed to create repair") as ApiError;
+        error.response = {
+          data: {
+            error: responseData.error,
+            details: responseData.details,
+          },
+        };
+        throw error;
       }
-      return response.json();
+      
+      return responseData;
     },
     onSuccess: () => {
+      // Invalidate and refetch repairs query
       queryClient.invalidateQueries({ queryKey: ["repairs"] });
     },
   });
@@ -81,7 +116,7 @@ export function RepairsClient({
         </CardHeader>
         <CardContent>
           <RepairForm
-            properties={initialProperties}
+            properties={properties}
             onSubmit={createRepair}
           />
         </CardContent>

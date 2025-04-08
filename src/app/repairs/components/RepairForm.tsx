@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, ControllerRenderProps, FieldValues } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -26,11 +26,11 @@ import { useToast } from "@/components/ui/use-toast";
 
 const repairSchema = z.object({
   date: z.string(),
-  cost: z.string().transform((val) => parseFloat(val)),
+  cost: z.number().positive(),
   description: z.string().min(1, "Description is required"),
   status: z.enum(["PENDING", "IN_PROGRESS", "COMPLETED"]),
   priority: z.enum(["LOW", "MEDIUM", "HIGH"]),
-  propertyId: z.string().uuid(),
+  propertyId: z.string().uuid("Please select a property"),
 });
 
 type RepairFormValues = z.infer<typeof repairSchema>;
@@ -38,20 +38,30 @@ type RepairFormValues = z.infer<typeof repairSchema>;
 interface RepairFormProps {
   properties: { id: string; address: string }[];
   onSubmit: (data: RepairFormValues) => Promise<void>;
-  initialData?: RepairFormValues;
+  initialData?: Partial<RepairFormValues>;
+}
+
+interface ApiError {
+  response?: {
+    data?: {
+      error?: string;
+      details?: string;
+    };
+  };
 }
 
 export function RepairForm({ properties, onSubmit, initialData }: RepairFormProps) {
   const { toast } = useToast();
   const form = useForm<RepairFormValues>({
     resolver: zodResolver(repairSchema),
-    defaultValues: initialData || {
+    defaultValues: {
       date: new Date().toISOString().split("T")[0],
-      cost: "",
+      cost: 0,
       description: "",
       status: "PENDING",
       priority: "MEDIUM",
       propertyId: "",
+      ...initialData,
     },
   });
 
@@ -62,10 +72,15 @@ export function RepairForm({ properties, onSubmit, initialData }: RepairFormProp
         title: "Success",
         description: "Repair saved successfully",
       });
+      form.reset();
     } catch (error) {
+      const apiError = error as ApiError;
+      const errorMessage = apiError.response?.data?.error || "Failed to save repair";
+      const errorDetails = apiError.response?.data?.details || "";
+      
       toast({
         title: "Error",
-        description: "Failed to save repair",
+        description: `${errorMessage}${errorDetails ? `: ${errorDetails}` : ""}`,
         variant: "destructive",
       });
     }
@@ -77,7 +92,7 @@ export function RepairForm({ properties, onSubmit, initialData }: RepairFormProp
         <FormField
           control={form.control}
           name="propertyId"
-          render={({ field }) => (
+          render={({ field }: { field: ControllerRenderProps<RepairFormValues, "propertyId"> }) => (
             <FormItem>
               <FormLabel>Property</FormLabel>
               <Select
@@ -90,11 +105,17 @@ export function RepairForm({ properties, onSubmit, initialData }: RepairFormProp
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {properties.map((property) => (
-                    <SelectItem key={property.id} value={property.id}>
-                      {property.address}
+                  {properties.length === 0 ? (
+                    <SelectItem value="" disabled>
+                      No properties available
                     </SelectItem>
-                  ))}
+                  ) : (
+                    properties.map((property) => (
+                      <SelectItem key={property.id} value={property.id}>
+                        {property.address}
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -105,7 +126,7 @@ export function RepairForm({ properties, onSubmit, initialData }: RepairFormProp
         <FormField
           control={form.control}
           name="date"
-          render={({ field }) => (
+          render={({ field }: { field: ControllerRenderProps<RepairFormValues, "date"> }) => (
             <FormItem>
               <FormLabel>Date</FormLabel>
               <FormControl>
@@ -119,11 +140,17 @@ export function RepairForm({ properties, onSubmit, initialData }: RepairFormProp
         <FormField
           control={form.control}
           name="cost"
-          render={({ field }) => (
+          render={({ field }: { field: ControllerRenderProps<RepairFormValues, "cost"> }) => (
             <FormItem>
               <FormLabel>Cost</FormLabel>
               <FormControl>
-                <Input type="number" step="0.01" {...field} />
+                <Input 
+                  type="number" 
+                  step="0.01" 
+                  min="0" 
+                  {...field}
+                  onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -133,7 +160,7 @@ export function RepairForm({ properties, onSubmit, initialData }: RepairFormProp
         <FormField
           control={form.control}
           name="description"
-          render={({ field }) => (
+          render={({ field }: { field: ControllerRenderProps<RepairFormValues, "description"> }) => (
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
@@ -147,7 +174,7 @@ export function RepairForm({ properties, onSubmit, initialData }: RepairFormProp
         <FormField
           control={form.control}
           name="status"
-          render={({ field }) => (
+          render={({ field }: { field: ControllerRenderProps<RepairFormValues, "status"> }) => (
             <FormItem>
               <FormLabel>Status</FormLabel>
               <Select
@@ -173,7 +200,7 @@ export function RepairForm({ properties, onSubmit, initialData }: RepairFormProp
         <FormField
           control={form.control}
           name="priority"
-          render={({ field }) => (
+          render={({ field }: { field: ControllerRenderProps<RepairFormValues, "priority"> }) => (
             <FormItem>
               <FormLabel>Priority</FormLabel>
               <Select
@@ -196,7 +223,9 @@ export function RepairForm({ properties, onSubmit, initialData }: RepairFormProp
           )}
         />
 
-        <Button type="submit">Save Repair</Button>
+        <Button type="submit" disabled={properties.length === 0}>
+          Save Repair
+        </Button>
       </form>
     </Form>
   );
