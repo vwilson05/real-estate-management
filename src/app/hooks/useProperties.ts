@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
+import { Property } from "@/types/property";
 
 // Define the property schema to match the Prisma model
 const propertySchema = z.object({
@@ -17,24 +18,6 @@ const propertySchema = z.object({
   latitude: z.number().optional().nullable(),
   longitude: z.number().optional().nullable(),
 });
-
-// Define the Property type based on the Prisma model
-export type Property = {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  type: string;
-  marketValue: number;
-  purchasePrice: number;
-  purchaseDate: string;
-  description?: string | null;
-  latitude?: number | null;
-  longitude?: number | null;
-};
 
 async function fetchProperties(): Promise<Property[]> {
   const response = await fetch("/api/properties", {

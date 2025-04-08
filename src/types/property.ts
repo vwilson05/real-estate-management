@@ -1,16 +1,16 @@
 export interface Property {
   id: string;
+  createdAt: string;
+  updatedAt: string;
   address: string;
   city: string;
   state: string;
   zipCode: string;
+  type: string;
+  marketValue: number;
   purchasePrice: number;
-  purchaseDate: Date;
-  propertyType: string;
-  bedrooms: number;
-  bathrooms: number;
-  squareFeet: number;
-  yearBuilt: number;
-  createdAt: Date;
-  updatedAt: Date;
+  purchaseDate: string;
+  description: string | null;
+  latitude: number | null;
+  longitude: number | null;
 } 

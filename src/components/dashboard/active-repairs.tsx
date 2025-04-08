@@ -8,7 +8,7 @@ interface Repair {
   id: string;
   item: string;
   location: string;
-  status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
+  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
   cost: number;
   estimatedCompletionDate: string;
 }
@@ -46,14 +46,12 @@ export function ActiveRepairs() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending':
+      case 'PENDING':
         return 'bg-yellow-500';
-      case 'in_progress':
+      case 'IN_PROGRESS':
         return 'bg-blue-500';
-      case 'completed':
+      case 'COMPLETED':
         return 'bg-green-500';
-      case 'cancelled':
-        return 'bg-red-500';
       default:
         return 'bg-gray-500';
     }

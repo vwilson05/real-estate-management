@@ -55,68 +55,8 @@
 *   Utilize `cn()` for merging Tailwind classes.
 *   Leverage shadcn/ui components for consistency.
 
-## Task 1: Project Cleanup and Best Practices Alignment
 
-**Goal:** Refactor code, consolidate duplicates, standardize UI components, fix inconsistencies, and align the project with best practices.
-
-**Specific Instructions:**
-
-1.  **Consolidate Prisma Client:**
-    *   Verify usage of `src/lib/prisma.ts` and `src/lib/db.ts`.
-    *   Assume `src/lib/db.ts` is preferred (check API route imports).
-    *   Remove `src/lib/prisma.ts` if redundant.
-    *   Update any imports pointing to `src/lib/prisma.ts` to use `src/lib/db.ts` instead.
-2.  **Consolidate Theme Toggle:**
-    *   Verify the two `ThemeToggle` components (`src/app/components/theme-toggle.tsx` and `src/components/theme-toggle.tsx`).
-    *   Choose one (likely `src/components/theme-toggle.tsx` as it seems intended for shared components) and delete the other.
-    *   Update any imports to point to the chosen component (check `src/app/layout.tsx`).
-3.  **Refactor `PropertyForm.tsx`:**
-    *   Go to `src/app/properties/components/PropertyForm.tsx`.
-    *   Remove the `<style jsx>` block.
-    *   Rewrite the form structure using shadcn/ui components:
-        *   `<Form>` from `@components/ui/form` wrapping the entire form.
-        *   `<FormField>` for each input field, connecting to `react-hook-form`.
-        *   `<FormItem>`, `<FormLabel>`, `<FormControl>`, `<FormMessage>`, `<FormDescription>` (optional, replaces helper text).
-        *   `<Input>` for text/number/date fields.
-        *   `<Select>` components (`Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectItem`) for the 'type' dropdown.
-        *   `<Textarea>` for the 'description' field.
-        *   `<Button>` for the submit button.
-    *   Ensure the refactored form looks visually similar and retains all functionality, including validation messages and required field indicators (use standard label styling).
-    *   Ensure correct props (`isLoading`) are passed to the Button.
-4.  **Refactor `PropertyList.tsx`:**
-    *   Go to `src/app/properties/components/PropertyList.tsx`.
-    *   Replace Tremor `Table`, `TableHead`, `TableRow`, `TableHeaderCell`, `TableBody`, `TableCell` with the equivalent shadcn/ui components from `@components/ui/table`.
-    *   Replace Tremor `Button` with shadcn `Button` from `@components/ui/button`.
-    *   Replace Tremor `Card` with shadcn `Card` from `@components/ui/card`.
-    *   Ensure the table structure and data display remain the same.
-    *   Keep the loading, error, and empty states, but ensure they use shadcn/ui components (`Skeleton`, `Button`, `Card`) if applicable or standard HTML/Tailwind otherwise.
-5.  **Remove Unused Dashboard Components:**
-    *   Check if `src/components/dashboard/main-nav.tsx`, `recent-sales.tsx`, `search.tsx`, `user-nav.tsx` are imported or used anywhere.
-    *   If confirmed unused, delete these files.
-6.  **Fix API/Schema/Component Inconsistencies:**
-    *   **Repair Status/Priority Enum:** Ensure consistent casing (UPPERCASE) in:
-        *   `prisma/schema.prisma` (already uppercase)
-        *   `src/app/api/repairs/route.ts` (Zod schema and Prisma queries)
-        *   `src/app/api/dashboard/repairs/route.ts` (Prisma query `where` clause and potentially returned data mapping)
-        *   `src/app/repairs/components/RepairForm.tsx` (Zod schema, Select options)
-        *   `src/app/repairs/components/RepairList.tsx` (Badge rendering logic)
-        *   `src/components/dashboard/active-repairs.tsx` (where clause in query, potentially returned data mapping, badge rendering)
-    *   **Repair `estimatedCompletionDate`:**
-        *   The Prisma schema uses `estimatedCompletionDate`.
-        *   Check `src/app/api/dashboard/repairs/route.ts` - it incorrectly maps `repair.date` to `estimatedCompletionDate`. Fix this mapping to use `repair.estimatedCompletionDate`.
-        *   Ensure `src/app/api/repairs/route.ts` uses the correct field name in its `orderBy` clause if needed (currently uses `date`). Add `estimatedCompletionDate` to the model if missing (already present).
-        *   Ensure `src/components/dashboard/active-repairs.tsx` correctly displays this field.
-    *   **Dashboard Overview Data:**
-        *   Modify `src/app/api/dashboard/monthly-income/route.ts` to calculate and return the full `MonthlyIncome` structure expected by `src/components/dashboard/overview.tsx`, including expenses, netIncome, YTD figures, and MoM changes. This will involve fetching both INCOME and EXPENSE transactions, grouping by month, and performing calculations over the required period (last 6 months + YTD).
-        *   Adjust the `useQuery` in `overview.tsx` if the API endpoint name changes or if data structure requires minor client-side adaptation.
-    *   **API Error Handling:**
-        *   Review `createTransaction` mutation in `src/app/transactions/components/TransactionForm.tsx` - ensure response JSON is parsed only once. (Already seems correct based on analysis).
-        *   Review `createRepair` mutation in `src/app/repairs/components/RepairsClient.tsx` - Ensure the `catch` block correctly structures the error object to match the `ApiError` interface expected by `RepairForm`, particularly passing `error.response.data`.
-7.  **Update Type Definitions:**
-    *   Go to `src/types/property.ts`. Ensure the `Property` interface matches the `prisma/schema.prisma` model precisely, including all fields (`city`, `zipCode`, `marketValue`, `purchasePrice`, `purchaseDate`, `description`) and their types (use `string` for ISO date strings passed to client).
-    *   Update `src/hooks/useProperties.ts` to import and use this shared `Property` type instead of defining its own.
-
-## Task 2: Update Documentation
+## Task 1: Update Documentation
 
 **Goal:** Ensure all documentation files in the `docs/` directory are accurate, consistent, and reflect the current state of the project after the cleanup in Task 1.
 
