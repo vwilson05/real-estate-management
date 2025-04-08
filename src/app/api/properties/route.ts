@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { db } from "@/lib/db";
 
 const propertySchema = z.object({
   address: z.string().min(1, "Address is required"),
@@ -19,7 +17,7 @@ const propertySchema = z.object({
 
 export async function GET() {
   try {
-    const properties = await prisma.property.findMany();
+    const properties = await db.property.findMany();
     return NextResponse.json(properties);
   } catch (error) {
     console.error("Error fetching properties:", error);
@@ -44,7 +42,7 @@ export async function POST(request: Request) {
       purchaseDate: validatedData.purchaseDate ? new Date(validatedData.purchaseDate) : new Date(),
     };
     
-    const newProperty = await prisma.property.create({
+    const newProperty = await db.property.create({
       data: propertyData,
     });
     

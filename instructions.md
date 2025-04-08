@@ -1,114 +1,195 @@
-# Project Cleanup, Documentation Update, and Feature Detailing Instructions
+# Agent Instructions
 
-## Phase 1: Project Structure and Code Cleanup
+## Master Context (`current_instructions`)
 
-1.  **Review Project Structure:**
-    *   Analyze the current file structure within `src/app/` and `src/components/`.
-    *   Identify potential inconsistencies or areas for improvement. Specifically, investigate the presence of `src/app/transactions/components/TransactionForm.tsx` and `src/app/components/transactions/TransactionForm.tsx`. Determine if one is redundant or if they serve different purposes. If one is redundant or misplaced, consolidate/move the correct version to `src/app/transactions/components/TransactionForm.tsx` and update all relevant imports. Delete the incorrect/redundant file.
-    *   Ensure components are located logically (shared UI components in `src/components/ui/`, feature-specific components within their respective feature folders in `src/app/`).
-    *   Verify the placement of hooks in `src/hooks/`. Ensure they are appropriately named and scoped.
+**Project Goal:** Develop and maintain a personal Real Estate Portfolio Management web application using Next.js 14 (App Router). The application tracks properties, income, expenses, repairs, tenants, and associated financials across multiple properties.
 
-2.  **Standardize Configuration Files:**
-    *   Review `tailwind.config.ts` and `tailwind.config.js`. Consolidate into `tailwind.config.ts` if appropriate, ensuring all necessary configurations (like `tailwindcss-animate`) are included. Delete the redundant file.
-    *   Review `postcss.config.mjs` and `postcss.config.js`. Consolidate into one, preferring `.mjs` or `.js` based on project consistency (likely `.mjs` given `next.config.mjs` and `eslint.config.mjs`). Ensure the correct plugins (`tailwindcss`, `autoprefixer`) are listed. Delete the redundant file.
-    *   Review `eslint.config.mjs`. Ensure it aligns with current ESLint best practices for Next.js/TypeScript projects.
-    *   Review `tsconfig.json` for optimal settings for a Next.js 14 App Router project. Ensure paths alias (`@/*`) is correct.
-    *   Review `.gitignore`. Ensure it includes necessary entries like `node_modules/`, `.next/`, `.env*`, and potentially `prisma/dev.db` (add `/prisma/dev.db` or `prisma/*.db` if not intended to be tracked). Consider adding `/data/` as seen in the example `.gitignore` if that's the intended pattern.
+**Tech Stack:**
+*   **Framework:** Next.js 14 (App Router)
+*   **Language:** TypeScript
+*   **Database:** SQLite via Prisma ORM
+*   **Styling:** Tailwind CSS
+*   **UI Components:** shadcn/ui (primary), Recharts (for charts)
+*   **State Management:** TanStack Query (React Query) for server state
+*   **Forms:** React Hook Form + Zod for validation
+*   **Notifications:** Sonner
+*   **Theming:** next-themes (dark mode default)
 
-3.  **Code Quality and Consistency:**
-    *   Scan all `.tsx` and `.ts` files for unused imports, variables, or functions and remove them.
-    *   Ensure consistent use of UI components (e.g., prefer components from `src/components/ui/` like `Button`, `Card`, `Input`, `Select`, `Label` where applicable over potentially duplicated or native elements, unless a specific library like Tremor is intentionally used). For example, review `src/app/components/transactions/TransactionForm.tsx` and see if it should be using the shared UI components from `src/components/ui/` like the other `TransactionForm`.
-    *   Check for consistent styling approaches (preferring Tailwind utility classes defined in `tailwind.config.ts`).
-    *   Ensure proper TypeScript usage, avoiding `any` where possible and using defined types (`Property`, `Transaction`, etc.).
-    *   Verify implementation of client components (`"use client";`) is correctly applied, especially in files using hooks (`useState`, `useEffect`) or event handlers.
+**Current State & Key Features:**
+*   **Structure:** Standard Next.js App Router structure. API routes in `src/app/api/`, feature pages/components under `src/app/[feature]/`. Shared UI components in `src/components/ui/`. Custom hooks in `src/hooks/`. Types in `src/types/`. Utilities in `src/lib/`.
+*   **Database:** Prisma schema defined (`schema.prisma`) for Property, Transaction, Repair, Tenant models. Uses SQLite (`dev.db`). Prisma client initialized likely via `src/lib/db.ts`.
+*   **Dashboard (`/dashboard`):** Displays key metrics (Total Properties, Portfolio Value, Monthly Income, Occupancy Rate) fetched via `/api/dashboard/metrics`. Includes a financial overview chart (Recharts) using `/api/dashboard/monthly-income`, a list of recent transactions using `/api/transactions`, and a list of active repairs using `/api/dashboard/repairs`.
+*   **Properties (`/properties`):**
+    *   Lists properties using `useProperties` hook. (UI component in `PropertyList.tsx` currently uses Tremor Table - **needs refactor**).
+    *   Form for adding new properties (`/properties/new`) using `PropertyForm.tsx`. (Uses custom CSS-in-JS - **needs refactor**). API (`/api/properties`) handles GET/POST with Prisma and Zod.
+    *   Edit/Delete/Detail view not yet implemented.
+*   **Transactions (`/transactions`):**
+    *   Lists transactions using `useTransactions` hook and shadcn `Table`.
+    *   Form (`TransactionForm.tsx`) for adding new transactions using shadcn UI, React Hook Form, Zod, React Query mutation.
+    *   API (`/api/transactions`) handles GET/POST with Prisma and Zod.
+    *   Edit/Delete not yet implemented.
+*   **Repairs (`/repairs`):**
+    *   Lists repairs using shadcn `Table`.
+    *   Form (`RepairForm.tsx`) for adding repairs using shadcn UI, React Hook Form, Zod, React Query mutation. Fetches properties for dropdown.
+    *   API (`/api/repairs`) handles GET/POST with Prisma and Zod.
+    *   Edit/Delete not yet implemented.
+*   **Tenant Management:** Planned, schema exists. No UI/API implemented.
+*   **UI/UX:** Primarily uses shadcn/ui components built on Tailwind and Radix UI. Dark mode default via `next-themes`. `sonner` used for toast notifications.
+*   **State:** TanStack Query manages server state and caching. Custom hooks (`useProperties`, `useTransactions`, `useDashboardMetrics`, etc.) abstract data fetching.
+*   **Validation:** Zod used for form and API validation.
 
-## Phase 2: Documentation Enhancement
+**Known Inconsistencies/Issues to Address:**
+*   UI component library usage: `PropertyList.tsx` uses Tremor Table, while others use shadcn Table. Needs standardization to shadcn.
+*   Styling: `PropertyForm.tsx` uses custom CSS-in-JS (`<style jsx>`), should use Tailwind/shadcn components.
+*   Prisma Client Initialization: Two files (`src/lib/prisma.ts` and `src/lib/db.ts`) exist; need consolidation (prefer `db.ts`).
+*   API/Schema Mismatches: Potential casing issues with Repair status enum (API vs Zod/Prisma), `estimatedCompletionDate` field naming in Repair API.
+*   Dashboard Data Discrepancy: Data structure in `Overview` component seems richer than what `/api/dashboard/monthly-income` provides.
+*   Duplicate Components: Two `ThemeToggle` components exist.
+*   Outdated Documentation: Several docs (`decisions.md`, `features.md`, etc.) may contain outdated info (e.g., mentions of in-memory storage, Tremor component usage). `issues.md` needs cleanup of duplicates.
 
-Review and update **all** files within the `docs/` directory based on the **current state of the codebase provided in the prompt**. Pay close attention to:
+**Coding Conventions:**
+*   Follow Next.js/React best practices.
+*   Use TypeScript strictly.
+*   Modular components and hooks.
+*   Consistent naming (PascalCase for components/types, camelCase for variables/functions).
+*   Utilize `cn()` for merging Tailwind classes.
+*   Leverage shadcn/ui components for consistency.
 
-1.  **`docs/features.md`:** (Detailed update instructions in Phase 3 below).
-2.  **`docs/architecture.md`:**
-    *   Verify the "Tech Stack" section matches the versions and libraries in `package.json` (e.g., Prisma version, Tremor, React Query, Zod, `next-themes`). Update versions if necessary.
-    *   Update the "Directory Structure" to reflect the actual structure, noting the placement of API routes, components, hooks, and lib.
-    *   Review "Architectural Decisions" (AD entries). Ensure they accurately reflect the implemented patterns (e.g., AD-003 for React Query, AD-005 for Zod, AD-006 for CSS variables/Tailwind, AD-007 for `next-themes`).
-    *   Update the "Data Flow" section if needed, especially regarding API layer implementation (Prisma/SQLite is used, not just file-based storage mentioned in some docs).
-3.  **`docs/documentation.md`:**
-    *   Update the "Project Structure" section.
-    *   Update the "Tech Stack" section to match `package.json`.
-    *   Review the "Features" checklist. Mark implemented features based on the codebase (e.g., Dashboard, Transactions basic form/list, Properties basic list/form).
-    *   Update the "API Endpoints" table based on the implemented routes in `src/app/api/`. Ensure methods, descriptions, and example schemas are accurate (e.g., `/api/dashboard/metrics`, `/api/transactions`, `/api/properties`).
-    *   Update "Component Documentation" for `TransactionForm` to reflect the implementation in `src/app/transactions/components/TransactionForm.tsx` (uses shared UI components, Zod, RHF).
-    *   Update the "API Response Handling" section based on the actual error handling in `src/app/transactions/components/TransactionForm.tsx` and API routes.
-4.  **`docs/issues.md`:**
-    *   Review all listed issues, especially "Active Bugs" and resolved bugs related to CSS, React Query Client, and Transaction Form errors.
-    *   Verify if the resolutions described match the actual code provided. For example, the "Transaction Creation Error" resolution *is* implemented in `src/app/transactions/components/TransactionForm.tsx`. Mark it as "Resolved" and potentially move it to the "Resolved Bugs" section, updating the description to match the fix.
-    *   Update statuses (Resolved, In Progress) based on the current code. Remove duplicate "Transaction List UX Fixes" sections.
-5.  **`docs/ui_ux.md`:**
-    *   Review the "UI Components" section. Ensure it accurately reflects the components used (Tailwind CSS, shared `src/components/ui/` components like Card, Label, Select, Button, Avatar, DropdownMenu, Skeleton). Mention Tremor usage if applicable based on potential future plans or if components like `Overview` use it implicitly via libraries like `recharts`.
-    *   Update the "User Feedback & Interaction" section to mention `sonner` for toast notifications, as seen in `src/app/providers.tsx` and `TransactionForm.tsx`.
-    *   Update the "Implementation Considerations" regarding CSS variables, Tailwind usage, and component architecture to match the codebase. Update component paths if necessary.
-    *   Review the specific documentation for `Label` and `Select` at the end – ensure it matches the code in `src/components/ui/`.
-6.  **`docs/coding-guidelines.md`, `docs/decisions.md`, `docs/milestones.md`, `docs/project-overview.md`, `docs/agent.md`:** Review these for consistency with the overall project state, tech stack, and implemented features. Update timelines or statuses in `milestones.md` if possible based on the implemented code (e.g., Phase 1 seems largely complete based on dashboard/transactions/properties foundations).
+## Task 1: Project Cleanup and Best Practices Alignment
 
-## Phase 3: Flesh out `features.md`
+**Goal:** Refactor code, consolidate duplicates, standardize UI components, fix inconsistencies, and align the project with best practices.
 
-Carefully review `docs/features.md` and update it based on the provided codebase:
+**Specific Instructions:**
 
-1.  **Property Management:**
-    *   **Status:** Change to "In Progress".
-    *   **Implementation:** Update to reflect the existence of:
-        *   `Property` model in `prisma/schema.prisma`.
-        *   API routes (`src/app/api/properties/route.ts`) for GET/POST.
-        *   `useProperties` hook (`src/app/hooks/useProperties.ts`) using React Query.
-        *   Basic `PropertyList` component (`src/app/properties/components/PropertyList.tsx`).
-        *   `PropertyForm` component (`src/app/properties/components/PropertyForm.tsx`) with Zod/RHF validation.
-        *   Client wrapper (`src/app/properties/components/PropertiesClient.tsx`).
-        *   New property page (`src/app/properties/new/page.tsx`).
-    *   **Next Steps:** Refine based on current state. Add items like: "Implement property detail view", "Implement property edit functionality", "Implement property deletion", "Add filtering/sorting to property list", "Improve error handling".
+1.  **Consolidate Prisma Client:**
+    *   Verify usage of `src/lib/prisma.ts` and `src/lib/db.ts`.
+    *   Assume `src/lib/db.ts` is preferred (check API route imports).
+    *   Remove `src/lib/prisma.ts` if redundant.
+    *   Update any imports pointing to `src/lib/prisma.ts` to use `src/lib/db.ts` instead.
+2.  **Consolidate Theme Toggle:**
+    *   Verify the two `ThemeToggle` components (`src/app/components/theme-toggle.tsx` and `src/components/theme-toggle.tsx`).
+    *   Choose one (likely `src/components/theme-toggle.tsx` as it seems intended for shared components) and delete the other.
+    *   Update any imports to point to the chosen component (check `src/app/layout.tsx`).
+3.  **Refactor `PropertyForm.tsx`:**
+    *   Go to `src/app/properties/components/PropertyForm.tsx`.
+    *   Remove the `<style jsx>` block.
+    *   Rewrite the form structure using shadcn/ui components:
+        *   `<Form>` from `@components/ui/form` wrapping the entire form.
+        *   `<FormField>` for each input field, connecting to `react-hook-form`.
+        *   `<FormItem>`, `<FormLabel>`, `<FormControl>`, `<FormMessage>`, `<FormDescription>` (optional, replaces helper text).
+        *   `<Input>` for text/number/date fields.
+        *   `<Select>` components (`Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectItem`) for the 'type' dropdown.
+        *   `<Textarea>` for the 'description' field.
+        *   `<Button>` for the submit button.
+    *   Ensure the refactored form looks visually similar and retains all functionality, including validation messages and required field indicators (use standard label styling).
+    *   Ensure correct props (`isLoading`) are passed to the Button.
+4.  **Refactor `PropertyList.tsx`:**
+    *   Go to `src/app/properties/components/PropertyList.tsx`.
+    *   Replace Tremor `Table`, `TableHead`, `TableRow`, `TableHeaderCell`, `TableBody`, `TableCell` with the equivalent shadcn/ui components from `@components/ui/table`.
+    *   Replace Tremor `Button` with shadcn `Button` from `@components/ui/button`.
+    *   Replace Tremor `Card` with shadcn `Card` from `@components/ui/card`.
+    *   Ensure the table structure and data display remain the same.
+    *   Keep the loading, error, and empty states, but ensure they use shadcn/ui components (`Skeleton`, `Button`, `Card`) if applicable or standard HTML/Tailwind otherwise.
+5.  **Remove Unused Dashboard Components:**
+    *   Check if `src/components/dashboard/main-nav.tsx`, `recent-sales.tsx`, `search.tsx`, `user-nav.tsx` are imported or used anywhere.
+    *   If confirmed unused, delete these files.
+6.  **Fix API/Schema/Component Inconsistencies:**
+    *   **Repair Status/Priority Enum:** Ensure consistent casing (UPPERCASE) in:
+        *   `prisma/schema.prisma` (already uppercase)
+        *   `src/app/api/repairs/route.ts` (Zod schema and Prisma queries)
+        *   `src/app/api/dashboard/repairs/route.ts` (Prisma query `where` clause and potentially returned data mapping)
+        *   `src/app/repairs/components/RepairForm.tsx` (Zod schema, Select options)
+        *   `src/app/repairs/components/RepairList.tsx` (Badge rendering logic)
+        *   `src/components/dashboard/active-repairs.tsx` (where clause in query, potentially returned data mapping, badge rendering)
+    *   **Repair `estimatedCompletionDate`:**
+        *   The Prisma schema uses `estimatedCompletionDate`.
+        *   Check `src/app/api/dashboard/repairs/route.ts` - it incorrectly maps `repair.date` to `estimatedCompletionDate`. Fix this mapping to use `repair.estimatedCompletionDate`.
+        *   Ensure `src/app/api/repairs/route.ts` uses the correct field name in its `orderBy` clause if needed (currently uses `date`). Add `estimatedCompletionDate` to the model if missing (already present).
+        *   Ensure `src/components/dashboard/active-repairs.tsx` correctly displays this field.
+    *   **Dashboard Overview Data:**
+        *   Modify `src/app/api/dashboard/monthly-income/route.ts` to calculate and return the full `MonthlyIncome` structure expected by `src/components/dashboard/overview.tsx`, including expenses, netIncome, YTD figures, and MoM changes. This will involve fetching both INCOME and EXPENSE transactions, grouping by month, and performing calculations over the required period (last 6 months + YTD).
+        *   Adjust the `useQuery` in `overview.tsx` if the API endpoint name changes or if data structure requires minor client-side adaptation.
+    *   **API Error Handling:**
+        *   Review `createTransaction` mutation in `src/app/transactions/components/TransactionForm.tsx` - ensure response JSON is parsed only once. (Already seems correct based on analysis).
+        *   Review `createRepair` mutation in `src/app/repairs/components/RepairsClient.tsx` - Ensure the `catch` block correctly structures the error object to match the `ApiError` interface expected by `RepairForm`, particularly passing `error.response.data`.
+7.  **Update Type Definitions:**
+    *   Go to `src/types/property.ts`. Ensure the `Property` interface matches the `prisma/schema.prisma` model precisely, including all fields (`city`, `zipCode`, `marketValue`, `purchasePrice`, `purchaseDate`, `description`) and their types (use `string` for ISO date strings passed to client).
+    *   Update `src/hooks/useProperties.ts` to import and use this shared `Property` type instead of defining its own.
 
-2.  **Financial Tracking:**
-    *   **Status:** Change to "In Progress".
-    *   **Implementation:** Update to reflect the existence of:
-        *   `Transaction` model in `prisma/schema.prisma`.
-        *   API routes (`src/app/api/transactions/route.ts`) for GET/POST with basic filtering.
-        *   `useTransactions` hook (`src/hooks/useTransactions.ts`) using React Query.
-        *   `TransactionList` component (`src/app/transactions/components/TransactionList.tsx`) displaying data.
-        *   `TransactionForm` component (`src/app/transactions/components/TransactionForm.tsx`) using shared UI components, Zod/RHF, and React Query mutation.
-        *   Integration with `Property` model (fetching property address in `TransactionList`).
-    *   **Next Steps:** Refine. Add items like: "Implement transaction editing/deletion", "Add advanced filtering/sorting", "Implement pagination", "Add financial reports/charts", "Add bulk import/export".
+## Task 2: Update Documentation
 
-3.  **Repair Management:**
-    *   **Status:** Keep as "Planned".
-    *   **Implementation:** Update to mention: "Database schema defined with `Repair` model in `prisma/schema.prisma`".
-    *   **Next Steps:** Keep as is or slightly refine.
+**Goal:** Ensure all documentation files in the `docs/` directory are accurate, consistent, and reflect the current state of the project after the cleanup in Task 1.
 
-4.  **Tenant Management:**
-    *   **Status:** Keep as "Planned".
-    *   **Implementation:** Update to mention: "Database schema defined with `Tenant` model in `prisma/schema.prisma`".
-    *   **Next Steps:** Keep as is or slightly refine.
+**Specific Instructions:**
 
-5.  **Dashboard & Analytics:**
-    *   **Status:** Change to "In Progress".
-    *   **Implementation:** Update to reflect the existence of:
-        *   Dashboard page (`src/app/dashboard/page.tsx`) with responsive grid layout.
-        *   Usage of `Card` components from `src/components/ui/card.tsx`.
-        *   API endpoint (`src/app/api/dashboard/metrics/route.ts`) calculating metrics from Prisma.
-        *   `useDashboardMetrics` hook (`src/app/hooks/useDashboardMetrics.ts`) fetching metrics.
-        *   Display of `totalProperties`, `totalValue`, `monthlyIncome`, `activeRepairs`.
-        *   Skeleton loading states (`src/components/ui/skeleton.tsx`) used on the dashboard.
-        *   Currency formatting (`src/lib/utils.ts`).
-        *   Monthly income overview chart (`src/components/dashboard/overview.tsx`) fetching data from `/api/dashboard/monthly-income/route.ts`.
-        *   Recent transactions list (`src/components/dashboard/recent-transactions.tsx`) fetching data from `/api/transactions?limit=5`.
-        *   Theme awareness via CSS variables and `next-themes`.
-    *   **Next Steps:** Review and update. Keep relevant items like "Add more interactive charts", "Implement filtering", "Add export functionality", "Add property performance comparison". Remove "Add recent transactions list" and "Add upcoming repairs list" if they are now considered part of the implementation or planned features.
+*   **For each file in `docs/`:**
+    *   Read through the content carefully.
+    *   Compare the information against the current codebase (files, structure, dependencies, features, UI components, APIs, database schema).
+    *   Update any outdated information, inaccuracies, or inconsistencies.
+*   **Key Files and Areas to Focus On:**
+    *   **`architecture.md`:**
+        *   Verify the Tech Stack list against `package.json`.
+        *   Clarify UI component usage: Emphasize shadcn/ui as primary, Recharts for charts. Remove/downplay Tremor unless specific components remain in use beyond `PropertyList` (which should be refactored).
+        *   Update the Directory Structure if any changes were made during cleanup.
+        *   Review Architectural Decisions (ADs). Update AD-004 (Tremor). Ensure AD-002 reflects Prisma/SQLite, removing any implication of in-memory storage. Add new ADs for standardization choices made in Task 1.
+    *   **`decisions.md`:**
+        *   Remove or explicitly mark as outdated the decision regarding "In-Memory Storage for MVP".
+        *   Update decisions related to UI components (Tremor vs shadcn/ui).
+        *   Add entries for decisions made during cleanup (e.g., Prisma client consolidation, UI standardization).
+    *   **`documentation.md`:**
+        *   Update Tech Stack.
+        *   Update Project Structure diagram if needed.
+        *   Update API Endpoints section: Add details for `/api/repairs` and `/api/dashboard/repairs`, `/api/dashboard/monthly-income`. Ensure descriptions and parameters match the code.
+        *   Update Database Schema overview to match `prisma/schema.prisma`.
+        *   Update Component Documentation: Reflect the refactoring of `PropertyForm`. Add documentation for `RepairForm` and `RepairList`.
+        *   Ensure API Response Handling section reflects best practices and any fixes made.
+        *   Remove references to temporary file-based storage if applicable.
+    *   **`features.md`:** (This will be more heavily updated in Task 3, but perform a quick consistency check here).
+    *   **`issues.md`:**
+        *   Remove the numerous duplicate "Transaction List UX Fixes" entries at the end of the file.
+        *   Review the "Current Issues" section. Mark issues resolved by Task 1 (e.g., structure cleanup, API errors, potentially UI/UX issues if refactoring addressed them). Update the status of ongoing issues like Form Validation, API Implementation, Performance Optimization.
+        *   Review "Resolved Bugs" to ensure accuracy.
+    *   **`milestones.md`:** Update the status description for Phase 1 based on the current state after Task 1.
+    *   **`ui_ux.md`:**
+        *   Update component descriptions to prioritize shadcn/ui. Remove/clarify Tremor mentions.
+        *   Update Form components section to reflect the use of shadcn `Form`, `Input`, `Label`, `Select`, etc., especially after refactoring `PropertyForm`.
+        *   Ensure the description of theming (CSS variables, Tailwind) matches `globals.css` and `tailwind.config.ts`.
+    *   **`agent.md`, `coding-guidelines.md`, `project-overview.md`:** Review for consistency but expect minor changes.
 
-6.  **Technical Features:**
-    *   **Data Validation:** Status: "In Progress". Implementation: Update to mention Zod schemas used in `PropertyForm`, `TransactionForm`, and API routes (`/api/properties`, `/api/transactions`). React Hook Form integration. Prisma schema types.
-    *   **API Integration:** Status: "In Progress". Implementation: Update to mention Next.js API routes for Properties, Transactions, Dashboard Metrics, Monthly Income. Prisma client usage. Basic error handling implemented.
-    *   **Performance Optimization:** Status: "Planned". Implementation: Update to mention `React Query` for data fetching/caching. Mention usage of Server Components where applicable (though many core pages are client components now).
+## Task 3: Enhance `features.md`
 
-7.  **Review "Features to be fleshed out":** Determine if any of these align with existing code or planned features and integrate them appropriately or leave as is.
+**Goal:** Update `docs/features.md` to accurately reflect completed work and add more detail to planned features.
 
-## Final Step
+**Specific Instructions:**
 
-Apply these changes carefully. Review the generated diffs before finalizing.
+1.  **Review `docs/features.md`:** Read the current content.
+2.  **Update Status and Implementation Details:**
+    *   **Property Management:**
+        *   Status: Keep "In Progress".
+        *   Implementation: Update list to accurately reflect `Property` model fields, `/api/properties` GET/POST, `useProperties` hook, `PropertyList` (mention refactor to shadcn Table), `PropertyForm` (mention refactor to shadcn Form), `PropertiesClient`, `new` page.
+        *   Next Steps: Keep Edit, Delete, Detail View, Filtering/Sorting.
+    *   **Financial Tracking:**
+        *   Status: Keep "In Progress".
+        *   Implementation: Update list to reflect `Transaction` model, `/api/transactions` GET/POST (mention filtering), `useTransactions` hook, `TransactionList` (shadcn Table), `TransactionForm` (shadcn Form, Zod/RHF, React Query mutation), property relation display.
+        *   Next Steps: Keep Edit/Delete, Advanced Filtering/Sorting, Pagination, Reports, Import/Export.
+    *   **Repair Management:**
+        *   Status: Change to "In Progress".
+        *   Implementation: Add details - `Repair` model defined, API route `/api/repairs` (GET/POST), `RepairList` component (shadcn Table), `RepairForm` component (shadcn Form, Zod/RHF, property dropdown), `RepairsClient` component for state management with React Query.
+        *   Next Steps: Keep Edit, Delete, Status Updates, History View, Schedules.
+    *   **Tenant Management:**
+        *   Status: Keep "Planned".
+        *   Implementation: Keep schema reference.
+        *   Next Steps: Keep existing items. Add detail if possible (e.g., specify fields like contact info, rent due date, payment status).
+    *   **Dashboard & Analytics:**
+        *   Status: Keep "In Progress".
+        *   Implementation: Update list - Dashboard page layout (`dashboard/page.tsx`), `Card` components, API endpoint `/api/dashboard/metrics` (Prisma aggregation), `useDashboardMetrics` hook, Display of metrics (`totalProperties`, `totalValue`, `monthlyIncome`, `occupancyRate` - check if occupancy is actually displayed), Skeleton loading, Formatting utilities, Financial Overview chart (`overview.tsx`, Recharts, `/api/dashboard/monthly-income` - mention data structure/discrepancy fix), Recent Transactions list (`recent-transactions.tsx`, React Query), Active Repairs list (`active-repairs.tsx`, React Query, `/api/dashboard/repairs`), Theme awareness, Error handling.
+        *   Next Steps: Keep More Charts, Filtering, Export, Property Comparison, More Metrics.
+    *   **Technical Features (Data Validation, API Integration, Performance Optimization):** Update status based on work done in Task 1 and current state (e.g., Zod validation is well-implemented, API integration covers basic CRUD for several features, performance uses React Query caching but more could be done).
+3.  **Flesh Out Future Features:**
+    *   Review the "Future Features" and "Features to be fleshed out" sections.
+    *   Integrate the "fleshed out" items into the main "Future Features" list.
+    *   **Property Map Integration:** Add description: "Visual map display of property locations using a library like Leaflet or React Map GL. Allow filtering properties on the map."
+    *   **Issue Tracking:** Add description: "Per-property issue tracker to manage maintenance requests or tenant issues. Fields: Issue Title, Description, Status (Open, In Progress, Resolved), Priority, Assigned To, Last Step Taken, Next Step, Contact Info, Due Date, Follow-up Reminders/Emails."
+    *   **Calendar Integration:** Add description: "Calendar view displaying important dates like lease expirations, rent due dates, maintenance schedules, follow-up reminders. Include email alert functionality for upcoming events."
+    *   Review other future features (Document Management, Tax Reporting, Market Analysis, Mobile App) and add a bit more detail if possible based on the project context.
+4.  **Review and Finalize:** Ensure the entire `features.md` file is consistent, up-to-date, and clearly distinguishes between implemented, in-progress, and planned features.

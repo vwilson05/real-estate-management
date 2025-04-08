@@ -1,167 +1,235 @@
 <!-- File: /docs/features.md -->
 # Features
 
-## Core Features Overview
+## Core Features
 
 ### 1. Property Management
-- **Status:** In Progress
-- **Description:** Manage and track properties including addresses, states, type, and market value
-- **Implementation:**
-  - `Property` model in `prisma/schema.prisma`
-  - API routes (`src/app/api/properties/route.ts`) for GET/POST
-  - `useProperties` hook (`src/app/hooks/useProperties.ts`) using React Query
-  - Basic `PropertyList` component (`src/app/properties/components/PropertyList.tsx`)
-  - `PropertyForm` component (`src/app/properties/components/PropertyForm.tsx`) with Zod/RHF validation
-  - Client wrapper (`src/app/properties/components/PropertiesClient.tsx`)
-  - New property page (`src/app/properties/new/page.tsx`)
-  - Shared UI components from `src/components/ui/`
-- **Next Steps:**
-  - Implement property detail view
-  - Implement property edit functionality
-  - Implement property deletion
-  - Add filtering/sorting to property list
-  - Improve error handling
+**Status:** In Progress
+**Description:** Create, view, edit, and delete properties in the portfolio.
+**Implementation:**
+- Property list view with filtering and sorting
+- Property creation form with validation
+- Property details view
+- Edit and delete functionality
+**Components:**
+- `PropertyList`: Displays properties in a table format
+- `PropertyForm`: Form for creating and editing properties
+- `PropertyCard`: Card view for property details
+**Next Steps:**
+- Implement property detail views
+- Add property images support
+- Implement property search functionality
+- Add property comparison feature
 
 ### 2. Financial Tracking
-- **Status:** In Progress
-- **Description:** Record and track income, expenses, taxes, repairs, and rents
-- **Implementation:**
-  - `Transaction` model in `prisma/schema.prisma`
-  - API routes (`src/app/api/transactions/route.ts`) for GET/POST with basic filtering
-  - `useTransactions` hook (`src/hooks/useTransactions.ts`) using React Query
-  - `TransactionList` component (`src/app/transactions/components/TransactionList.tsx`) displaying data
-  - `TransactionForm` component (`src/app/transactions/components/TransactionForm.tsx`) using shared UI components, Zod/RHF, and React Query mutation
-  - Integration with `Property` model (fetching property address in `TransactionList`)
-  - Toast notifications for success/error feedback
-- **Next Steps:**
-  - Implement transaction editing/deletion
-  - Add advanced filtering/sorting
-  - Implement pagination
-  - Add financial reports/charts
-  - Add bulk import/export
+**Status:** In Progress
+**Description:** Track income, expenses, and financial metrics for each property.
+**Implementation:**
+- Transaction creation and management
+- Income and expense categorization
+- Financial reporting and analytics
+- Cash flow tracking
+**Components:**
+- `TransactionList`: Displays transactions in a table format
+- `TransactionForm`: Form for creating and editing transactions
+- `FinancialMetrics`: Displays key financial metrics
+**Next Steps:**
+- Implement transaction categories
+- Add recurring transaction support
+- Implement financial reports
+- Add budget tracking
 
 ### 3. Repair Management
-- **Status:** Planned
-- **Description:** Track and manage property repairs and maintenance
-- **Implementation:**
-  - Database schema defined with `Repair` model in `prisma/schema.prisma`
-- **Next Steps:**
-  - Create repair tracking interface
-  - Implement repair status updates
-  - Add repair history view
-  - Create maintenance schedules
+**Status:** Planned
+**Description:** Track and manage property repairs and maintenance.
+**Implementation:**
+- Repair request creation
+- Repair status tracking
+- Cost tracking
+- Maintenance scheduling
+**Components:**
+- `RepairList`: Displays repairs in a table format
+- `RepairForm`: Form for creating and editing repairs
+- `RepairStatus`: Displays repair status and timeline
+**Next Steps:**
+- Implement repair request workflow
+- Add maintenance scheduling
+- Implement cost tracking
+- Add repair history view
 
 ### 4. Tenant Management
-- **Status:** Planned
-- **Description:** Manage tenant information and leases
-- **Implementation:**
-  - Database schema defined with `Tenant` model in `prisma/schema.prisma`
-- **Next Steps:**
-  - Create tenant list view
-  - Implement lease management
-  - Add tenant communication log
-  - Create rent payment tracking
+**Status:** Planned
+**Description:** Manage tenant information and lease agreements.
+**Implementation:**
+- Tenant profile creation
+- Lease agreement tracking
+- Rent payment tracking
+- Communication history
+**Components:**
+- `TenantList`: Displays tenants in a table format
+- `TenantForm`: Form for creating and editing tenants
+- `LeaseAgreement`: Displays lease agreement details
+**Next Steps:**
+- Implement tenant profiles
+- Add lease agreement management
+- Implement rent payment tracking
+- Add communication history
 
 ### 5. Dashboard & Analytics
-- **Status:** In Progress
-- **Description:** Provide overview and insights of portfolio performance
-- **Implementation:**
-  - Dashboard page (`src/app/dashboard/page.tsx`) with responsive grid layout
-  - Usage of `Card` components from `src/components/ui/card.tsx`
-  - API endpoint (`src/app/api/dashboard/metrics/route.ts`) calculating metrics from Prisma
-  - React Query integration for data fetching and caching
-  - Display of `totalProperties`, `totalValue`, `monthlyIncome`, `occupancyRate`
-  - Skeleton loading states (`src/components/ui/skeleton.tsx`) used on the dashboard
-  - Currency and percentage formatting utilities
-  - Monthly income overview chart (`src/components/dashboard/overview.tsx`) showing net income trends
-  - Recent transactions list (`src/components/dashboard/recent-transactions.tsx`) with React Query integration
-  - Theme awareness via CSS variables and `next-themes`
-  - Comprehensive error handling with user-friendly error states
-- **Next Steps:**
-  - Add more interactive charts
-  - Implement filtering
-  - Add export functionality
-  - Add property performance comparison
-  - Add more detailed financial metrics
+**Status:** In Progress
+**Description:** Overview of portfolio performance and key metrics.
+**Implementation:**
+- Portfolio overview
+- Financial metrics
+- Property performance
+- Recent activity
+**Components:**
+- `Dashboard`: Main dashboard layout
+- `PortfolioMetrics`: Displays portfolio-level metrics
+- `PropertyPerformance`: Displays property-level performance
+- `RecentActivity`: Displays recent transactions and updates
+**Next Steps:**
+- Implement more detailed analytics
+- Add customizable dashboard widgets
+- Implement export functionality
+- Add data visualization components
+
+## UI Components
+
+### 1. Base Components
+**Status:** Complete
+**Description:** Core UI components built with shadcn/ui.
+**Implementation:**
+- Button variants (primary, secondary, ghost)
+- Form components with validation
+- Input fields with variants
+- Select dropdowns
+- Card components
+- Tabs interface
+- Theme toggle
+**Components:**
+- All components in `src/components/ui/`
+**Next Steps:**
+- Add more component variants
+- Implement additional form components
+- Add more interactive components
+
+### 2. Feature Components
+**Status:** In Progress
+**Description:** Feature-specific components built on top of base components.
+**Implementation:**
+- Property management components
+- Transaction management components
+- Dashboard components
+- Form components with validation
+**Components:**
+- Components in `src/components/[feature]/`
+**Next Steps:**
+- Refactor remaining components to use shadcn/ui
+- Add more feature-specific components
+- Implement responsive layouts
+- Add loading states and error handling
 
 ## Technical Features
 
-### 1. Data Validation
-- **Status:** In Progress
-- **Description:** Ensure data integrity and type safety
-- **Implementation:**
-  - Zod schemas used in `PropertyForm`, `TransactionForm`, and API routes
-  - React Hook Form integration for form handling
-  - Prisma schema types for database validation
-  - TypeScript types throughout the application
-- **Next Steps:**
-  - Add more comprehensive validation rules
-  - Improve error message display
-  - Add form validation for all features
+### 1. Authentication & Authorization
+**Status:** Planned
+**Description:** User authentication and role-based access control.
+**Implementation:**
+- User registration and login
+- Role-based access control
+- Session management
+- Password reset
+**Next Steps:**
+- Implement user authentication
+- Add role-based access control
+- Implement session management
+- Add password reset functionality
 
-### 2. API Integration
-- **Status:** In Progress
-- **Description:** RESTful API endpoints for all features
-- **Implementation:**
-  - Next.js API routes for Properties, Transactions, Dashboard Metrics, Monthly Income
-  - Prisma client usage for database operations
-  - Basic error handling implemented
-  - Type-safe database queries
-- **Next Steps:**
-  - Implement all CRUD endpoints
-  - Add rate limiting
-  - Add request validation
-  - Add response caching
+### 2. Data Management
+**Status:** In Progress
+**Description:** Efficient data handling and state management.
+**Implementation:**
+- React Query for server state
+- Form state management with React Hook Form
+- Data validation with Zod
+- Optimistic updates
+**Next Steps:**
+- Implement data caching
+- Add offline support
+- Implement data synchronization
+- Add data export/import
 
-### 3. Performance Optimization
-- **Status:** In Progress
-- **Description:** Ensure fast and responsive application
-- **Implementation:**
-  - React Query for data fetching/caching
-  - Server Components where applicable
-  - Optimistic updates for better UX
-  - Loading states with skeletons
-- **Next Steps:**
-  - Implement proper caching strategies
-  - Optimize bundle size
-  - Add performance monitoring
-  - Add error boundaries
+### 3. Theme Support
+**Status:** Complete
+**Description:** Light and dark mode support.
+**Implementation:**
+- Theme toggle component
+- CSS variables for theming
+- System preference detection
+- Persistent theme selection
+**Components:**
+- `ThemeToggle`: Toggle between light and dark modes
+**Next Steps:**
+- Add more theme variants
+- Implement theme customization
+- Add theme preview
+- Implement theme persistence
+
+### 4. Responsive Design
+**Status:** In Progress
+**Description:** Mobile-first responsive design.
+**Implementation:**
+- Mobile-first approach
+- Responsive layouts
+- Touch-friendly interfaces
+- Adaptive components
+**Next Steps:**
+- Implement more responsive layouts
+- Add mobile-specific features
+- Optimize for tablets
+- Add print styles
 
 ## Future Features
 
-### 1. Document Management
-- Store and manage property-related documents
-- Track document expiration dates
-- Implement document search
+### 1. Advanced Analytics
+**Status:** Planned
+**Description:** Advanced portfolio analytics and reporting.
+**Implementation:**
+- Custom reports
+- Data visualization
+- Trend analysis
+- Predictive analytics
+**Next Steps:**
+- Implement custom reports
+- Add data visualization
+- Implement trend analysis
+- Add predictive analytics
 
-### 2. Tax Reporting
-- Generate tax reports
-- Track tax-deductible expenses
-- Export data for tax preparation
+### 2. Integration
+**Status:** Planned
+**Description:** Integration with external services.
+**Implementation:**
+- Bank account integration
+- Property listing sites
+- Maintenance services
+- Accounting software
+**Next Steps:**
+- Implement bank account integration
+- Add property listing site integration
+- Implement maintenance service integration
+- Add accounting software integration
 
-### 3. Market Analysis
-- Track property market values
-- Compare with similar properties
-- Generate market trend reports
-
-### 4. Mobile App
-- Create mobile-friendly interface
+### 3. Mobile App
+**Status:** Planned
+**Description:** Native mobile application.
+**Implementation:**
+- React Native app
+- Offline support
+- Push notifications
+- Mobile-specific features
+**Next Steps:**
+- Design mobile app
+- Implement core features
+- Add offline support
 - Implement push notifications
-- Add offline capabilities
-
-### 5. Property Map Integration
-- Map feature to see properties
-- Integration with Google Maps
-- Property clustering and filtering
-
-### 6. Issue Tracking
-- Issue tracker per property
-- Track issues with description, last step, next step
-- Contact management and follow-up
-- Due date tracking and notifications
-
-## Features to be fleshed out
-- Map feature to see properties
-- integration with google maps
-- Issue tracker per property with issue, description, last step, next step, contact, due date, follow up email, etc to make managing/juggling easier
-- calendar with email alerts function

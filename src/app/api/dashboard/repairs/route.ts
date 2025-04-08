@@ -1,10 +1,5 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { Repair, Property } from "@prisma/client";
-
-interface RepairWithProperty extends Repair {
-  property: Pick<Property, 'address'>;
-}
 
 export async function GET() {
   try {
@@ -12,7 +7,7 @@ export async function GET() {
     const activeRepairs = await db.repair.findMany({
       where: {
         status: {
-          in: ['pending', 'in_progress']
+          in: ['PENDING', 'IN_PROGRESS']
         }
       },
       orderBy: {
@@ -28,12 +23,12 @@ export async function GET() {
     });
 
     // Calculate total repair cost
-    const totalRepairCost = activeRepairs.reduce((sum: number, repair: RepairWithProperty) => sum + repair.cost, 0);
+    const totalRepairCost = activeRepairs.reduce((sum, repair) => sum + repair.cost, 0);
 
     return NextResponse.json({
-      activeRepairs: activeRepairs.map((repair: RepairWithProperty) => ({
+      activeRepairs: activeRepairs.map((repair) => ({
         id: repair.id,
-        item: repair.item,
+        item: repair.description,
         location: repair.property.address,
         status: repair.status,
         cost: repair.cost,
