@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/db";
 
 export async function GET() {
   try {
@@ -17,7 +17,7 @@ export async function GET() {
       const lastDayOfMonth = new Date(currentYear, now.getMonth() - i + 1, 0);
       
       // Get transactions for this month
-      const monthlyTransactions = await prisma.transaction.findMany({
+      const monthlyTransactions = await db.transaction.findMany({
         where: {
           date: {
             gte: firstDayOfMonth,

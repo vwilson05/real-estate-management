@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/db";
 import { z } from "zod";
 
 // Validation schema for repair creation
@@ -18,7 +18,7 @@ export async function GET(request: Request) {
     const propertyId = searchParams.get("propertyId");
     const status = searchParams.get("status");
 
-    const repairs = await prisma.repair.findMany({
+    const repairs = await db.repair.findMany({
       where: {
         ...(propertyId && { propertyId }),
         ...(status && { status }),
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
     const validatedData = repairSchema.parse(body);
 
     // Check if property exists
-    const property = await prisma.property.findUnique({
+    const property = await db.property.findUnique({
       where: { id: validatedData.propertyId },
     });
 
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const repair = await prisma.repair.create({
+    const repair = await db.repair.create({
       data: validatedData,
       include: {
         property: {

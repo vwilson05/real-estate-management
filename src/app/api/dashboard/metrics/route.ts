@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/db";
 
 export async function GET() {
   try {
     // Get all properties
-    const properties = await prisma.property.findMany();
+    const properties = await db.property.findMany();
     
     // Calculate total properties and total value
     const totalProperties = properties.length;
@@ -15,7 +15,7 @@ export async function GET() {
     const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
     
-    const monthlyTransactions = await prisma.transaction.findMany({
+    const monthlyTransactions = await db.transaction.findMany({
       where: {
         date: {
           gte: firstDayOfMonth,
@@ -29,7 +29,7 @@ export async function GET() {
     const monthlyIncome = monthlyTransactions.reduce((sum, transaction) => sum + transaction.amount, 0);
     
     // Get active repairs
-    const activeRepairs = await prisma.repair.count({
+    const activeRepairs = await db.repair.count({
       where: {
         status: {
           in: ["PENDING", "IN_PROGRESS"],

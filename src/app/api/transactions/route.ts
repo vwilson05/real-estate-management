@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { z } from 'zod';
 
 const transactionSchema = z.object({
@@ -29,7 +29,7 @@ export async function GET(request: Request) {
       }),
     };
 
-    const transactions = await prisma.transaction.findMany({
+    const transactions = await db.transaction.findMany({
       where,
       include: {
         property: true,
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const validatedData = transactionSchema.parse(body);
 
-    const transaction = await prisma.transaction.create({
+    const transaction = await db.transaction.create({
       data: {
         ...validatedData,
         date: new Date(validatedData.date),

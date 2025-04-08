@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/db";
 import { RepairsClient } from "./components/RepairsClient";
 
 interface Property {
@@ -20,7 +20,7 @@ interface Repair {
 }
 
 async function getProperties(): Promise<Property[]> {
-  return await prisma.property.findMany({
+  return await db.property.findMany({
     select: {
       id: true,
       address: true,
@@ -29,7 +29,7 @@ async function getProperties(): Promise<Property[]> {
 }
 
 async function getRepairs(): Promise<Repair[]> {
-  const repairs = await prisma.repair.findMany({
+  const repairs = await db.repair.findMany({
     include: {
       property: {
         select: {
