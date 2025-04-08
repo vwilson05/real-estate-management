@@ -25,7 +25,9 @@
   - Integration with Property model
   - Categories defined for transaction types
   - Transaction list view with filtering and sorting
-  - Transaction form with validation
+  - Transaction form with validation using Zod and React Hook Form
+  - Form fields for amount, description, date, and type (income/expense)
+  - Client-side validation with error messages
   - API routes for CRUD operations
 - **Next Steps:**
   - Add financial reports and charts
