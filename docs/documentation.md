@@ -75,7 +75,12 @@ Each page focuses on its specific content without duplicating navigation element
 - **API Validation:** Improved date format handling in transaction API endpoints
 - **Type Safety:** Centralized type definitions in src/types/ directory
 - **Repair Management:** Added repair tracking with status and priority management
-- **Geocoding:** Implemented address geocoding for property locations
+- **Geocoding:** Implemented server-side geocoding with OpenStreetMap
+- **Issue Tracking:** Added comprehensive issue tracking system with filtering and sorting
+- **Property Map:** Enhanced map component with graceful handling of missing coordinates
+- **Dashboard:** Added active issues tracking and improved metrics calculation
+- **API Security:** Added rate limiting and improved error handling
+- **Database:** Fixed enum validation and added migration support
 
 ## Database Schema
 The application uses the following main entities:
@@ -87,6 +92,9 @@ The application uses the following main entities:
   - Optional fields: description
 - **Repair:** Property maintenance and repairs
   - Required fields: date, cost, description, status, priority, item, estimatedCompletionDate, propertyId
+- **Issue:** Property issues and tasks
+  - Required fields: title, status, priority, type, propertyId
+  - Optional fields: description, dueDate, repairId, tenantId
 - **Tenant:** Property tenants and lease information
   - Required fields: name, leaseStart, leaseEnd, rentAmount, propertyId
   - Optional fields: email, phone
@@ -171,12 +179,22 @@ This document serves as the central repository for technical documentation. It c
 |--------------------------|--------|---------------------------------------------|------------------------------|------------------------------------|
 | `/api/properties`        | GET    | Retrieve list of properties                 | `None`                       | Array of property objects          |
 | `/api/properties`        | POST   | Create a new property                       | Property data in JSON format | Created property object            |
-| `/api/transactions`      | GET    | Retrieve list of income/expense transactions  | `propertyId` (optional)      | Array of transaction objects       |
+| `/api/properties/[id]`   | GET    | Retrieve a single property                  | `id` in URL                  | Property object                    |
+| `/api/properties/[id]`   | PATCH  | Update a property                           | `id` in URL, data in body    | Updated property object            |
+| `/api/properties/[id]`   | DELETE | Delete a property                           | `id` in URL                  | 204 No Content                     |
+| `/api/transactions`      | GET    | Retrieve list of transactions               | `propertyId` (optional)      | Array of transaction objects       |
 | `/api/transactions`      | POST   | Record a new transaction                    | Transaction data in JSON     | Created transaction object         |
 | `/api/repairs`          | GET    | Retrieve list of repairs                    | `propertyId` (optional)      | Array of repair objects            |
 | `/api/repairs`          | POST   | Create a new repair                         | Repair data in JSON          | Created repair object              |
+| `/api/issues`           | GET    | Retrieve list of issues                     | Multiple filter params       | Array of issue objects             |
+| `/api/issues`           | POST   | Create a new issue                          | Issue data in JSON           | Created issue object               |
+| `/api/issues/[id]`      | PATCH  | Update an issue                             | `id` in URL, data in body    | Updated issue object               |
+| `/api/issues/[id]`      | DELETE | Delete an issue                             | `id` in URL                  | 204 No Content                     |
+| `/api/geocode`          | GET    | Geocode an address                          | `address` in query           | Coordinates object                 |
+| `/api/properties/geocode` | GET  | Geocode a property by ID                    | `propertyId` in query        | Coordinates object                 |
 | `/api/dashboard/metrics` | GET    | Get dashboard metrics                       | `None`                       | Dashboard metrics object           |
 | `/api/dashboard/repairs` | GET    | Get active repairs                          | `None`                       | Active repairs and total cost      |
+| `/api/dashboard/issues`  | GET    | Get active issues                           | `None`                       | Active issues and total count      |
 | `/api/dashboard/monthly-income` | GET | Get monthly income data                 | `None`                       | Monthly income, expenses, and NOI  |
 
 ## Component Documentation
