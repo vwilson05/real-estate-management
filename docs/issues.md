@@ -1,27 +1,139 @@
 <!-- File: /docs/issues.md -->
-# issues.md
+# Issues & Tracking
 
-## Issues and Bugs Tracking
-This document is used to track bugs and known issues in the Real Estate Portfolio Tracker. Document each issue with detailed reproduction steps and resolution instructions.
+## Current Issues
 
-## Issue Template
+### High Priority
+1. **Database Setup**
+   - Status: Resolved
+   - Description: Initial database setup and schema implementation
+   - Resolution: Implemented Prisma schema with SQLite
 
-- **Issue ID:** BUG-001
-- **Title:** [Short description of the issue]
-- **Description:** Detailed explanation of the issue, including any error messages.
-- **Steps to Reproduce:**
-  1. [Step one]
-  2. [Step two]
-  3. [Step three]
-- **Expected Result:** What the proper behavior should be.
-- **Actual Result:** What is currently happening.
-- **Priority:** [Low/Medium/High]
-- **Status:** [Open/In Progress/Resolved]
+2. **Project Structure**
+   - Status: Resolved
+   - Description: Establish proper Next.js project structure
+   - Resolution: Created organized directory structure with proper separation of concerns
+
+### Medium Priority
+1. **API Implementation**
+   - Status: In Progress
+   - Description: Need to implement CRUD operations for all entities
+   - Next Steps:
+     - Create API routes for properties
+     - Implement proper error handling
+     - Add request validation
+
+2. **Form Validation**
+   - Status: Pending
+   - Description: Implement comprehensive form validation
+   - Next Steps:
+     - Set up Zod schemas
+     - Integrate with React Hook Form
+     - Add error messages
+
+### Low Priority
+1. **Documentation**
+   - Status: Ongoing
+   - Description: Keep documentation up to date with implementation
+   - Next Steps:
+     - Update API documentation
+     - Add code comments
+     - Maintain README
+
+## Potential Issues
+
+### Technical Debt
+1. **Type Safety**
+   - Risk Level: Medium
+   - Description: Ensure proper TypeScript usage throughout the application
+   - Prevention:
+     - Regular type checking
+     - Avoid using 'any'
+     - Implement proper interfaces
+
+2. **Performance**
+   - Risk Level: Medium
+   - Description: Monitor and optimize application performance
+   - Prevention:
+     - Regular performance audits
+     - Implement proper caching
+     - Optimize bundle size
+
+### Security Concerns
+1. **Data Protection**
+   - Risk Level: Medium
+   - Description: Ensure proper data security measures
+   - Prevention:
+     - Implement proper validation
+     - Sanitize inputs
+     - Use environment variables
+
+2. **API Security**
+   - Risk Level: Medium
+   - Description: Secure API endpoints
+   - Prevention:
+     - Implement rate limiting
+     - Add request validation
+     - Use proper error handling
+
+### Scalability
+1. **Database Performance**
+   - Risk Level: Low
+   - Description: Monitor database performance as data grows
+   - Prevention:
+     - Implement proper indexing
+     - Use efficient queries
+     - Regular monitoring
+
+2. **Application Load**
+   - Risk Level: Low
+   - Description: Handle increased usage and data
+   - Prevention:
+     - Implement proper caching
+     - Optimize queries
+     - Monitor performance
+
+## Bug Tracking
+
+### Active Bugs
+- None currently identified
+
+### Resolved Bugs
+1. **Initial Setup**
+   - Description: Project configuration issues
+   - Resolution: Updated dependencies and configuration
+
+## Feature Requests
+
+### Under Consideration
+1. **Enhanced Reporting**
+   - Priority: Medium
+   - Description: Add more detailed financial reports
+   - Status: Planning
+
+2. **Mobile Support**
+   - Priority: Low
+   - Description: Optimize for mobile devices
+   - Status: Future consideration
+
+## Maintenance Tasks
+
+### Regular
+- Dependency updates
+- Code cleanup
+- Documentation updates
+- Performance monitoring
+
+### Scheduled
+- Weekly code reviews
+- Monthly security audits
+- Quarterly performance reviews
 
 ## Resolution Process
-1. **Reproduce:** Confirm the issue by reproducing the problem.
-2. **Isolate:** Identify the module or component causing the issue.
-3. **Fix:** Implement iterative fixes with frequent commits.
-4. **Test:** Validate the fix across different scenarios.
-5. **Document:** Update this file and relevant documentation.
-6. **Deploy:** Follow release procedures to update the live app.
+1. Issue identification
+2. Priority assessment
+3. Assignment
+4. Implementation
+5. Testing
+6. Documentation
+7. Closure

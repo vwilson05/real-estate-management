@@ -1,28 +1,146 @@
 <!-- File: /docs/.agent.md -->
-# .agent.md
+# Development Agent Guidelines
 
 ## Overview
-This document outlines the rules and processes that the AI agent (Cursor) should always follow during development. The focus is on small, iterative development while preserving context, maintaining up-to-date documentation, and using best practices (like git branching and early commits).
+This document outlines the guidelines and best practices for AI agents assisting in the development of the Real Estate Portfolio Management system.
 
-## Agent Guidelines
-- **Iterative Development:** Work in small, manageable increments.
-- **Context Preservation:** Keep changes focused; avoid overcomplicating fixes.
-- **Version Control:**
-  - Adopt clear and descriptive commit messages.
-  - Use a branching strategy (e.g., feature branches, hotfix branches) to isolate changes.
-- **Documentation Updates:** Ensure that each code change is accompanied by updates in the corresponding md files.
-- **Testing & Validation:** Run unit and integration tests early and often.
+## Development Approach
 
-## Development Processes
+### 1. Code Structure
+- Follow Next.js 14 App Router conventions
+- Use TypeScript for all new code
+- Implement proper type safety
+- Keep components modular and reusable
 
-### Bug Fixes
-1. **Identification:** Clearly identify and document bugs in the issues file.
-2. **Branching:** Create a bug-fix branch off the main or development branch.
-3. **Fix & Test:** Apply iterative fixes and validate with tests.
-4. **Merge:** Merge after reviews and successful tests.
+### 2. Feature Implementation
+- Start with database schema
+- Create API endpoints
+- Implement UI components
+- Add validation and error handling
+- Write tests when appropriate
 
-### Feature Implementation
-1. **Planning:** Outline requirements and design (refer to features.md and architecture.md).
-2. **Incremental Changes:** Develop and commit small chunks of functionality.
-3. **Integration:** Continuously integrate changes and run tests.
-4. **Documentation:** Update all relevant documentation concurrently.
+### 3. Code Quality
+- Follow established coding guidelines
+- Use proper TypeScript types
+- Implement error handling
+- Add appropriate comments
+- Keep code DRY
+
+### 4. Documentation
+- Update documentation as you implement features
+- Document API endpoints
+- Add JSDoc comments for functions
+- Keep README up to date
+
+## Technology Stack
+
+### Frontend
+- Next.js 14
+- TypeScript
+- Tailwind CSS
+- Tremor Components
+- React Query
+- React Hook Form
+
+### Backend
+- Next.js API Routes
+- Prisma ORM
+- SQLite Database
+- Zod Validation
+
+### Development Tools
+- ESLint
+- TypeScript Compiler
+- Prisma CLI
+- npm/Node.js
+
+## Best Practices
+
+### 1. Code Generation
+- Generate complete, working code
+- Include all necessary imports
+- Add proper type definitions
+- Include error handling
+- Follow established patterns
+
+### 2. Problem Solving
+- Break down complex tasks
+- Implement iteratively
+- Test as you go
+- Document decisions
+- Consider edge cases
+
+### 3. Communication
+- Provide clear explanations
+- Document important decisions
+- Ask clarifying questions
+- Suggest improvements
+- Explain technical concepts
+
+### 4. Error Handling
+- Implement proper try/catch blocks
+- Use appropriate error messages
+- Log errors appropriately
+- Provide user-friendly feedback
+- Handle edge cases
+
+## Development Process
+
+### 1. Planning
+- Review requirements
+- Break down tasks
+- Identify dependencies
+- Plan implementation approach
+
+### 2. Implementation
+- Follow coding guidelines
+- Use appropriate tools
+- Write clean code
+- Add proper documentation
+- Implement error handling
+
+### 3. Testing
+- Test functionality
+- Check edge cases
+- Verify error handling
+- Ensure type safety
+- Test performance
+
+### 4. Documentation
+- Update relevant docs
+- Add code comments
+- Document APIs
+- Explain complex logic
+- Note important decisions
+
+## Maintenance
+
+### 1. Code Reviews
+- Check code quality
+- Verify type safety
+- Review error handling
+- Check documentation
+- Suggest improvements
+
+### 2. Updates
+- Keep dependencies current
+- Update documentation
+- Refactor when needed
+- Optimize performance
+- Fix technical debt
+
+## Security Considerations
+
+### 1. Data Protection
+- Validate inputs
+- Sanitize data
+- Use proper authentication
+- Implement authorization
+- Protect sensitive data
+
+### 2. API Security
+- Validate requests
+- Implement rate limiting
+- Use proper error responses
+- Secure endpoints
+- Follow best practices

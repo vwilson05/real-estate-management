@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Property {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  address     String
+  city        String
+  state       String
+  zipCode     String
+  type        String   // e.g., "Single Family", "Multi Family", "Commercial"
+  marketValue Float
+  purchasePrice Float
+  purchaseDate DateTime
+  description String?
+  
+  // Relations
+  transactions Transaction[]
+  repairs     Repair[]
+  tenants     Tenant[]
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  date        DateTime
+  amount      Float
+  type        String   // "INCOME" or "EXPENSE"
+  category    String   // e.g., "Rent", "Mortgage", "Insurance", "Tax", "Utilities"
+  description String?
+  
+  // Relations
+  property    Property @relation(fields: [propertyId], references: [id])
+  propertyId  String
+}
+
+model Repair {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  date        DateTime
+  cost        Float
+  description String
+  status      String   // "PENDING", "IN_PROGRESS", "COMPLETED"
+  priority    String   // "LOW", "MEDIUM", "HIGH"
+  
+  // Relations
+  property    Property @relation(fields: [propertyId], references: [id])
+  propertyId  String
+}
+
+model Tenant {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String
+  email       String?
+  phone       String?
+  leaseStart  DateTime
+  leaseEnd    DateTime
+  rentAmount  Float
+  
+  // Relations
+  property    Property @relation(fields: [propertyId], references: [id])
+  propertyId  String
+}
