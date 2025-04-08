@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from "react"
 import Link from "next/link"
 import { Menu, X } from "lucide-react"
@@ -30,7 +32,7 @@ export function MobileNav() {
         )}
       </Button>
       {isOpen && (
-        <div className="absolute top-16 left-0 right-0 z-50 bg-background border-b">
+        <div className="fixed inset-x-0 top-16 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="space-y-1 px-4 py-3">
             {navigation.map((item) => (
               <Link
