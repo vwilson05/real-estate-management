@@ -81,6 +81,11 @@ Each page focuses on its specific content without duplicating navigation element
 - **Dashboard:** Added active issues tracking and improved metrics calculation
 - **API Security:** Added rate limiting and improved error handling
 - **Database:** Fixed enum validation and added migration support
+- **Tenant Management:** Implemented full CRUD operations for tenants, including form validation, API routes, and UI components
+- **Issue Tracking:** Added issue tracking functionality with API routes, hooks, and UI components
+- **Geocoding:** Integrated server-side geocoding with OpenStreetMap for property addresses
+- **Property Map:** Enhanced property map with graceful handling of invalid coordinates
+- **Dashboard Metrics:** Fixed dashboard metrics calculation and display
 
 ## Database Schema
 The application uses the following main entities:
@@ -130,7 +135,7 @@ The application uses the following main entities:
 - [x] Properties management
 - [x] Transaction tracking
 - [x] Repair management
-- [ ] Tenant management
+- [x] Tenant management
 - [ ] Reports and analytics
 
 ## Development Guidelines
@@ -196,6 +201,14 @@ This document serves as the central repository for technical documentation. It c
 | `/api/dashboard/repairs` | GET    | Get active repairs                          | `None`                       | Active repairs and total cost      |
 | `/api/dashboard/issues`  | GET    | Get active issues                           | `None`                       | Active issues and total count      |
 | `/api/dashboard/monthly-income` | GET | Get monthly income data                 | `None`                       | Monthly income, expenses, and NOI  |
+
+### Tenants
+
+- `GET /api/tenants`: List all tenants with optional property filtering
+- `POST /api/tenants`: Create a new tenant
+- `GET /api/tenants/[id]`: Get a single tenant by ID
+- `PATCH /api/tenants/[id]`: Update a tenant
+- `DELETE /api/tenants/[id]`: Delete a tenant
 
 ## Component Documentation
 ### PropertyForm

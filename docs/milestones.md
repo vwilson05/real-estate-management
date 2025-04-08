@@ -6,22 +6,19 @@ Develop a personal web app to track and manage my real estate portfolio—includ
 
 ## Milestones
 
-## Phase 1: Foundation (Current)
+## Phase 1: Foundation (In Progress)
 - **Status:** In Progress
 - **Target Date:** [Current Sprint]
 - **Completed:**
-  - [x] Project initialization with Next.js 14
-  - [x] Database schema design with Prisma
-  - [x] Basic project structure
-  - [x] Navigation setup
-  - [x] Dashboard layout
-  - [x] Dashboard metrics implementation
-  - [x] Geocoding integration with OpenStreetMap
-  - [x] Issue tracking system
-  - [x] Basic CRUD operations for properties
-  - [x] Basic CRUD operations for transactions
-  - [x] Basic CRUD operations for repairs
-  - [x] Form validation setup with Zod
+  - [x] Project setup with Next.js 14, TypeScript, and Prisma
+  - [x] Database schema design and implementation
+  - [x] Basic UI components with shadcn/ui
+  - [x] Property management (Create, Read)
+  - [x] Transaction tracking (Create, Read)
+  - [x] Repair management (Create, Read)
+  - [x] Dashboard metrics
+  - [x] Tenant management (Create, Read, Update, Delete)
+  - [ ] Reports and analytics
 - **In Progress:**
   - [ ] Property management refinements
     - Edit/Delete functionality
@@ -36,9 +33,16 @@ Develop a personal web app to track and manage my real estate portfolio—includ
     - Status updates
     - Cost tracking
 
-## Phase 2: Core Features
+## Phase 2: Core Features (Planned)
 - **Target Date:** [Next Sprint]
 - **Goals:**
+  - [ ] Property management (Update, Delete)
+  - [ ] Transaction tracking (Update, Delete)
+  - [ ] Repair management (Update, Delete)
+  - [ ] Tenant payment tracking
+  - [ ] Lease renewal workflow
+  - [ ] Tenant communication history
+  - [ ] Tenant dashboard with key metrics
   - [ ] Complete property management
     - Property search and filtering
     - Property comparison

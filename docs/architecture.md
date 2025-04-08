@@ -292,3 +292,58 @@ src/
 ### New Directories
 - src/lib/schemas/ - Zod validation schemas
   - issueSchema.ts - Issue validation schema
+
+### Tenants API
+
+**Location**: `src/app/api/tenants/`
+
+**Endpoints**:
+- `GET /api/tenants`: List all tenants with optional property filtering
+- `POST /api/tenants`: Create a new tenant
+- `GET /api/tenants/[id]`: Get a single tenant by ID
+- `PATCH /api/tenants/[id]`: Update a tenant
+- `DELETE /api/tenants/[id]`: Delete a tenant
+
+**Implementation**:
+- Uses Prisma for database operations
+- Validates input with Zod schemas
+- Includes property details in responses
+- Proper error handling with appropriate status codes
+
+## React Query Hooks
+
+### Tenant Hooks
+
+**Location**: `src/hooks/useTenants.ts`
+
+**Hooks**:
+- `useTenants(propertyId?)`: Fetch all tenants with optional property filtering
+- `useTenant(tenantId)`: Fetch a single tenant by ID
+- `useCreateTenant()`: Create a new tenant
+- `useUpdateTenant()`: Update an existing tenant
+- `useDeleteTenant()`: Delete a tenant
+
+**Implementation**:
+- Proper query invalidation on mutations
+- Toast notifications for success/error states
+- Type safety with TypeScript
+
+## Custom Components
+
+### Tenant Components
+
+**Location**: `src/app/tenants/components/`
+
+**Components**:
+- `TenantForm`: Form for creating and editing tenants
+- `TenantList`: Table displaying all tenants with actions
+- `TenantsClient`: Main client component for tenant management
+- `TenantDetailClient`: Detailed view of a single tenant
+- `TenantEditClient`: Form for editing an existing tenant
+
+**Implementation**:
+- Uses shadcn/ui components
+- Form validation with React Hook Form and Zod
+- Date pickers for lease dates
+- Property selection dropdown
+- Responsive design

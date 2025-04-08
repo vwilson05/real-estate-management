@@ -271,6 +271,46 @@ Features:
 - Pagination support
 - Row actions
 
+### TenantForm
+
+**Location**: `src/app/tenants/components/TenantForm.tsx`
+
+**Description**: A form component for creating and editing tenants.
+
+**Features**:
+- Input validation using Zod
+- Date pickers for lease dates
+- Property selection dropdown
+- Loading states during submission
+- Success/error handling
+
+**Usage**:
+```tsx
+<TenantForm 
+  initialData={tenantData} // Optional: For editing existing tenant
+  tenantId={tenantId} // Optional: For editing existing tenant
+  onSuccess={() => setIsFormOpen(false)} // Optional: Callback on successful submission
+/>
+```
+
+### TenantList
+
+**Location**: `src/app/tenants/components/TenantList.tsx`
+
+**Description**: A table component displaying all tenants with actions.
+
+**Features**:
+- Responsive table layout
+- View, Edit, and Delete actions
+- Confirmation dialog for deletion
+- Empty state handling
+- Formatted currency and dates
+
+**Usage**:
+```tsx
+<TenantList tenants={tenants} />
+```
+
 ## Prototyping & Tools
 - **High-Fidelity Prototypes:** Utilize design tools like Figma, Sketch, or Adobe XD for creating detailed prototypes.
 - **Wireframing:** Develop wireframes to map out user journeys and validate layouts before moving to full design.

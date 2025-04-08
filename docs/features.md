@@ -93,20 +93,27 @@
 - Add repair notifications
 
 ### 4. Tenant Management
-**Status:** Planned
-**Description:** Manage tenant information and lease agreements.
-**Implementation:**
-- Tenant model defined in schema
-- Basic fields: name, leaseStart, leaseEnd, rentAmount, propertyId, email, phone
+**Status:** Complete
+**Description:** Manage tenants across properties, including lease information, contact details, and rent tracking.
+**Features:**
+- Create, view, edit, and delete tenants
+- Associate tenants with properties
+- Track lease periods (start and end dates)
+- Record rent amounts
+- Store contact information (email, phone)
+- View tenant details with property information
+**Implementation Details:**
+- Full CRUD operations via API routes
+- Form validation using Zod
+- React Query for data fetching and caching
+- Responsive UI with shadcn/ui components
+- Currency formatting for rent amounts
+- Date formatting for lease periods
 **Next Steps:**
-- Implement tenant profiles
-- Add lease agreement management
-- Implement rent payment tracking
-- Add communication history
-- Create tenant list view
-- Implement tenant creation form
-- Add tenant search and filtering
-- Implement tenant-property relationship management
+- Add tenant payment tracking
+- Implement lease renewal workflow
+- Add tenant communication history
+- Create tenant dashboard with key metrics
 
 ### 5. Dashboard & Analytics
 **Status:** In Progress
