@@ -126,26 +126,140 @@ src/
 
 ## Geocoding Architecture
 
-The application uses a two-tier geocoding architecture to handle address geocoding:
+### Overview
+The application uses a server-side geocoding architecture to handle address geocoding efficiently and securely:
 
-1. **Client-Side Geocoding Module** (`src/lib/geocoding.ts`)
-   - Provides geocoding functionality for the client-side components
-   - Makes API calls to the server-side geocoding endpoints
-   - Handles errors and provides fallback values
+1. **Server-Side Geocoding Module** (`src/lib/server/geocoding.ts`)
+   - Implements geocoding using OpenStreetMap's Nominatim API
+   - Uses native `fetch` API for compatibility with server environment
+   - Includes rate limiting and error handling
+   - Returns standardized response format with coordinates
 
-2. **Server-Side Geocoding Module** (`src/lib/server/geocoding.ts`)
-   - Implements the actual geocoding logic using the OpenStreetMap Nominatim API
-   - Uses the native `fetch` API to make HTTP requests
-   - Returns latitude and longitude coordinates for addresses
-
-3. **Geocoding API Routes**
+2. **Geocoding API Routes**
    - `/api/geocode` - Geocodes a single address
    - `/api/properties/geocode` - Geocodes a property by its ID
+   - Includes proper error handling and rate limiting
 
-This architecture ensures that:
-- Geocoding is performed on the server side, avoiding client-side issues with CORS and API rate limits
-- The client-side code is kept simple and focused on UI concerns
-- The server-side implementation can be updated independently of the client-side code
+3. **Client Integration**
+   - Client components make requests to geocoding API routes
+   - Handles loading states and errors gracefully
+   - Provides fallback UI for failed geocoding attempts
+
+### Benefits
+- No API key exposure (server-side only)
+- Better rate limiting control
+- Consistent error handling
+- Improved reliability
+- Reduced client-side complexity
+
+## Issue Tracking Architecture
+
+### Database Schema
+```prisma
+model Issue {
+  id          String      @id @default(cuid())
+  title       String
+  description String?
+  dueDate     DateTime?
+  status      IssueStatus @default(OPEN)
+  priority    IssuePriority @default(MEDIUM)
+  type        IssueType
+  property    Property    @relation(fields: [propertyId], references: [id])
+  propertyId  String
+  repair      Repair?     @relation(fields: [repairId], references: [id])
+  repairId    String?
+  tenant      Tenant?     @relation(fields: [tenantId], references: [id])
+  tenantId    String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+enum IssueStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum IssuePriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum IssueType {
+  REPAIR
+  MAINTENANCE
+  INSPECTION
+  OTHER
+}
+```
+
+### API Routes
+- `GET /api/issues` - List issues with filtering and sorting
+  - Query parameters: status, priority, type, propertyId
+  - Includes pagination and sorting
+- `POST /api/issues` - Create new issue
+  - Validates input using Zod schema
+  - Checks property existence
+- `PATCH /api/issues/[id]` - Update issue
+  - Partial updates supported
+  - Validates enum values
+- `DELETE /api/issues/[id]` - Delete issue
+
+### React Query Hooks
+- `useIssues` - Fetch and filter issues
+  - Supports all filter parameters
+  - Includes pagination
+  - Real-time updates
+- `useCreateIssue` - Create new issues
+  - Optimistic updates
+  - Error handling
+- `useUpdateIssue` - Update existing issues
+  - Partial updates
+  - Validation
+- `useDeleteIssue` - Delete issues
+  - Confirmation dialog
+  - Cache updates
+
+### UI Components
+- `IssueList` - Display issues in a table
+  - Status badges
+  - Priority indicators
+  - Sorting and filtering
+  - Pagination
+- `IssueForm` - Form for creating/editing issues
+  - Zod validation
+  - Property selection
+  - Date picker
+  - Status/priority/type selection
+- `IssuesClient` - Client-side wrapper
+  - State management
+  - Error handling
+  - Loading states
+
+### Directory Structure
+```
+src/
+├── app/
+│   ├── api/
+│   │   └── issues/
+│   │       ├── route.ts
+│   │       └── [id]/
+│   │           └── route.ts
+│   └── issues/
+│       ├── page.tsx
+│       └── components/
+│           ├── IssuesClient.tsx
+│           ├── IssueList.tsx
+│           └── IssueForm.tsx
+├── lib/
+│   └── schemas/
+│       └── issueSchema.ts
+└── hooks/
+    └── useIssues.ts
+```
 
 ## Database Schema
 
