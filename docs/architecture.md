@@ -22,7 +22,7 @@ This document details the overall architecture of the Real Estate Portfolio Trac
 - **State Management:** React Query for server state
 - **Form Handling:** React Hook Form with Zod validation
 - **Theme:** Dark mode support with next-themes
-- **Maps:** Mapbox GL JS for interactive property maps
+- **Maps:** Leaflet with OpenStreetMap for interactive property maps
 
 ## Core Components
 

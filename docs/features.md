@@ -11,12 +11,12 @@
 - Property creation form with validation
 - Property details view
 - Edit and delete functionality
-- Interactive property map with Mapbox integration
+- Interactive property map with Leaflet and OpenStreetMap integration
 **Components:**
 - `PropertyList`: Displays properties in a table format
 - `PropertyForm`: Form for creating and editing properties
 - `PropertyCard`: Card view for property details
-- `PropertyMap`: Interactive map displaying property locations
+- `PropertyMap`: Interactive map displaying property locations using Leaflet
 - `PropertyMapClient`: Client-side wrapper for the map component
 **Next Steps:**
 - Implement property detail views
