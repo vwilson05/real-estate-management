@@ -4,106 +4,212 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { toast } from 'sonner';
+import { Property } from '@/types/property';
 
 const transactionSchema = z.object({
-  amount: z.number().positive(),
-  description: z.string().min(1),
-  date: z.string(),
-  type: z.enum(['income', 'expense']),
+  amount: z.number().positive({ message: 'Amount must be positive' }),
+  description: z.string().min(1, { message: 'Description is required' }),
+  date: z.string().min(1, { message: 'Date is required' }),
+  type: z.enum(['INCOME', 'EXPENSE'], { required_error: 'Transaction type is required' }),
+  category: z.string().min(1, { message: 'Category is required' }),
+  propertyId: z.string().min(1, { message: 'Property is required' }),
 });
 
 type TransactionFormData = z.infer<typeof transactionSchema>;
 
 export default function TransactionForm() {
+  const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<TransactionFormData>({
+  
+  const { register, handleSubmit, reset, formState: { errors }, setValue } = useForm<TransactionFormData>({
     resolver: zodResolver(transactionSchema),
+    defaultValues: {
+      date: new Date().toISOString().split('T')[0],
+    },
+  });
+
+  // Fetch properties for the dropdown
+  const { data: properties = [] } = useQuery({
+    queryKey: ['properties'],
+    queryFn: async () => {
+      const response = await fetch('/api/properties');
+      if (!response.ok) {
+        throw new Error('Failed to fetch properties');
+      }
+      return response.json();
+    },
+  });
+
+  // Create transaction mutation
+  const createTransaction = useMutation({
+    mutationFn: async (data: TransactionFormData) => {
+      const response = await fetch('/api/transactions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      
+      const responseData = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(responseData.error || 'Failed to create transaction');
+      }
+      
+      return responseData;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboardMetrics'] });
+      toast.success('Transaction created successfully');
+      reset();
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : 'Failed to create transaction');
+    },
   });
 
   const onSubmit = async (data: TransactionFormData) => {
     setIsSubmitting(true);
     try {
-      // TODO: Implement API call to save transaction
-      console.log('Transaction data:', data);
-      reset();
-    } catch (error) {
-      console.error('Error saving transaction:', error);
+      await createTransaction.mutateAsync(data);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div>
-        <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
-          Amount
-        </label>
-        <input
-          type="number"
-          id="amount"
-          {...register('amount', { valueAsNumber: true })}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-        />
-        {errors.amount && (
-          <p className="mt-1 text-sm text-red-600">{errors.amount.message}</p>
-        )}
-      </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Add Transaction</CardTitle>
+        <CardDescription>Record a new income or expense for a property</CardDescription>
+      </CardHeader>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="propertyId">Property</Label>
+            <Select 
+              onValueChange={(value) => setValue('propertyId', value)}
+              required
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a property" />
+              </SelectTrigger>
+              <SelectContent>
+                {properties.map((property: Property) => (
+                  <SelectItem key={property.id} value={property.id}>
+                    {property.address}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {errors.propertyId && (
+              <p className="text-sm text-red-500">{errors.propertyId.message}</p>
+            )}
+          </div>
 
-      <div>
-        <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-          Description
-        </label>
-        <input
-          type="text"
-          id="description"
-          {...register('description')}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-        />
-        {errors.description && (
-          <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
-        )}
-      </div>
+          <div className="space-y-2">
+            <Label htmlFor="type">Transaction Type</Label>
+            <Select 
+              onValueChange={(value) => setValue('type', value as 'INCOME' | 'EXPENSE')}
+              required
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select transaction type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="INCOME">Income</SelectItem>
+                <SelectItem value="EXPENSE">Expense</SelectItem>
+              </SelectContent>
+            </Select>
+            {errors.type && (
+              <p className="text-sm text-red-500">{errors.type.message}</p>
+            )}
+          </div>
 
-      <div>
-        <label htmlFor="date" className="block text-sm font-medium text-gray-700">
-          Date
-        </label>
-        <input
-          type="date"
-          id="date"
-          {...register('date')}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-        />
-        {errors.date && (
-          <p className="mt-1 text-sm text-red-600">{errors.date.message}</p>
-        )}
-      </div>
+          <div className="space-y-2">
+            <Label htmlFor="category">Category</Label>
+            <Select 
+              onValueChange={(value) => setValue('category', value)}
+              required
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Rent">Rent</SelectItem>
+                <SelectItem value="Mortgage">Mortgage</SelectItem>
+                <SelectItem value="Insurance">Insurance</SelectItem>
+                <SelectItem value="Tax">Tax</SelectItem>
+                <SelectItem value="Utilities">Utilities</SelectItem>
+                <SelectItem value="Maintenance">Maintenance</SelectItem>
+                <SelectItem value="Other">Other</SelectItem>
+              </SelectContent>
+            </Select>
+            {errors.category && (
+              <p className="text-sm text-red-500">{errors.category.message}</p>
+            )}
+          </div>
 
-      <div>
-        <label htmlFor="type" className="block text-sm font-medium text-gray-700">
-          Type
-        </label>
-        <select
-          id="type"
-          {...register('type')}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-        >
-          <option value="income">Income</option>
-          <option value="expense">Expense</option>
-        </select>
-        {errors.type && (
-          <p className="mt-1 text-sm text-red-600">{errors.type.message}</p>
-        )}
-      </div>
+          <div className="space-y-2">
+            <Label htmlFor="amount">Amount</Label>
+            <Input
+              type="number"
+              id="amount"
+              step="0.01"
+              {...register('amount', { valueAsNumber: true })}
+              className="w-full"
+            />
+            {errors.amount && (
+              <p className="text-sm text-red-500">{errors.amount.message}</p>
+            )}
+          </div>
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-      >
-        {isSubmitting ? 'Saving...' : 'Save Transaction'}
-      </button>
-    </form>
+          <div className="space-y-2">
+            <Label htmlFor="date">Date</Label>
+            <Input
+              type="date"
+              id="date"
+              {...register('date')}
+              className="w-full"
+            />
+            {errors.date && (
+              <p className="text-sm text-red-500">{errors.date.message}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Input
+              type="text"
+              id="description"
+              {...register('description')}
+              className="w-full"
+              placeholder="Brief description of the transaction"
+            />
+            {errors.description && (
+              <p className="text-sm text-red-500">{errors.description.message}</p>
+            )}
+          </div>
+        </CardContent>
+        <CardFooter>
+          <Button 
+            type="submit" 
+            className="w-full" 
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Saving...' : 'Save Transaction'}
+          </Button>
+        </CardFooter>
+      </form>
+    </Card>
   );
 } 

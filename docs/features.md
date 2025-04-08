@@ -160,3 +160,10 @@
 - Create mobile-friendly interface
 - Implement push notifications
 - Add offline capabilities
+
+
+## Features to be fleshed out
+- Map feature to see properties
+- integration with google maps
+- Issue tracker per property with issue, description, last step, next step, contact, due date, follow up email, etc
+- 

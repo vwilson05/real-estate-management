@@ -104,6 +104,30 @@ This document outlines the design guidelines and principles for the Real Estate 
 
 ## User Feedback & Interaction
 - **Notifications:** Use in-app notifications to communicate important updates or errors to the user unobtrusively.
+  - **Sonner Toast:** A lightweight toast notification library for displaying temporary messages.
+    ```tsx
+    import { toast } from 'sonner';
+    
+    // Success notification
+    toast.success('Transaction added successfully');
+    
+    // Error notification
+    toast.error('Failed to add transaction');
+    
+    // Info notification
+    toast.info('Processing your request');
+    
+    // Warning notification
+    toast.warning('Please review your input');
+    ```
+    Features:
+    - Lightweight and performant
+    - Customizable styling
+    - Multiple toast types (success, error, info, warning)
+    - Automatic dismissal
+    - Stacking and queuing
+    - Keyboard navigation support
+    - Accessible by default
 - **Modals & Overlays:** Utilize modals for additional details without disrupting the main workflow.
 - **Feedback Animations:** Introduce subtle animations that provide feedback on user interactions (e.g., hover effects, button clicks).
 
@@ -127,3 +151,56 @@ This document outlines the design guidelines and principles for the Real Estate 
 
 ## Final Thoughts
 Focus on continuous improvement by gathering user feedback, analyzing usage patterns, and iterating on the design to ensure that the final product remains clean, modern, and exceptionally intuitive.
+
+## Form Components
+
+### Label
+The Label component is a form control that provides an accessible label for form elements. It uses Radix UI's label primitive and supports all standard HTML label attributes.
+
+```tsx
+import { Label } from "@/components/ui/label"
+
+// Usage example
+<Label htmlFor="email">Email</Label>
+```
+
+Features:
+- Accessible by default
+- Supports HTML label attributes
+- Styled with Tailwind CSS
+- Responsive and customizable
+- Supports disabled states
+
+### Select
+The Select component provides a customizable dropdown menu for selecting options. It's built on top of Radix UI's select primitive and supports keyboard navigation, screen readers, and custom styling.
+
+```tsx
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+// Usage example
+<Select>
+  <SelectTrigger>
+    <SelectValue placeholder="Select an option" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="option1">Option 1</SelectItem>
+    <SelectItem value="option2">Option 2</SelectItem>
+  </SelectContent>
+</Select>
+```
+
+Features:
+- Accessible by default (ARIA compliant)
+- Keyboard navigation support
+- Custom styling with Tailwind CSS
+- Support for groups and separators
+- Scroll buttons for long lists
+- Customizable trigger and content
+- Support for disabled states
+- Animated transitions

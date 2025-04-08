@@ -65,6 +65,8 @@ Each page focuses on its specific content without duplicating navigation element
 - **Form Validation:** Implemented Zod schema validation for property data
 - **UI/UX Improvements:** Added required field indicators and helper text for better user guidance
 - **Dashboard Metrics:** Implemented real-time metrics from database with loading states and error handling
+- **Transaction Form:** Enhanced date handling with native date picker and aligned validation schemas
+- **API Validation:** Improved date format handling in transaction API endpoints
 
 ## Database Schema
 The application uses the following main entities:
@@ -236,6 +238,48 @@ The PropertyForm component provides a comprehensive interface for creating and e
 />
 ```
 
+### TransactionForm
+- **Purpose:** Allows users to add new income or expense transactions
+- **Location:** `src/app/components/transactions/TransactionForm.tsx`
+- **Features:**
+  - Native date picker for better user experience
+  - Consistent date format handling (YYYY-MM-DD)
+  - Real-time form validation using Zod
+  - Property selection dropdown
+  - Amount validation for positive numbers
+  - Transaction type selection (INCOME/EXPENSE)
+  - Category and description fields
+  - Automatic form reset on successful submission
+  - React Query integration for optimistic updates
+
+### API Routes
+
+#### Transaction API
+- **Endpoint:** `/api/transactions`
+- **Methods:**
+  - `GET`: Retrieve transactions with optional filtering
+    - Query Parameters:
+      - `propertyId`: Filter by property
+      - `fromDate`: Start date for date range
+      - `toDate`: End date for date range
+      - `limit`: Maximum number of transactions to return
+  - `POST`: Create new transaction
+    - Request Body Schema:
+      ```typescript
+      {
+        amount: number (positive),
+        type: 'INCOME' | 'EXPENSE',
+        category: string,
+        date: string (YYYY-MM-DD format),
+        propertyId: string,
+        description: string
+      }
+      ```
+    - Validation:
+      - Uses Zod for request validation
+      - Converts date strings to Date objects for database storage
+      - Returns detailed validation errors for invalid requests
+
 ## Dashboard
 
 The dashboard provides an overview of the real estate portfolio with the following metrics:
@@ -269,3 +313,68 @@ GET /api/dashboard/monthly-income
 
 Returns monthly income data for the last 6 months:
 - Array of objects with `month` (short month name) and `income` (total income for that month)
+
+## API Response Handling
+
+### Best Practices for Fetch API Responses
+
+When working with the Fetch API in React Query mutations, it's important to follow these best practices:
+
+1. **Parse Response Body Only Once**: The response body can only be read once. After calling `response.json()`, the response stream is consumed and cannot be read again.
+
+   ```tsx
+   // ❌ Incorrect: Parsing response body twice
+   const response = await fetch('/api/endpoint');
+   if (!response.ok) {
+     const errorData = await response.json(); // First parse
+     throw new Error(errorData.error);
+   }
+   return response.json(); // Second parse - will fail
+   
+   // ✅ Correct: Parse response body once and reuse
+   const response = await fetch('/api/endpoint');
+   const responseData = await response.json(); // Parse once
+   if (!response.ok) {
+     throw new Error(responseData.error);
+   }
+   return responseData; // Reuse parsed data
+   ```
+
+2. **Error Handling**: Always check the `response.ok` property before attempting to use the response data.
+
+3. **Type Safety**: Use TypeScript interfaces to define the expected response structure.
+
+4. **Consistent Error Format**: Ensure your API returns errors in a consistent format that can be easily handled by the client.
+
+### Example: Transaction Creation
+
+Here's an example of proper response handling in a transaction creation mutation:
+
+```tsx
+const createTransaction = useMutation({
+  mutationFn: async (data: TransactionFormData) => {
+    const response = await fetch('/api/transactions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    
+    const responseData = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(responseData.error || 'Failed to create transaction');
+    }
+    
+    return responseData;
+  },
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['transactions'] });
+    toast.success('Transaction created successfully');
+  },
+  onError: (error) => {
+    toast.error(error instanceof Error ? error.message : 'Failed to create transaction');
+  },
+});
+```

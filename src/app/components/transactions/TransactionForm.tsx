@@ -32,7 +32,7 @@ const transactionSchema = z.object({
   amount: z.number().positive(),
   type: z.enum(['INCOME', 'EXPENSE']),
   category: z.string().min(1),
-  date: z.string().datetime(),
+  date: z.string().min(1),
   propertyId: z.string().min(1),
   description: z.string().min(1),
 });
@@ -123,10 +123,11 @@ export default function TransactionForm() {
         </div>
 
         <div>
-          <TextInput
+          <input
             {...register('date')}
-            type="text"
-            placeholder="YYYY-MM-DDTHH:mm"
+            type="date"
+            defaultValue={new Date().toISOString().split('T')[0]}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {errors.date && (
             <Text className="text-red-500">{errors.date.message}</Text>
