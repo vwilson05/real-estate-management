@@ -1,5 +1,5 @@
-import TransactionList from '../components/transactions/TransactionList';
-import TransactionForm from '../components/transactions/TransactionForm';
+import TransactionList from './components/TransactionList';
+import TransactionForm from './components/TransactionForm';
 
 export default function TransactionsPage() {
   return (
