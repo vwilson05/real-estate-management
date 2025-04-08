@@ -123,3 +123,26 @@ src/
 4. Prisma performs database operation
 5. Response flows back through React Query
 6. UI updates with new data
+
+## Geocoding Architecture
+
+The application uses a two-tier geocoding architecture to handle address geocoding:
+
+1. **Client-Side Geocoding Module** (`src/lib/geocoding.ts`)
+   - Provides geocoding functionality for the client-side components
+   - Makes API calls to the server-side geocoding endpoints
+   - Handles errors and provides fallback values
+
+2. **Server-Side Geocoding Module** (`src/lib/server/geocoding.ts`)
+   - Implements the actual geocoding logic using the OpenStreetMap Nominatim API
+   - Uses the native `fetch` API to make HTTP requests
+   - Returns latitude and longitude coordinates for addresses
+
+3. **Geocoding API Routes**
+   - `/api/geocode` - Geocodes a single address
+   - `/api/properties/geocode` - Geocodes a property by its ID
+
+This architecture ensures that:
+- Geocoding is performed on the server side, avoiding client-side issues with CORS and API rate limits
+- The client-side code is kept simple and focused on UI concerns
+- The server-side implementation can be updated independently of the client-side code

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
+import { geocodeAddress } from "@/lib/geocoding";
 
 const propertySchema = z.object({
   address: z.string().min(1, "Address is required"),
@@ -13,6 +14,8 @@ const propertySchema = z.object({
   purchasePrice: z.number().optional().default(0),
   purchaseDate: z.string().optional().default(new Date().toISOString()),
   description: z.string().optional().nullable(),
+  latitude: z.number().nullable().optional(),
+  longitude: z.number().nullable().optional(),
 });
 
 export async function GET() {
@@ -36,10 +39,23 @@ export async function POST(request: Request) {
     const validatedData = propertySchema.parse(body);
     console.log("Validated property data:", validatedData);
     
+    // Geocode the address if latitude and longitude are not provided
+    let latitude = validatedData.latitude;
+    let longitude = validatedData.longitude;
+    
+    if (latitude === null || longitude === null) {
+      const fullAddress = `${validatedData.address}, ${validatedData.city}, ${validatedData.state} ${validatedData.zipCode}`;
+      const geocodingResult = await geocodeAddress(fullAddress);
+      latitude = geocodingResult.latitude;
+      longitude = geocodingResult.longitude;
+    }
+    
     // Convert purchaseDate string to Date object if it exists
     const propertyData = {
       ...validatedData,
       purchaseDate: validatedData.purchaseDate ? new Date(validatedData.purchaseDate) : new Date(),
+      latitude,
+      longitude,
     };
     
     const newProperty = await db.property.create({

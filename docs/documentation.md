@@ -378,3 +378,75 @@ const createTransaction = useMutation({
   },
 });
 ```
+
+## Geocoding
+
+The application includes geocoding functionality to convert addresses to latitude and longitude coordinates. This is used to display properties on a map and for location-based features.
+
+### Client-Side Geocoding
+
+The client-side geocoding module (`src/lib/geocoding.ts`) provides two main functions:
+
+1. `geocodeAddress(address: string)`: Geocodes a single address
+   ```typescript
+   const result = await geocodeAddress("123 Main St, Boston, MA 02108");
+   console.log(result); // { latitude: 42.3601, longitude: -71.0589 }
+   ```
+
+2. `geocodeProperty(propertyId: string)`: Geocodes a property by its ID
+   ```typescript
+   const property = await geocodeProperty("property-id-123");
+   console.log(property); // { id: "property-id-123", latitude: 42.3601, longitude: -71.0589, ... }
+   ```
+
+### Server-Side Geocoding
+
+The server-side geocoding module (`src/lib/server/geocoding.ts`) implements the actual geocoding logic using the OpenStreetMap Nominatim API. It uses the native `fetch` API to make HTTP requests and returns latitude and longitude coordinates for addresses.
+
+### API Routes
+
+The application provides two API routes for geocoding:
+
+1. `/api/geocode`: Geocodes a single address
+   ```typescript
+   // Request
+   POST /api/geocode
+   {
+     "address": "123 Main St, Boston, MA 02108"
+   }
+   
+   // Response
+   {
+     "latitude": 42.3601,
+     "longitude": -71.0589
+   }
+   ```
+
+2. `/api/properties/geocode`: Geocodes a property by its ID
+   ```typescript
+   // Request
+   POST /api/properties/geocode
+   {
+     "propertyId": "property-id-123"
+   }
+   
+   // Response
+   {
+     "id": "property-id-123",
+     "address": "123 Main St",
+     "city": "Boston",
+     "state": "MA",
+     "zipCode": "02108",
+     "latitude": 42.3601,
+     "longitude": -71.0589,
+     ...
+   }
+   ```
+
+### Usage in Components
+
+The geocoding functionality is used in several components:
+
+1. `PropertyForm`: Automatically geocodes addresses as they are entered
+2. `GeocodeButton`: Allows users to geocode all properties at once
+3. `PropertyMap`: Displays properties on a map using their coordinates

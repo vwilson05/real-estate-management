@@ -12,15 +12,31 @@
 - Property details view
 - Edit and delete functionality
 - Interactive property map with Leaflet and OpenStreetMap integration
+  - Real-time property location visualization
+  - Custom markers with property information popups
+  - Automatic map bounds adjustment to show all properties
   - Handles properties with missing coordinates gracefully
   - Filters out invalid coordinates before creating markers
   - Provides error handling for map initialization issues
+  - Responsive design that adapts to container size
+  - Proper cleanup of map resources on unmount
 **Components:**
 - `PropertyList`: Displays properties in a table format
 - `PropertyForm`: Form for creating and editing properties
 - `PropertyCard`: Card view for property details
 - `PropertyMap`: Interactive map displaying property locations using Leaflet
+  - Uses OpenStreetMap tiles for the base map
+  - Implements custom markers with property information
+  - Handles map initialization and cleanup
+  - Manages marker state and updates
 - `PropertyMapClient`: Client-side wrapper for the map component
+  - Handles data fetching with React Query
+  - Provides loading and error states
+  - Wraps map in a styled card component
+**Dependencies:**
+- Leaflet: For interactive map functionality
+- OpenStreetMap: For map tiles and data
+- React Query: For data fetching and caching
 **Next Steps:**
 - Implement property detail views
 - Add property images support
@@ -29,6 +45,8 @@
 - Add clustering for multiple properties in the same area
 - Implement map filters and search
 - Add geocoding to automatically get coordinates from addresses
+- Add custom map styles and themes
+- Implement map controls for zoom and layer selection
 
 ### 2. Financial Tracking
 **Status:** In Progress

@@ -14,6 +14,8 @@ const propertySchema = z.object({
   purchasePrice: z.number().optional().default(0),
   purchaseDate: z.string().optional().default(new Date().toISOString()),
   description: z.string().optional().nullable(),
+  latitude: z.number().optional().nullable(),
+  longitude: z.number().optional().nullable(),
 });
 
 // Define the Property type based on the Prisma model
@@ -30,6 +32,8 @@ export type Property = {
   purchasePrice: number;
   purchaseDate: string;
   description?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
 };
 
 async function fetchProperties(): Promise<Property[]> {

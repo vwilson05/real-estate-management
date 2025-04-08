@@ -24,6 +24,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { geocodeAddress } from "@/lib/geocoding";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const propertySchema = z.object({
   address: z.string().min(1, "Address is required"),
@@ -35,6 +37,8 @@ const propertySchema = z.object({
   purchasePrice: z.number().min(0, "Purchase price must be positive"),
   purchaseDate: z.string().min(1, "Purchase date is required"),
   description: z.string().nullable(),
+  latitude: z.number().nullable(),
+  longitude: z.number().nullable(),
 });
 
 type PropertyFormData = z.infer<typeof propertySchema>;
@@ -47,10 +51,7 @@ interface PropertyFormProps {
 
 export default function PropertyForm({ initialData, onSubmit, isLoading }: PropertyFormProps) {
   const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const [isGeocoding, setIsGeocoding] = useState(false);
 
   const form = useForm<PropertyFormData>({
     resolver: zodResolver(propertySchema),
@@ -64,9 +65,49 @@ export default function PropertyForm({ initialData, onSubmit, isLoading }: Prope
       purchasePrice: 0,
       purchaseDate: new Date().toISOString().split('T')[0],
       description: null,
+      latitude: null,
+      longitude: null,
       ...initialData,
     },
   });
+
+  // Watch for address changes
+  const address = form.watch("address");
+  const city = form.watch("city");
+  const state = form.watch("state");
+  const zipCode = form.watch("zipCode");
+
+  // Debounce the address to avoid too many API calls
+  const debouncedAddress = useDebounce(
+    `${address}, ${city}, ${state} ${zipCode}`.trim(),
+    1000
+  );
+
+  // Geocode address when it changes
+  useEffect(() => {
+    const geocodeLocation = async () => {
+      if (!debouncedAddress || debouncedAddress === ", ,  ") return;
+      
+      setIsGeocoding(true);
+      try {
+        const result = await geocodeAddress(debouncedAddress);
+        if (result.latitude && result.longitude) {
+          form.setValue("latitude", result.latitude);
+          form.setValue("longitude", result.longitude);
+        }
+      } catch (error) {
+        console.error("Geocoding failed:", error);
+      } finally {
+        setIsGeocoding(false);
+      }
+    };
+
+    geocodeLocation();
+  }, [debouncedAddress, form]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   if (!mounted) {
     return null;
@@ -90,7 +131,10 @@ export default function PropertyForm({ initialData, onSubmit, isLoading }: Prope
                   <FormControl>
                     <Input placeholder="123 Main Street" {...field} />
                   </FormControl>
-                  <FormDescription>Enter the complete street address</FormDescription>
+                  <FormDescription>
+                    Enter the complete street address
+                    {isGeocoding && " (Geocoding...)"}
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

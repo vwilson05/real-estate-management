@@ -3,6 +3,7 @@
 import { Card, Title, Text } from "@tremor/react";
 import PropertyList from "./PropertyList";
 import { PropertyMapClient } from "@/components/properties/PropertyMapClient";
+import { GeocodeButton } from "./GeocodeButton";
 
 export default function PropertiesClient() {
   return (
@@ -10,6 +11,9 @@ export default function PropertiesClient() {
       <Title>Properties</Title>
       <Text>Manage your real estate portfolio properties</Text>
       <div className="mt-6 space-y-6">
+        <div className="flex justify-end">
+          <GeocodeButton />
+        </div>
         <PropertyMapClient />
         <Card>
           <PropertyList />

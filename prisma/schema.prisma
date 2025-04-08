@@ -26,6 +26,8 @@ model Property {
   purchasePrice Float
   purchaseDate DateTime
   description String?
+  latitude    Float?
+  longitude   Float?
   
   // Relations
   transactions Transaction[]

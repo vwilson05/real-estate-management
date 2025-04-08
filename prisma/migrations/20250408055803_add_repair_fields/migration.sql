@@ -11,7 +11,9 @@ CREATE TABLE "Property" (
     "marketValue" REAL NOT NULL,
     "purchasePrice" REAL NOT NULL,
     "purchaseDate" DATETIME NOT NULL,
-    "description" TEXT
+    "description" TEXT,
+    "latitude" REAL,
+    "longitude" REAL
 );
 
 -- CreateTable
