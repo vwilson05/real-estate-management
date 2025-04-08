@@ -10,6 +10,8 @@ const repairSchema = z.object({
   status: z.enum(["PENDING", "IN_PROGRESS", "COMPLETED"]),
   priority: z.enum(["LOW", "MEDIUM", "HIGH"]),
   propertyId: z.string().uuid(),
+  item: z.string().min(1),
+  estimatedCompletionDate: z.string().transform((str) => new Date(str)),
 });
 
 export async function GET(request: Request) {

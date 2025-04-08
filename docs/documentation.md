@@ -97,6 +97,8 @@ The application uses the following main entities:
   - Optional fields: description
 - **Repair:** Property maintenance and repairs
   - Required fields: date, cost, description, status, priority, item, estimatedCompletionDate, propertyId
+  - Status values: "PENDING", "IN_PROGRESS", "COMPLETED"
+  - Priority values: "LOW", "MEDIUM", "HIGH"
 - **Issue:** Property issues and tasks
   - Required fields: title, status, priority, type, propertyId
   - Optional fields: description, dueDate, repairId, tenantId
