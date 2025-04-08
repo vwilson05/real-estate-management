@@ -5,26 +5,28 @@
 
 ### High Priority
 1. **Property Map Invalid Coordinates Error**
-   - Status: In Progress
+   - Status: Resolved
    - Description: Error in PropertyMap component: "Invalid LatLng object: (undefined, undefined)"
    - Error: "Invalid LatLng object: (undefined, undefined)"
    - Impact: Map component fails to render when properties have missing coordinates
    - Root Cause: The map component was trying to create markers with undefined latitude and longitude values
-   - Next Steps:
-     - Add validation to check for valid coordinates before creating markers
-     - Provide a fallback for properties without coordinates
-     - Update documentation to reflect the fix
+   - Resolution:
+     - Added validation to filter properties with valid coordinates before creating markers
+     - Implemented graceful fallback when no valid coordinates are available
+     - Added console logging for debugging purposes
+     - Updated documentation to reflect the fix
 
 2. **Repairs API OrderBy Field Error**
-   - Status: In Progress
+   - Status: Resolved
    - Description: Error in the repairs API route when trying to order by estimatedCompletionDate
    - Error: "Unknown argument `estimatedCompletionDate`. Available options are marked with ?"
-   - Impact: Dashboard repairs endpoint is failing
+   - Impact: Dashboard repairs endpoint was failing
    - Root Cause: Field mismatch between API and Prisma schema
-   - Next Steps:
-     - Update Prisma schema to include estimatedCompletionDate
-     - Update API route to use correct field name
-     - Regenerate Prisma client
+   - Resolution:
+     - Verified correct field name in Prisma schema
+     - Updated API route to use correct field name
+     - Regenerated Prisma client
+     - Added proper error handling for invalid field names
 
 3. **Dashboard Active Repairs Bug**
    - Status: Resolved
@@ -253,41 +255,38 @@
    - Root Cause: Missing QueryClientProvider in the application root
    - Resolution: Added QueryClientProvider to the root layout component
 
-9. **Invalid IssueType Enum Value**
-   - Description: Error when trying to use 'IMPROVEMENT' as an IssueType value
+9. **Invalid IssueType Values**
+   - Description: Database contained invalid IssueType enum values
    - Status: Resolved
    - Priority: High
-   - Root Cause: Database contained records with an invalid enum value that wasn't defined in the Prisma schema
+   - Root Cause: Data inconsistency between application and database
    - Resolution: 
-     - Created and ran a migration to update any issues with 'IMPROVEMENT' type to 'OTHER'
-     - Verified that all code paths use the correct enum values from the schema
-     - Updated documentation to reflect the valid enum values
-   - Prevention: Always use the enum values defined in the Prisma schema and validate data before insertion
+     - Created migration script to fix invalid values
+     - Updated enum validation in API routes
+     - Added stricter type checking in forms
+     - Improved error handling for invalid enum values
 
-10. **Transaction Form Date Validation Error**
-    - Description: Invalid transaction data error when submitting the form due to date format mismatch
+10. **Dashboard Metrics Calculation**
+    - Description: Incorrect calculation of dashboard metrics
     - Status: Resolved
     - Priority: High
-    - Root Cause: Mismatch between form date input format and API validation requirements
-    - Resolution: 
-      - Updated API schema to accept YYYY-MM-DD format instead of datetime
-      - Changed form input to use native date picker
+    - Root Cause: Missing null checks and incorrect data aggregation
+    - Resolution:
+      - Added proper null checks for all metrics
+      - Implemented correct aggregation logic
+      - Added data validation
+      - Improved error handling
 
-11. **Missing IssueForm Component**
-    - Description: Error in IssuesClient component: "Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined"
-    - Impact: Issues page was not rendering properly
-    - Root Cause: Missing IssueForm component implementation
-    - Resolution: 
-      - Created IssueForm component with proper TypeScript types
-      - Added form validation using Zod schema
-      - Implemented proper error handling
-      - Added loading states and success/error notifications
+11. **Geocoding Integration**
+    - Description: Client-side geocoding limitations and API key exposure
     - Status: Resolved
-    - Prevention: 
-      - Ensure all required components are implemented before referencing them
-      - Add proper TypeScript types for all components
-      - Implement comprehensive error handling
-      - Add loading states for better UX
+    - Priority: High
+    - Root Cause: Using client-side geocoding with API key
+    - Resolution:
+      - Implemented server-side geocoding using OpenStreetMap
+      - Added rate limiting and error handling
+      - Removed client-side API key exposure
+      - Improved geocoding reliability
 
 ## Feature Requests
 
