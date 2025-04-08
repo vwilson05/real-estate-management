@@ -18,17 +18,20 @@
   - Implement property deletion with confirmation
 
 ### 2. Financial Tracking
-- **Status:** Planned
+- **Status:** In Progress
 - **Description:** Record and track income, expenses, taxes, repairs, and rents
 - **Implementation:**
   - Database schema complete with Transaction model
   - Integration with Property model
   - Categories defined for transaction types
+  - Transaction list view with filtering and sorting
+  - Transaction form with validation
+  - API routes for CRUD operations
 - **Next Steps:**
-  - Create transaction list view
-  - Implement transaction forms
-  - Add filtering and sorting
-  - Create financial reports
+  - Add financial reports and charts
+  - Implement export functionality
+  - Add bulk transaction import
+  - Create transaction categories management
 
 ### 3. Repair Management
 - **Status:** Planned
@@ -89,6 +92,7 @@
   - Zod schemas for validation
   - TypeScript types defined
   - Prisma schema validation
+  - Form validation with React Hook Form
 - **Next Steps:**
   - Add more comprehensive validation rules
   - Implement error messages
@@ -100,6 +104,8 @@
 - **Implementation:**
   - Basic API structure defined
   - Next.js API routes setup
+  - Transaction endpoints implemented
+  - Property endpoints implemented
 - **Next Steps:**
   - Implement all CRUD endpoints
   - Add error handling
