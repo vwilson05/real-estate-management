@@ -69,18 +69,20 @@
   - Dashboard page (`src/app/dashboard/page.tsx`) with responsive grid layout
   - Usage of `Card` components from `src/components/ui/card.tsx`
   - API endpoint (`src/app/api/dashboard/metrics/route.ts`) calculating metrics from Prisma
-  - `useDashboardMetrics` hook (`src/app/hooks/useDashboardMetrics.ts`) fetching metrics
-  - Display of `totalProperties`, `totalValue`, `monthlyIncome`, `activeRepairs`
+  - React Query integration for data fetching and caching
+  - Display of `totalProperties`, `totalValue`, `monthlyIncome`, `occupancyRate`
   - Skeleton loading states (`src/components/ui/skeleton.tsx`) used on the dashboard
-  - Currency formatting (`src/lib/utils.ts`)
-  - Monthly income overview chart (`src/components/dashboard/overview.tsx`) fetching data from `/api/dashboard/monthly-income/route.ts`
-  - Recent transactions list (`src/components/dashboard/recent-transactions.tsx`) fetching data from `/api/transactions?limit=5`
+  - Currency and percentage formatting utilities
+  - Monthly income overview chart (`src/components/dashboard/overview.tsx`) showing net income trends
+  - Recent transactions list (`src/components/dashboard/recent-transactions.tsx`) with React Query integration
   - Theme awareness via CSS variables and `next-themes`
+  - Comprehensive error handling with user-friendly error states
 - **Next Steps:**
   - Add more interactive charts
   - Implement filtering
   - Add export functionality
   - Add property performance comparison
+  - Add more detailed financial metrics
 
 ## Technical Features
 
@@ -161,5 +163,5 @@
 ## Features to be fleshed out
 - Map feature to see properties
 - integration with google maps
-- Issue tracker per property with issue, description, last step, next step, contact, due date, follow up email, etc
-- 
+- Issue tracker per property with issue, description, last step, next step, contact, due date, follow up email, etc to make managing/juggling easier
+- calendar with email alerts function
