@@ -48,9 +48,10 @@ This document outlines the design guidelines and principles for the Real Estate 
 ## UI Components
 
 ### Headers & Navigation
-- **Navigation Bar:** A sticky header that includes the logo, primary navigation links, and a theme toggle button.
-  - **MainNav:** A responsive navigation component that displays the main navigation links.
-  - **UserNav:** A dropdown menu for user-related actions and profile information.
+- **Navigation Bar:** A sticky header in the root layout that includes the logo, primary navigation links, and a theme toggle button.
+  - **Consistent Navigation:** The navigation is defined once in the root layout (`src/app/layout.tsx`) to ensure consistency across all pages.
+  - **Main Navigation Links:** Dashboard, Properties, Transactions, Repairs, and Tenants.
+  - **Theme Toggle:** A button to switch between light and dark modes.
 - **Breadcrumbs:** Support deeper navigation within the app to help users understand their current context.
 
 ### Forms & Inputs

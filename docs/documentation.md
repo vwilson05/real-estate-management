@@ -36,6 +36,17 @@ re-portfolio-management/
 └── package.json          # Project dependencies
 ```
 
+## Navigation Structure
+The application uses a single navigation menu in the root layout (`src/app/layout.tsx`) that provides consistent navigation across all pages. The navigation includes links to:
+
+- Dashboard
+- Properties
+- Transactions
+- Repairs
+- Tenants
+
+Each page focuses on its specific content without duplicating navigation elements.
+
 ## Tech Stack
 - **Framework:** Next.js 14 with App Router
 - **Language:** TypeScript
