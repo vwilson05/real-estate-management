@@ -14,6 +14,24 @@
    - Description: Establish proper Next.js project structure
    - Resolution: Created organized directory structure with proper separation of concerns
 
+3. **CSS Border Class Error**
+   - Status: Resolved
+   - Description: The `border-border` class does not exist in Tailwind configuration
+   - Resolution: Updated globals.css to use `border-[hsl(var(--border))]` instead of the non-existent `border-border` class
+   - Prevention: Ensure all Tailwind classes used in @apply directives are properly defined in the configuration
+
+4. **CSS Background Class Error**
+   - Status: Resolved
+   - Description: The `bg-background` class does not exist in Tailwind configuration
+   - Resolution: Updated globals.css to use `bg-[hsl(var(--background))]` instead of the non-existent `bg-background` class
+   - Prevention: Use arbitrary value syntax for all CSS variable references in Tailwind classes
+
+5. **React Query Client Error**
+   - Status: Resolved
+   - Description: "No QueryClient set, use QueryClientProvider to set one" error when using React Query hooks
+   - Resolution: Added QueryClientProvider to the providers.tsx file
+   - Prevention: Ensure all required providers are properly set up in the application
+
 ### Medium Priority
 1. **API Implementation**
    - Status: In Progress
@@ -107,6 +125,27 @@
    - Description: Can't resolve '../../../hooks/useProperties'
    - Resolution: Updated import path to '../../hooks/useProperties'
    - Status: Resolved
+
+3. **CSS Border Class Error**
+   - Description: The `border-border` class does not exist in Tailwind configuration
+   - Status: Resolved
+   - Priority: High
+   - Root Cause: Incorrect CSS class name in globals.css
+   - Resolution: Updated globals.css to use `border-[hsl(var(--border))]` instead of the non-existent `border-border` class
+
+4. **CSS Background Class Error**
+   - Description: The `bg-background` class does not exist in Tailwind configuration
+   - Status: Resolved
+   - Priority: High
+   - Root Cause: Incorrect CSS class name in globals.css
+   - Resolution: Updated globals.css to use `bg-[hsl(var(--background))]` instead of the non-existent `bg-background` class
+
+5. **React Query Client Error**
+   - Description: "No QueryClient set, use QueryClientProvider to set one" error when using React Query hooks
+   - Status: Resolved
+   - Priority: High
+   - Root Cause: Missing QueryClientProvider in the application
+   - Resolution: Added QueryClientProvider to the providers.tsx file
 
 ### Resolved Bugs
 1. **Initial Setup**
@@ -268,3 +307,163 @@ To prevent similar issues in the future:
 
 ### Related Architectural Decision
 This issue relates to our decision documented in decisions.md regarding the organization of components. The resolution reinforces our approach of keeping components within their respective feature directories for better maintainability and organization.
+
+## CSS Border Class Error
+
+### Issue Description
+**Date**: [Current Date]  
+**Status**: Resolved  
+**Priority**: High  
+**File**: src/app/globals.css
+
+The application failed to build with the following error:
+
+```
+./src/app/globals.css:1:1
+Syntax error: /Users/victorwilson/Desktop/projects/personal/re-portfolio-management/src/app/globals.css The `border-border` class does not exist. If `border-border` is a custom class, make sure it is defined within a `@layer` directive.
+```
+
+This error occurred during the build process and can only be dismissed by fixing the error.
+
+### Root Cause
+The CSS was trying to use a `border-border` class in the `@apply` directive, but this class doesn't exist in our Tailwind configuration. While we defined a `--border` CSS variable, we didn't create a corresponding Tailwind class for it.
+
+### Resolution
+1. Updated the CSS in globals.css from:
+   ```css
+   * {
+     @apply border-border;
+   }
+   ```
+   to:
+   ```css
+   * {
+     @apply border-[hsl(var(--border))];
+   }
+   ```
+
+2. This change uses Tailwind's arbitrary value syntax to directly apply the HSL color value from our CSS variable.
+
+### Prevention
+To prevent similar issues in the future:
+1. Ensure all classes used in `@apply` directives are properly defined in the Tailwind configuration
+2. Use arbitrary value syntax (`[value]`) when applying CSS variables directly
+3. Consider creating explicit Tailwind classes for commonly used CSS variables
+
+### Related Design System Decision
+This issue relates to our design system implementation documented in ui_ux.md. The resolution reinforces our approach of using CSS variables for theming while ensuring proper integration with Tailwind's utility classes.
+
+## CSS Background Class Error
+
+### Issue Description
+**Date**: [Current Date]  
+**Status**: Resolved  
+**Priority**: High  
+**File**: src/app/globals.css
+
+The application failed to build with the following error:
+
+```
+Syntax error: /Users/victorwilson/Desktop/projects/personal/re-portfolio-management/src/app/globals.css The `bg-background` class does not exist. If `bg-background` is a custom class, make sure it is defined within a `@layer` directive.
+```
+
+This error occurred during the build process and can only be dismissed by fixing the error.
+
+### Root Cause
+Similar to the previous border-border error, the CSS was trying to use a `bg-background` class in the `@apply` directive, but this class doesn't exist in our Tailwind configuration. While we defined a `--background` CSS variable, we didn't create a corresponding Tailwind class for it.
+
+### Resolution
+1. Updated the CSS in globals.css from:
+   ```css
+   body {
+     @apply bg-background text-foreground;
+     font-feature-settings: "rlig" 1, "calt" 1;
+   }
+   ```
+   to:
+   ```css
+   body {
+     @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))];
+     font-feature-settings: "rlig" 1, "calt" 1;
+   }
+   ```
+
+2. This change uses Tailwind's arbitrary value syntax to directly apply the HSL color values from our CSS variables.
+
+### Prevention
+To prevent similar issues in the future:
+1. Use arbitrary value syntax (`[value]`) for all CSS variable references in Tailwind classes
+2. Ensure consistent approach to CSS variable usage throughout the application
+3. Consider creating a utility function or component to standardize the application of CSS variables
+
+### Related Design System Decision
+This issue relates to our design system implementation documented in ui_ux.md. The resolution reinforces our approach of using CSS variables for theming while ensuring proper integration with Tailwind's utility classes. We should consider updating our design system documentation to explicitly mention the use of arbitrary value syntax for CSS variables.
+
+## React Query Client Error
+
+### Issue Description
+**Date**: [Current Date]  
+**Status**: Resolved  
+**Priority**: High  
+**File**: src/app/hooks/useProperties.ts
+
+The application failed with the following error:
+
+```
+Unhandled Runtime Error
+Error: No QueryClient set, use QueryClientProvider to set one
+
+Source
+src/app/hooks/useProperties.ts (43:36) @ useQueryClient
+
+  41 |
+  42 | export function useProperties() {
+> 43 | const queryClient = useQueryClient();
+     |                                  ^
+  44 |
+  45 | const { data: properties, isLoading, error } = useQuery({
+  46 |   queryKey: ["properties"],
+```
+
+This error occurred during runtime and prevented the application from functioning properly.
+
+### Root Cause
+The error was occurring because we were using React Query hooks (`useQueryClient` and `useQuery`) without properly setting up the `QueryClientProvider` in our application. React Query requires a `QueryClientProvider` to be present in the component tree above any components that use React Query hooks.
+
+### Resolution
+1. Updated the providers.tsx file to include both ThemeProvider and QueryClientProvider:
+   ```tsx
+   "use client";
+   
+   import { ThemeProvider } from "next-themes";
+   import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+   import { useState } from "react";
+   
+   export default function Providers({ children }: { children: React.ReactNode }) {
+     const [queryClient] = useState(() => new QueryClient());
+   
+     return (
+       <QueryClientProvider client={queryClient}>
+         <ThemeProvider
+           attribute="class"
+           defaultTheme="dark"
+           enableSystem
+           disableTransitionOnChange
+         >
+           {children}
+         </ThemeProvider>
+       </QueryClientProvider>
+     );
+   }
+   ```
+
+2. This change ensures that all components in the application have access to the React Query client.
+
+### Prevention
+To prevent similar issues in the future:
+1. Always set up required providers at the root of the application
+2. Document all required providers in the project documentation
+3. Consider creating a checklist for new features that require specific providers
+
+### Related Architectural Decision
+This issue relates to our architectural decision to use React Query for data fetching. The resolution reinforces our approach of centralizing data fetching logic in custom hooks while ensuring proper provider setup for these hooks to function correctly.
