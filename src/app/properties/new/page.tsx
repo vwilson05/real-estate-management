@@ -1,9 +1,21 @@
 "use client";
 
-import { useProperties, Property } from "@/app/hooks/useProperties";
+import { useProperties } from "@/app/hooks/useProperties";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import PropertyForm from "../components/PropertyForm";
+
+type PropertyFormData = {
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  type: string;
+  marketValue: number;
+  purchasePrice: number;
+  purchaseDate: string;
+  description: string | null;
+};
 
 export default function NewPropertyPage() {
   const router = useRouter();
@@ -14,7 +26,7 @@ export default function NewPropertyPage() {
     setMounted(true);
   }, []);
 
-  const handleSubmit = async (data: Omit<Property, "id">) => {
+  const handleSubmit = async (data: PropertyFormData) => {
     try {
       await createProperty(data);
       router.push("/properties");
