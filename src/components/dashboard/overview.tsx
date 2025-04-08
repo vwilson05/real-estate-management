@@ -1,42 +1,44 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useQuery } from "@tanstack/react-query"
 
 interface MonthlyIncome {
   month: string;
   income: number;
+  expenses: number;
+  netIncome: number;
 }
 
 export function Overview() {
-  const [monthlyData, setMonthlyData] = useState<MonthlyIncome[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchMonthlyIncome = async () => {
-      try {
-        const response = await fetch('/api/dashboard/monthly-income');
-        if (!response.ok) {
-          throw new Error('Failed to fetch monthly income data');
-        }
-        const data = await response.json();
-        setMonthlyData(data);
-      } catch (error) {
-        console.error('Error fetching monthly income data:', error);
-      } finally {
-        setLoading(false);
+  const { data: monthlyData, isLoading, error } = useQuery<MonthlyIncome[]>({
+    queryKey: ["monthlyIncome"],
+    queryFn: async () => {
+      const response = await fetch('/api/dashboard/monthly-income');
+      if (!response.ok) {
+        throw new Error('Failed to fetch monthly income data');
       }
-    };
+      return response.json();
+    },
+  });
 
-    fetchMonthlyIncome();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return <Skeleton className="h-[350px] w-full" />;
   }
 
-  if (monthlyData.length === 0) {
+  if (error) {
+    return (
+      <div className="flex h-[350px] items-center justify-center">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold text-red-500">Error Loading Data</h3>
+          <p className="text-sm text-muted-foreground">Please try refreshing the page</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!monthlyData || monthlyData.length === 0) {
     return (
       <div className="flex h-[350px] items-center justify-center text-muted-foreground">
         No income data available
@@ -66,7 +68,7 @@ export function Overview() {
           cursor={{ fill: 'rgba(0, 0, 0, 0.1)' }}
         />
         <Bar
-          dataKey="income"
+          dataKey="netIncome"
           fill="currentColor"
           radius={[4, 4, 0, 0]}
           className="fill-primary"

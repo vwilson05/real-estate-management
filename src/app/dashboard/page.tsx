@@ -1,41 +1,32 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Overview } from "@/components/dashboard/overview"
 import { RecentTransactions } from "@/components/dashboard/recent-transactions"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useQuery } from "@tanstack/react-query"
 
 interface DashboardMetrics {
   totalProperties: number;
   totalValue: number;
   monthlyIncome: number;
   activeRepairs: number;
+  occupancyRate: number;
+  averageRent: number;
 }
 
 export default function DashboardPage() {
-  const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchMetrics = async () => {
-      try {
-        const response = await fetch('/api/dashboard/metrics');
-        if (!response.ok) {
-          throw new Error('Failed to fetch metrics');
-        }
-        const data = await response.json();
-        setMetrics(data);
-      } catch (error) {
-        console.error('Error fetching dashboard metrics:', error);
-      } finally {
-        setLoading(false);
+  const { data: metrics, isLoading, error } = useQuery<DashboardMetrics>({
+    queryKey: ["dashboardMetrics"],
+    queryFn: async () => {
+      const response = await fetch('/api/dashboard/metrics');
+      if (!response.ok) {
+        throw new Error('Failed to fetch metrics');
       }
-    };
-
-    fetchMetrics();
-  }, []);
+      return response.json();
+    },
+  });
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -45,6 +36,25 @@ export default function DashboardPage() {
       maximumFractionDigits: 0,
     }).format(value);
   };
+
+  const formatPercentage = (value: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'percent',
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    }).format(value / 100);
+  };
+
+  if (error) {
+    return (
+      <div className="flex h-[450px] items-center justify-center">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold text-red-500">Error Loading Dashboard</h3>
+          <p className="text-sm text-muted-foreground">Please try refreshing the page</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -62,7 +72,7 @@ export default function DashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {loading ? (
+            {isLoading ? (
               <Skeleton className="h-8 w-24" />
             ) : (
               <>
@@ -81,7 +91,7 @@ export default function DashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {loading ? (
+            {isLoading ? (
               <Skeleton className="h-8 w-24" />
             ) : (
               <>
@@ -98,7 +108,7 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium">Monthly Income</CardTitle>
           </CardHeader>
           <CardContent>
-            {loading ? (
+            {isLoading ? (
               <Skeleton className="h-8 w-24" />
             ) : (
               <>
@@ -112,16 +122,16 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Repairs</CardTitle>
+            <CardTitle className="text-sm font-medium">Occupancy Rate</CardTitle>
           </CardHeader>
           <CardContent>
-            {loading ? (
+            {isLoading ? (
               <Skeleton className="h-8 w-24" />
             ) : (
               <>
-                <div className="text-2xl font-bold">{metrics?.activeRepairs || 0}</div>
+                <div className="text-2xl font-bold">{formatPercentage(metrics?.occupancyRate || 0)}</div>
                 <p className="text-xs text-muted-foreground">
-                  Pending or in progress
+                  Current occupancy
                 </p>
               </>
             )}
