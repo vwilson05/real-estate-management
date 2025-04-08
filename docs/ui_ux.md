@@ -49,15 +49,40 @@ This document outlines the design guidelines and principles for the Real Estate 
 
 ### Headers & Navigation
 - **Navigation Bar:** A sticky header that includes the logo, primary navigation links, and a theme toggle button.
+  - **MainNav:** A responsive navigation component that displays the main navigation links.
+  - **UserNav:** A dropdown menu for user-related actions and profile information.
 - **Breadcrumbs:** Support deeper navigation within the app to help users understand their current context.
 
 ### Forms & Inputs
 - **Input Fields:** Use clearly labeled inputs with placeholders and inline validation messages.
+  - **Search:** A search input component with an icon for searching properties.
 - **Buttons:** Differentiate between primary, secondary, and tertiary buttons for distinct actions.
 - **Interactive Elements:** Ensure that form inputs and interactive elements are accessible via keyboard and mouse.
 
 ### Data Presentation
 - **Cards:** Use card components to display property summaries, transaction details, and dashboard insights.
+  - **Card Structure:** Cards consist of several subcomponents:
+    - `Card`: The main container with rounded corners, border, and shadow
+    - `CardHeader`: Container for the card's header section
+    - `CardTitle`: The main heading of the card
+    - `CardDescription`: A brief description or subtitle
+    - `CardContent`: The main content area of the card
+    - `CardFooter`: The footer section for additional actions or information
+  - **Usage Example:**
+    ```tsx
+    <Card>
+      <CardHeader>
+        <CardTitle>Property Details</CardTitle>
+        <CardDescription>Overview of the property information</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {/* Property details content */}
+      </CardContent>
+      <CardFooter>
+        {/* Action buttons or additional info */}
+      </CardFooter>
+    </Card>
+    ```
 - **Tables & Lists:** Present data in easily readable tables or lists with options for sorting and filtering.
 - **Charts & Graphs:** Use appropriate chart types for different data:
   - Area charts for trends over time
@@ -69,6 +94,12 @@ This document outlines the design guidelines and principles for the Real Estate 
 - **Responsive Images:** Support responsive images for property visuals and media content.
 - **Charts & Graphs:** Integrate interactive data visualization tools to convey portfolio performance effectively.
 - **Data Visualization:** Use color and size to highlight important data points and trends.
+
+### User Interface Elements
+- **Dropdown Menus:** Use dropdown menus for contextual actions and navigation.
+  - **DropdownMenu:** A versatile dropdown menu component with various subcomponents for different menu items and actions.
+- **Theme Toggle:** A button to switch between light and dark modes.
+- **Avatar:** A component for displaying user avatars with fallback support.
 
 ## User Feedback & Interaction
 - **Notifications:** Use in-app notifications to communicate important updates or errors to the user unobtrusively.
@@ -85,6 +116,13 @@ This document outlines the design guidelines and principles for the Real Estate 
 - **Component Libraries:** Leverage Tremor for data visualization and UI components.
 - **Decoupled UI Layer:** Ensure the UI layer is separated from business logic, allowing for easier updates and maintenance.
 - **Theme Implementation:** Use CSS variables with HSL values for consistent theming across the application.
+- **Border Styling:** The `border-border` class is used to apply the theme's border color to elements. This is defined in the Tailwind configuration and uses the CSS variable `--border` for consistent styling across light and dark modes.
+- **Component Architecture:** Follow a modular approach with components organized by functionality:
+  - UI components in `src/components/ui/`
+  - Feature-specific components in `src/components/[feature]/`
+  - Layout components in `src/components/layout/`
+- **React Hooks:** Use React hooks like `useState` and `useEffect` for managing component state and side effects.
+- **Next.js Integration:** Leverage Next.js features like client-side navigation and server-side rendering for optimal performance.
 
 ## Final Thoughts
 Focus on continuous improvement by gathering user feedback, analyzing usage patterns, and iterating on the design to ensure that the final product remains clean, modern, and exceptionally intuitive.
