@@ -16,27 +16,54 @@ Develop a personal web app to track and manage my real estate portfolio—includ
   - [x] Navigation setup
   - [x] Dashboard layout
   - [x] Dashboard metrics implementation
+  - [x] Geocoding integration with OpenStreetMap
+  - [x] Issue tracking system
+  - [x] Basic CRUD operations for properties
+  - [x] Basic CRUD operations for transactions
+  - [x] Basic CRUD operations for repairs
+  - [x] Form validation setup with Zod
 - **In Progress:**
-  - [ ] Property management implementation
-  - [ ] Basic CRUD operations
-  - [ ] Form validation setup
+  - [ ] Property management refinements
+    - Edit/Delete functionality
+    - Search and filtering
+    - Performance metrics
+  - [ ] Transaction management refinements
+    - Edit/Delete functionality
+    - Advanced filtering
+    - Financial reports
+  - [ ] Repair management refinements
+    - Edit/Delete functionality
+    - Status updates
+    - Cost tracking
 
 ## Phase 2: Core Features
 - **Target Date:** [Next Sprint]
 - **Goals:**
   - [ ] Complete property management
-    - Property list view
-    - Property details view
-    - Property creation/edit forms
-    - Property deletion
-  - [ ] Transaction management
-    - Transaction recording
-    - Income/expense tracking
-    - Transaction history
+    - Property search and filtering
+    - Property comparison
+    - Property images
+    - Property performance metrics
+  - [ ] Complete transaction management
+    - Transaction editing
+    - Transaction deletion
+    - Advanced filtering
+    - Financial reports
+  - [ ] Complete repair management
+    - Repair editing
+    - Repair deletion
+    - Status updates
+    - Cost tracking
+  - [ ] Tenant management MVP
+    - Tenant profiles
+    - Lease management
+    - Rent tracking
+    - Tenant-property relationships
   - [ ] Basic reporting
     - Summary statistics
     - Transaction reports
     - Property performance
+    - Issue tracking reports
 
 ## Phase 3: Extended Features
 - **Target Date:** [Sprint + 2]
