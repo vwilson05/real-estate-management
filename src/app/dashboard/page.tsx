@@ -3,9 +3,11 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Overview } from "@/components/dashboard/overview"
 import { RecentTransactions } from "@/components/dashboard/recent-transactions"
+import { ActiveRepairs } from "@/components/dashboard/active-repairs"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useQuery } from "@tanstack/react-query"
+import { AlertCircle } from "lucide-react"
 
 interface DashboardMetrics {
   totalProperties: number;
@@ -150,7 +152,7 @@ export default function DashboardPage() {
             <Overview />
           </CardContent>
         </Card>
-        <Card className="col-span-3">
+        <Card className="col-span-4">
           <CardHeader>
             <CardTitle>Recent Transactions</CardTitle>
             <CardDescription>
@@ -159,6 +161,15 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <RecentTransactions />
+          </CardContent>
+        </Card>
+        <Card className="col-span-3">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Repairs</CardTitle>
+            <AlertCircle className="h-4 w-4 text-amber-500" />
+          </CardHeader>
+          <CardContent>
+            <ActiveRepairs />
           </CardContent>
         </Card>
       </div>

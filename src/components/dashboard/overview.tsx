@@ -4,17 +4,7 @@ import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } fro
 import { Skeleton } from "@/components/ui/skeleton"
 import { useQuery } from "@tanstack/react-query"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowDownIcon, ArrowUpIcon, AlertCircle } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-
-interface Repair {
-  id: string;
-  item: string;
-  location: string;
-  status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
-  cost: number;
-  estimatedCompletionDate: string;
-}
+import { ArrowDownIcon, ArrowUpIcon } from "lucide-react"
 
 interface MonthlyIncome {
   month: string;
@@ -27,8 +17,6 @@ interface MonthlyIncome {
   momIncomeChange: number;
   momExpensesChange: number;
   momNetIncomeChange: number;
-  activeRepairs?: Repair[];
-  totalRepairCost?: number;
 }
 
 export function Overview() {
@@ -60,26 +48,6 @@ export function Overview() {
     }).format(value / 100);
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return 'bg-yellow-500';
-      case 'in_progress':
-        return 'bg-blue-500';
-      case 'completed':
-        return 'bg-green-500';
-      case 'cancelled':
-        return 'bg-red-500';
-      default:
-        return 'bg-gray-500';
-    }
-  };
-
   if (isLoading) {
     return <Skeleton className="h-[350px] w-full" />;
   }
@@ -105,8 +73,6 @@ export function Overview() {
 
   // Get the most recent month's data for metrics
   const currentMonth = monthlyData[monthlyData.length - 1];
-  const activeRepairs = currentMonth.activeRepairs || [];
-  const totalRepairCost = currentMonth.totalRepairCost || 0;
 
   return (
     <div className="space-y-4">
@@ -204,42 +170,6 @@ export function Overview() {
             />
           </BarChart>
         </ResponsiveContainer>
-      </div>
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="space-y-4">
-          {/* Left side content can be added here in the future */}
-        </div>
-        {activeRepairs.length > 0 && (
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Repairs</CardTitle>
-              <AlertCircle className="h-4 w-4 text-amber-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{activeRepairs.length}</div>
-              <p className="text-xs text-muted-foreground mb-4">
-                Total Cost: {formatCurrency(totalRepairCost)}
-              </p>
-              <div className="space-y-4">
-                {activeRepairs.map((repair) => (
-                  <div key={repair.id} className="flex items-center justify-between border-b pb-2">
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium">{repair.item}</p>
-                      <p className="text-xs text-muted-foreground">{repair.location}</p>
-                      <p className="text-xs text-muted-foreground">Est. completion: {formatDate(repair.estimatedCompletionDate)}</p>
-                    </div>
-                    <div className="flex flex-col items-end space-y-1">
-                      <Badge className={getStatusColor(repair.status)}>
-                        {repair.status.replace('_', ' ')}
-                      </Badge>
-                      <p className="text-sm font-medium">{formatCurrency(repair.cost)}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
       </div>
     </div>
   )
