@@ -86,6 +86,7 @@ Each page focuses on its specific content without duplicating navigation element
 - **Geocoding:** Integrated server-side geocoding with OpenStreetMap for property addresses
 - **Property Map:** Enhanced property map with graceful handling of invalid coordinates
 - **Dashboard Metrics:** Fixed dashboard metrics calculation and display
+- **Repair Form:** Fixed repair creation by adding required item and estimatedCompletionDate fields
 
 ## Database Schema
 The application uses the following main entities:
