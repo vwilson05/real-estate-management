@@ -13,21 +13,26 @@ This document details the overall architecture of the Real Estate Portfolio Trac
 - **Responsive Design:** Support various screen sizes and devices
 
 ## Tech Stack
-- **Frontend Framework:** Next.js 14 with App Router
+- **Frontend Framework:** Next.js 14.1.3 with App Router
 - **Language:** TypeScript 5.0+
 - **Database:** SQLite with Prisma ORM 6.5.0
 - **UI Components:** 
-  - Tailwind CSS 3.3.0 for styling
+  - Tailwind CSS 3.4.17 for styling
   - Tremor 3.18.7 for dashboards and charts
-  - Headless UI 2.2.1 for accessible components
-  - Heroicons 2.2.0 for icons
+  - Radix UI for accessible components
+    - @radix-ui/react-avatar 1.1.3
+    - @radix-ui/react-dropdown-menu 2.1.6
+    - @radix-ui/react-label 2.1.2
+    - @radix-ui/react-select 2.1.6
+  - Lucide React 0.487.0 for icons
 - **State Management:** 
   - TanStack Query (React Query) 5.72.0 for server state
   - React Hook Form 7.55.0 for form management
 - **Data Validation:** Zod 3.24.2
 - **HTTP Client:** Axios 1.8.4
 - **Charts:** Recharts 2.15.2
-- **Theming:** next-themes for dark/light mode support
+- **Theming:** next-themes 0.4.6 for dark/light mode support
+- **Notifications:** Sonner 2.0.3 for toast notifications
 
 ## Core Components
 - **Frontend:** 
@@ -48,7 +53,7 @@ This document details the overall architecture of the Real Estate Portfolio Trac
 - **UI System:**
   - CSS variables for theming
   - Tailwind CSS for utility classes
-  - Reusable UI components
+  - Reusable UI components from shadcn/ui
 
 ## Directory Structure
 ```
@@ -56,7 +61,7 @@ re-portfolio-management/
 ├── src/
 │   ├── app/
 │   │   ├── api/           # API routes
-│   │   ├── components/    # Shared components
+│   │   ├── components/    # Feature-specific components
 │   │   │   ├── ui/       # UI components (buttons, inputs, etc.)
 │   │   │   └── theme-toggle.tsx # Theme toggle component
 │   │   ├── lib/          # Utilities and helpers
@@ -77,6 +82,8 @@ re-portfolio-management/
 | AD-005     | Zod for validation                          | TypeScript integration, runtime validation               |
 | AD-006     | CSS variables with Tailwind                 | Flexible theming with utility-first CSS approach         |
 | AD-007     | next-themes for theme management            | Simple dark/light mode implementation with system preference support |
+| AD-008     | Radix UI for accessible components          | Unstyled, accessible components that work with Tailwind  |
+| AD-009     | Sonner for toast notifications              | Lightweight, customizable toast notifications            |
 
 ## Security Considerations
 - Environment variables for sensitive data
@@ -95,17 +102,25 @@ re-portfolio-management/
 ```
 src/
 ├── app/                    # Next.js app directory
-│   ├── transactions/       # Transactions feature
+│   ├── api/               # API routes
+│   │   ├── properties/    # Property endpoints
+│   │   ├── transactions/  # Transaction endpoints
+│   │   └── dashboard/     # Dashboard metrics endpoints
+│   ├── transactions/      # Transactions feature
 │   │   ├── components/    # Transaction-specific components
 │   │   └── page.tsx      # Transactions page
-│   └── properties/        # Properties feature
-│       ├── components/    # Property-specific components
-│       └── page.tsx      # Properties page
-├── hooks/                 # Custom React hooks
+│   ├── properties/        # Properties feature
+│   │   ├── components/    # Property-specific components
+│   │   └── page.tsx      # Properties page
+│   └── dashboard/         # Dashboard feature
+│       └── page.tsx      # Dashboard page
+├── components/            # Shared components
+│   └── ui/               # UI components (shadcn/ui)
+├── hooks/                # Custom React hooks
 │   ├── useProperties.ts  # Properties data hook
 │   └── useTransactions.ts # Transactions data hook
 ├── lib/                  # Utility functions
-│   └── utils.ts          # Helper functions (e.g., class name merging)
+│   └── utils.ts          # Helper functions
 └── types/                # TypeScript type definitions
     ├── property.ts       # Property interface
     └── transaction.ts    # Transaction interface
@@ -117,32 +132,34 @@ src/
    - Custom hooks (`useProperties`, `useTransactions`) manage data fetching and state
    - Hooks provide loading and error states
    - React Query for efficient data fetching and caching
-   - Cache control headers to prevent browser caching
-   - Refetch on mount and window focus for fresh data
+   - Cache invalidation on mutations
+   - Optimistic updates for better UX
 
 2. **Component Layer**
    - Components consume hooks for data and state
    - Follow consistent pattern for loading and error handling
    - Maintain separation of concerns
    - Reusable UI components with consistent styling
+   - Toast notifications for user feedback
 
 3. **API Layer**
    - Next.js API routes for CRUD operations
-   - File-based storage for data persistence
+   - Prisma Client for database access
    - Zod validation for request data
    - Comprehensive error handling
-   - Logging for debugging
+   - Type-safe database operations
 
-4. **Storage Layer**
-   - File-based JSON storage for development
-   - Structured for easy migration to database
-   - Helper functions for reading and writing data
-   - Error handling for file operations
+4. **Database Layer**
+   - SQLite database for data persistence
+   - Prisma schema with relations
+   - Type-safe database queries
+   - Migration support for schema changes
 
 5. **Type System**
    - Strong TypeScript typing throughout the application
    - Shared interfaces in types directory
-   - Ensures type safety across components and hooks
+   - Prisma-generated types for database models
+   - Zod schemas for runtime validation
 
 6. **Theming System**
    - CSS variables for theme values

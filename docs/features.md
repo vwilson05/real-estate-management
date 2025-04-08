@@ -7,41 +7,44 @@
 - **Status:** In Progress
 - **Description:** Manage and track properties including addresses, states, type, and market value
 - **Implementation:**
-  - Database schema complete with Property model
-  - UI components using Tremor and Tailwind
-  - Form validation with Zod and React Hook Form
-  - CRUD operations via Next.js API routes
+  - `Property` model in `prisma/schema.prisma`
+  - API routes (`src/app/api/properties/route.ts`) for GET/POST
+  - `useProperties` hook (`src/app/hooks/useProperties.ts`) using React Query
+  - Basic `PropertyList` component (`src/app/properties/components/PropertyList.tsx`)
+  - `PropertyForm` component (`src/app/properties/components/PropertyForm.tsx`) with Zod/RHF validation
+  - Client wrapper (`src/app/properties/components/PropertiesClient.tsx`)
+  - New property page (`src/app/properties/new/page.tsx`)
+  - Shared UI components from `src/components/ui/`
 - **Next Steps:**
-  - Implement property list view
-  - Create property detail view
-  - Add property creation/edit forms
-  - Implement property deletion with confirmation
+  - Implement property detail view
+  - Implement property edit functionality
+  - Implement property deletion
+  - Add filtering/sorting to property list
+  - Improve error handling
 
 ### 2. Financial Tracking
 - **Status:** In Progress
 - **Description:** Record and track income, expenses, taxes, repairs, and rents
 - **Implementation:**
-  - Database schema complete with Transaction model
-  - Integration with Property model
-  - Categories defined for transaction types
-  - Transaction list view with filtering and sorting
-  - Transaction form with validation using Zod and React Hook Form
-  - Form fields for amount, description, date, and type (income/expense)
-  - Client-side validation with error messages
-  - API routes for CRUD operations
+  - `Transaction` model in `prisma/schema.prisma`
+  - API routes (`src/app/api/transactions/route.ts`) for GET/POST with basic filtering
+  - `useTransactions` hook (`src/hooks/useTransactions.ts`) using React Query
+  - `TransactionList` component (`src/app/transactions/components/TransactionList.tsx`) displaying data
+  - `TransactionForm` component (`src/app/transactions/components/TransactionForm.tsx`) using shared UI components, Zod/RHF, and React Query mutation
+  - Integration with `Property` model (fetching property address in `TransactionList`)
+  - Toast notifications for success/error feedback
 - **Next Steps:**
-  - Add financial reports and charts
-  - Implement export functionality
-  - Add bulk transaction import
-  - Create transaction categories management
+  - Implement transaction editing/deletion
+  - Add advanced filtering/sorting
+  - Implement pagination
+  - Add financial reports/charts
+  - Add bulk import/export
 
 ### 3. Repair Management
 - **Status:** Planned
 - **Description:** Track and manage property repairs and maintenance
 - **Implementation:**
-  - Database schema complete with Repair model
-  - Status and priority tracking
-  - Property relationship defined
+  - Database schema defined with `Repair` model in `prisma/schema.prisma`
 - **Next Steps:**
   - Create repair tracking interface
   - Implement repair status updates
@@ -52,9 +55,7 @@
 - **Status:** Planned
 - **Description:** Manage tenant information and leases
 - **Implementation:**
-  - Database schema complete with Tenant model
-  - Lease period tracking
-  - Rent amount tracking
+  - Database schema defined with `Tenant` model in `prisma/schema.prisma`
 - **Next Steps:**
   - Create tenant list view
   - Implement lease management
@@ -65,79 +66,64 @@
 - **Status:** In Progress
 - **Description:** Provide overview and insights of portfolio performance
 - **Implementation:**
-  - Enhanced dashboard layout with responsive grid
-  - Tremor components integrated for data visualization
-  - Summary cards with icons and metrics
-  - Real-time metrics from database:
-    - Total properties count
-    - Total portfolio value
-    - Monthly income
-    - Active repairs count
-  - Performance charts:
-    - Portfolio value trend (Area chart)
-    - Property type distribution (Donut chart)
-  - Loading states and error handling
-  - Theme-aware components with proper contrast
+  - Dashboard page (`src/app/dashboard/page.tsx`) with responsive grid layout
+  - Usage of `Card` components from `src/components/ui/card.tsx`
+  - API endpoint (`src/app/api/dashboard/metrics/route.ts`) calculating metrics from Prisma
+  - `useDashboardMetrics` hook (`src/app/hooks/useDashboardMetrics.ts`) fetching metrics
+  - Display of `totalProperties`, `totalValue`, `monthlyIncome`, `activeRepairs`
+  - Skeleton loading states (`src/components/ui/skeleton.tsx`) used on the dashboard
+  - Currency formatting (`src/lib/utils.ts`)
+  - Monthly income overview chart (`src/components/dashboard/overview.tsx`) fetching data from `/api/dashboard/monthly-income/route.ts`
+  - Recent transactions list (`src/components/dashboard/recent-transactions.tsx`) fetching data from `/api/transactions?limit=5`
+  - Theme awareness via CSS variables and `next-themes`
 - **Next Steps:**
   - Add more interactive charts
-  - Implement filtering options
+  - Implement filtering
   - Add export functionality
-  - Add recent transactions list
-  - Add upcoming repairs list
   - Add property performance comparison
 
 ## Technical Features
 
-### 1. Authentication & Authorization
-- **Status:** Planned
-- **Description:** Secure access to the application
-- **Implementation:**
-  - Not started
-- **Next Steps:**
-  - Choose auth provider
-  - Implement login/logout
-  - Add route protection
-  - Set up role-based access
-
-### 2. Data Validation
+### 1. Data Validation
 - **Status:** In Progress
 - **Description:** Ensure data integrity and type safety
 - **Implementation:**
-  - Zod schemas for validation
-  - TypeScript types defined
-  - Prisma schema validation
-  - Form validation with React Hook Form
+  - Zod schemas used in `PropertyForm`, `TransactionForm`, and API routes
+  - React Hook Form integration for form handling
+  - Prisma schema types for database validation
+  - TypeScript types throughout the application
 - **Next Steps:**
   - Add more comprehensive validation rules
-  - Implement error messages
-  - Add form validation
+  - Improve error message display
+  - Add form validation for all features
 
-### 3. API Integration
+### 2. API Integration
 - **Status:** In Progress
 - **Description:** RESTful API endpoints for all features
 - **Implementation:**
-  - Basic API structure defined
-  - Next.js API routes setup
-  - Transaction endpoints implemented
-  - Property endpoints implemented
-  - Dashboard metrics endpoint implemented
+  - Next.js API routes for Properties, Transactions, Dashboard Metrics, Monthly Income
+  - Prisma client usage for database operations
+  - Basic error handling implemented
+  - Type-safe database queries
 - **Next Steps:**
   - Implement all CRUD endpoints
-  - Add error handling
   - Add rate limiting
   - Add request validation
+  - Add response caching
 
-### 4. Performance Optimization
-- **Status:** Planned
+### 3. Performance Optimization
+- **Status:** In Progress
 - **Description:** Ensure fast and responsive application
 - **Implementation:**
-  - Server Components used where possible
-  - React Query for data fetching
+  - React Query for data fetching/caching
+  - Server Components where applicable
+  - Optimistic updates for better UX
+  - Loading states with skeletons
 - **Next Steps:**
-  - Implement proper caching
-  - Add loading states
+  - Implement proper caching strategies
   - Optimize bundle size
   - Add performance monitoring
+  - Add error boundaries
 
 ## Future Features
 
@@ -161,6 +147,16 @@
 - Implement push notifications
 - Add offline capabilities
 
+### 5. Property Map Integration
+- Map feature to see properties
+- Integration with Google Maps
+- Property clustering and filtering
+
+### 6. Issue Tracking
+- Issue tracker per property
+- Track issues with description, last step, next step
+- Contact management and follow-up
+- Due date tracking and notifications
 
 ## Features to be fleshed out
 - Map feature to see properties
