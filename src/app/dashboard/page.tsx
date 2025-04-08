@@ -141,9 +141,9 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-7">
           <CardHeader>
-            <CardTitle>Monthly Income Overview</CardTitle>
+            <CardTitle>Financial Overview</CardTitle>
             <CardDescription>
-              Rental income, expenses, and NOI trends over time
+              Rental income, expenses, NOI, and repair trends over time
             </CardDescription>
           </CardHeader>
           <CardContent>
