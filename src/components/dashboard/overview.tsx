@@ -82,7 +82,7 @@ export function Overview() {
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Monthly Income</CardTitle>
@@ -129,57 +129,59 @@ export function Overview() {
           </CardContent>
         </Card>
       </div>
-      <div className="h-[350px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={data.monthlyData}>
-            <XAxis
-              dataKey="monthName"
-              stroke="#888888"
-              fontSize={12}
-              tickLine={false}
-              axisLine={false}
-            />
-            <YAxis
-              stroke="#888888"
-              fontSize={12}
-              tickLine={false}
-              axisLine={false}
-              tickFormatter={(value) => `$${value}`}
-            />
-            <Tooltip 
-              formatter={(value: number, name: string) => {
-                const formattedValue = formatCurrency(Math.abs(value));
-                if (name === 'income') return [formattedValue, 'Income'];
-                if (name === 'expenses') return [formattedValue, 'Expenses'];
-                return [formattedValue, 'NOI'];
-              }}
-              cursor={{ fill: 'rgba(0, 0, 0, 0.1)' }}
-            />
-            <Legend />
-            <Bar
-              dataKey="income"
-              name="Income"
-              fill="#22c55e"
-              radius={[4, 4, 0, 0]}
-              stackId="stack"
-            />
-            <Bar
-              dataKey="expenses"
-              name="Expenses"
-              fill="#ef4444"
-              radius={[4, 4, 0, 0]}
-              stackId="stack"
-            />
-            <Line
-              type="monotone"
-              dataKey="netIncome"
-              name="NOI"
-              stroke="#3b82f6"
-              strokeWidth={2}
-              dot={{ fill: '#3b82f6', r: 4 }}
-            />
-          </ComposedChart>
-        </ResponsiveContainer>
+      <div className="h-[350px] w-full overflow-x-auto">
+        <div className="min-w-[600px] h-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <ComposedChart data={data.monthlyData}>
+              <XAxis
+                dataKey="monthName"
+                stroke="#888888"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+              />
+              <YAxis
+                stroke="#888888"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(value) => `$${value}`}
+              />
+              <Tooltip 
+                formatter={(value: number, name: string) => {
+                  const formattedValue = formatCurrency(Math.abs(value));
+                  if (name === 'income') return [formattedValue, 'Income'];
+                  if (name === 'expenses') return [formattedValue, 'Expenses'];
+                  return [formattedValue, 'NOI'];
+                }}
+                cursor={{ fill: 'rgba(0, 0, 0, 0.1)' }}
+              />
+              <Legend />
+              <Bar
+                dataKey="income"
+                name="Income"
+                fill="#22c55e"
+                radius={[4, 4, 0, 0]}
+                stackId="stack"
+              />
+              <Bar
+                dataKey="expenses"
+                name="Expenses"
+                fill="#ef4444"
+                radius={[4, 4, 0, 0]}
+                stackId="stack"
+              />
+              <Line
+                type="monotone"
+                dataKey="netIncome"
+                name="NOI"
+                stroke="#3b82f6"
+                strokeWidth={2}
+                dot={{ fill: '#3b82f6', r: 4 }}
+              />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   )

@@ -4,6 +4,7 @@ import "./globals.css";
 import Providers from "./providers";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { MobileNav } from "@/components/ui/mobile-nav";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -78,6 +79,7 @@ export default function RootLayout({
                   </div>
                   <div className="flex items-center gap-4">
                     <ThemeToggle />
+                    <MobileNav />
                   </div>
                 </div>
               </div>
