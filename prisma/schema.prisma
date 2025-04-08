@@ -49,18 +49,18 @@ model Transaction {
 }
 
 model Repair {
-  id          String   @id @default(uuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  date        DateTime
-  cost        Float
-  description String
-  status      String   // "PENDING", "IN_PROGRESS", "COMPLETED"
-  priority    String   // "LOW", "MEDIUM", "HIGH"
-  
-  // Relations
-  property    Property @relation(fields: [propertyId], references: [id])
-  propertyId  String
+  id                      String   @id @default(cuid())
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+  date                   DateTime
+  cost                   Float
+  description            String
+  status                 String
+  priority               String
+  item                   String
+  estimatedCompletionDate DateTime
+  property               Property @relation(fields: [propertyId], references: [id])
+  propertyId             String
 }
 
 model Tenant {
