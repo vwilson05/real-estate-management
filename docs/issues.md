@@ -248,11 +248,9 @@
   - Prevention: Follow project structure guidelines for component organization
 
 6. **CSS Border Class Error**
-   - Description: The `border-border` class does not exist in Tailwind configuration
+   - Description: Error in CSS class for border styling
+   - Resolution: Updated border class to use proper Tailwind syntax
    - Status: Resolved
-   - Priority: High
-   - Root Cause: Incorrect CSS class name in globals.css
-   - Resolution: Updated globals.css to use `border-[hsl(var(--border))]` instead of the non-existent `border-border` class
 
 7. **CSS Background Class Error**
    - Description: The `bg-background` class does not exist in Tailwind configuration
@@ -300,6 +298,20 @@
       - Added rate limiting and error handling
       - Removed client-side API key exposure
       - Improved geocoding reliability
+
+12. **IssueForm Type Errors**
+   - Description: Type errors in IssueForm component causing form validation issues
+   - Error: Type mismatches between form schema and React Hook Form implementation
+   - Impact: Form validation was not working correctly and TypeScript errors were present
+   - Root Cause: Mismatch between the Zod schema and the form implementation
+   - Resolution: 
+     - Completely rebuilt the IssueForm component with proper TypeScript typing
+     - Defined a clear Zod schema directly in the component file
+     - Created a properly typed form using the inferred type from the schema
+     - Added explicit validation rules for required fields
+     - Improved error handling and user feedback
+   - Status: Resolved
+   - Prevention: Follow TypeScript best practices and ensure proper type definitions for all form components
 
 ## Feature Requests
 

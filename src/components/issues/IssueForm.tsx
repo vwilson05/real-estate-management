@@ -1,9 +1,11 @@
 "use client";
 
+import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCreateIssue } from "@/hooks/useIssues";
-import { issueSchema } from "@/lib/schemas/issueSchema";
+import { z } from "zod";
+import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -22,57 +24,59 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+
+import { useCreateIssue } from "@/hooks/useIssues";
 import { useProperties } from "@/hooks/useProperties";
-import { IssueFormData } from "@/lib/schemas/issueSchema";
-import { toast } from "sonner";
 
-// Define the enum values directly to avoid Prisma import issues
-const IssueStatus = {
-  OPEN: "OPEN",
-  IN_PROGRESS: "IN_PROGRESS",
-  BLOCKED: "BLOCKED",
-  RESOLVED: "RESOLVED",
-  CLOSED: "CLOSED",
-} as const;
+// Define the form schema with Zod
+const issueFormSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().optional(),
+  status: z.enum(["OPEN", "IN_PROGRESS", "BLOCKED", "RESOLVED", "CLOSED"]),
+  priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]),
+  type: z.enum(["MAINTENANCE", "REPAIR", "COMPLAINT", "INSPECTION", "OTHER"]),
+  dueDate: z.string().optional(),
+  propertyId: z.string().min(1, "Property is required"),
+});
 
-const IssuePriority = {
-  LOW: "LOW",
-  MEDIUM: "MEDIUM",
-  HIGH: "HIGH",
-  URGENT: "URGENT",
-} as const;
-
-const IssueType = {
-  MAINTENANCE: "MAINTENANCE",
-  REPAIR: "REPAIR",
-  COMPLAINT: "COMPLAINT",
-  INSPECTION: "INSPECTION",
-  OTHER: "OTHER",
-} as const;
+// Infer the type from the schema
+type IssueFormValues = z.infer<typeof issueFormSchema>;
 
 export function IssueForm() {
-  const form = useForm<IssueFormData>({
-    resolver: zodResolver(issueSchema),
+  // Initialize form with React Hook Form and Zod validation
+  const form = useForm<IssueFormValues>({
+    resolver: zodResolver(issueFormSchema),
     defaultValues: {
       title: "",
       description: "",
-      status: IssueStatus.OPEN,
-      priority: IssuePriority.MEDIUM,
-      type: IssueType.MAINTENANCE,
+      status: "OPEN",
+      priority: "MEDIUM",
+      type: "MAINTENANCE",
       dueDate: "",
       propertyId: "",
     },
   });
 
-  const { data: properties } = useProperties();
+  // Fetch properties for the dropdown
+  const { data: properties, isLoading: isLoadingProperties } = useProperties();
+  
+  // Mutation hook for creating issues
   const createIssue = useCreateIssue();
 
-  const onSubmit = async (data: IssueFormData) => {
+  // Form submission handler
+  const onSubmit = async (data: IssueFormValues) => {
     try {
-      await createIssue.mutateAsync(data);
+      // Format the date to YYYY-MM-DD if it exists
+      const formattedData = {
+        ...data,
+        dueDate: data.dueDate ? new Date(data.dueDate).toISOString().split('T')[0] : undefined,
+      };
+      
+      await createIssue.mutateAsync(formattedData);
       form.reset();
       toast.success("Issue created successfully");
     } catch (error) {
+      console.error("Error creating issue:", error);
       toast.error("Failed to create issue");
     }
   };
@@ -121,6 +125,7 @@ export function IssueForm() {
               <Select
                 onValueChange={field.onChange}
                 defaultValue={field.value}
+                disabled={isLoadingProperties}
               >
                 <FormControl>
                   <SelectTrigger>
@@ -156,7 +161,7 @@ export function IssueForm() {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {Object.values(IssueStatus).map((status) => (
+                  {["OPEN", "IN_PROGRESS", "BLOCKED", "RESOLVED", "CLOSED"].map((status) => (
                     <SelectItem key={status} value={status}>
                       {status.replace("_", " ")}
                     </SelectItem>
@@ -184,7 +189,7 @@ export function IssueForm() {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {Object.values(IssuePriority).map((priority) => (
+                  {["LOW", "MEDIUM", "HIGH", "URGENT"].map((priority) => (
                     <SelectItem key={priority} value={priority}>
                       {priority}
                     </SelectItem>
@@ -212,7 +217,7 @@ export function IssueForm() {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {Object.values(IssueType).map((type) => (
+                  {["MAINTENANCE", "REPAIR", "COMPLAINT", "INSPECTION", "OTHER"].map((type) => (
                     <SelectItem key={type} value={type}>
                       {type.replace("_", " ")}
                     </SelectItem>
