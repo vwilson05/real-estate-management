@@ -20,6 +20,8 @@ interface Repair {
   description: string;
   status: "PENDING" | "IN_PROGRESS" | "COMPLETED";
   priority: "LOW" | "MEDIUM" | "HIGH";
+  item: string;
+  estimatedCompletionDate: string;
   property: {
     address: string;
   };
@@ -49,10 +51,12 @@ export function RepairList({ repairs }: RepairListProps) {
           <TableRow>
             <TableHead>Date</TableHead>
             <TableHead>Property</TableHead>
+            <TableHead>Item</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>Cost</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Priority</TableHead>
+            <TableHead>Est. Completion</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -62,6 +66,7 @@ export function RepairList({ repairs }: RepairListProps) {
                 {format(new Date(repair.date), "MMM d, yyyy")}
               </TableCell>
               <TableCell>{repair.property.address}</TableCell>
+              <TableCell>{repair.item}</TableCell>
               <TableCell>{repair.description}</TableCell>
               <TableCell>{formatCurrency(repair.cost)}</TableCell>
               <TableCell>
@@ -73,6 +78,9 @@ export function RepairList({ repairs }: RepairListProps) {
                 <Badge className={priorityColors[repair.priority]}>
                   {repair.priority}
                 </Badge>
+              </TableCell>
+              <TableCell>
+                {format(new Date(repair.estimatedCompletionDate), "MMM d, yyyy")}
               </TableCell>
             </TableRow>
           ))}

@@ -18,6 +18,8 @@ interface Repair {
   description: string;
   status: "PENDING" | "IN_PROGRESS" | "COMPLETED";
   priority: "LOW" | "MEDIUM" | "HIGH";
+  item: string;
+  estimatedCompletionDate: string;
   property: {
     address: string;
   };
@@ -30,6 +32,8 @@ interface RepairFormData {
   status: "PENDING" | "IN_PROGRESS" | "COMPLETED";
   priority: "LOW" | "MEDIUM" | "HIGH";
   propertyId: string;
+  item: string;
+  estimatedCompletionDate: string;
 }
 
 interface RepairsClientProps {

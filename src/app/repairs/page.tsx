@@ -14,6 +14,8 @@ interface Repair {
   description: string;
   status: "PENDING" | "IN_PROGRESS" | "COMPLETED";
   priority: "LOW" | "MEDIUM" | "HIGH";
+  item: string;
+  estimatedCompletionDate: string;
   property: {
     address: string;
   };
@@ -46,6 +48,7 @@ async function getRepairs(): Promise<Repair[]> {
   return repairs.map(repair => ({
     ...repair,
     date: repair.date.toISOString(),
+    estimatedCompletionDate: repair.estimatedCompletionDate.toISOString(),
     status: repair.status as Repair["status"],
     priority: repair.priority as Repair["priority"],
   }));

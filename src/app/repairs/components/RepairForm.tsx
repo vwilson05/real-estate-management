@@ -31,6 +31,8 @@ const repairSchema = z.object({
   status: z.enum(["PENDING", "IN_PROGRESS", "COMPLETED"]),
   priority: z.enum(["LOW", "MEDIUM", "HIGH"]),
   propertyId: z.string().uuid("Please select a property"),
+  item: z.string().min(1, "Item is required"),
+  estimatedCompletionDate: z.string(),
 });
 
 type RepairFormValues = z.infer<typeof repairSchema>;
@@ -61,6 +63,8 @@ export function RepairForm({ properties, onSubmit, initialData }: RepairFormProp
       status: "PENDING",
       priority: "MEDIUM",
       propertyId: "",
+      item: "",
+      estimatedCompletionDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
       ...initialData,
     },
   });
@@ -218,6 +222,34 @@ export function RepairForm({ properties, onSubmit, initialData }: RepairFormProp
                   <SelectItem value="HIGH">High</SelectItem>
                 </SelectContent>
               </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="item"
+          render={({ field }: { field: ControllerRenderProps<RepairFormValues, "item"> }) => (
+            <FormItem>
+              <FormLabel>Item</FormLabel>
+              <FormControl>
+                <Input {...field} placeholder="What needs to be repaired" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="estimatedCompletionDate"
+          render={({ field }: { field: ControllerRenderProps<RepairFormValues, "estimatedCompletionDate"> }) => (
+            <FormItem>
+              <FormLabel>Estimated Completion Date</FormLabel>
+              <FormControl>
+                <Input type="date" {...field} />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
