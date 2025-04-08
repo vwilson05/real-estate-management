@@ -53,6 +53,7 @@ re-portfolio-management/
 - **Property Management:** Enhanced PropertyForm with comprehensive field validation and improved UX
 - **Form Validation:** Implemented Zod schema validation for property data
 - **UI/UX Improvements:** Added required field indicators and helper text for better user guidance
+- **Dashboard Metrics:** Implemented real-time metrics from database with loading states and error handling
 
 ## Database Schema
 The application uses the following main entities:
@@ -90,6 +91,7 @@ The application uses the following main entities:
 - [x] Dashboard page with summary cards
 - [x] Theme support (dark/light mode)
 - [x] React Query integration
+- [x] Dashboard metrics from database
 - [ ] Properties management
 - [ ] Transaction tracking
 - [ ] Repair management
@@ -144,6 +146,7 @@ This document serves as the central repository for technical documentation. It c
 | `/api/properties`        | POST   | Create a new property                       | Property data in JSON format | Created property object            |
 | `/api/transactions`      | GET    | Retrieve list of income/expense transactions  | `propertyId` (optional)      | Array of transaction objects       |
 | `/api/transactions`      | POST   | Record a new transaction                    | Transaction data in JSON     | Created transaction object         |
+| `/api/dashboard/metrics` | GET    | Get dashboard metrics                       | `None`                       | Dashboard metrics object           |
 
 ## Database Schemas
 ### Properties Table

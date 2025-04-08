@@ -66,11 +66,18 @@
   - Basic dashboard layout complete
   - Tremor components integrated
   - Summary cards implemented
+  - Real-time metrics from database:
+    - Total properties count
+    - Total portfolio value
+    - Monthly income
+    - Active repairs count
+  - Loading states and error handling
 - **Next Steps:**
-  - Add real-time data integration
   - Create performance charts
   - Implement filtering options
   - Add export functionality
+  - Add recent transactions list
+  - Add upcoming repairs list
 
 ## Technical Features
 
@@ -106,6 +113,7 @@
   - Next.js API routes setup
   - Transaction endpoints implemented
   - Property endpoints implemented
+  - Dashboard metrics endpoint implemented
 - **Next Steps:**
   - Implement all CRUD endpoints
   - Add error handling

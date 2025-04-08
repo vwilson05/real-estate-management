@@ -15,6 +15,7 @@ Develop a personal web app to track and manage my real estate portfolio—includ
   - [x] Basic project structure
   - [x] Navigation setup
   - [x] Dashboard layout
+  - [x] Dashboard metrics implementation
 - **In Progress:**
   - [ ] Property management implementation
   - [ ] Basic CRUD operations

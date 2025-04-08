@@ -572,3 +572,43 @@ This fix aligns with our architectural decisions regarding:
    - Added comprehensive error handling in the API route
    - Improved error messages in the UI
    - Added retry functionality for failed requests
+
+## Dashboard Metrics Fix
+
+### Issue Description
+**Date**: [Current Date]  
+**Status**: Resolved  
+**Priority**: High  
+**Component**: Dashboard, API, Hooks
+
+The dashboard metrics were not reading from the database, showing $0 for total value even after properties were created with values.
+
+### Root Cause
+1. The dashboard was using hardcoded values instead of fetching real data from the database
+2. No API endpoint existed to calculate and return dashboard metrics
+3. No React hook was available to fetch and manage dashboard metrics data
+
+### Resolution
+1. Created a new API endpoint `/api/dashboard/metrics` that calculates:
+   - Total number of properties
+   - Total portfolio value (sum of all property market values)
+   - Monthly income (sum of income transactions for the current month)
+   - Number of active repairs (repairs with status "PENDING" or "IN_PROGRESS")
+2. Implemented a new React hook `useDashboardMetrics` to fetch and manage dashboard metrics data
+3. Updated the dashboard page to:
+   - Use the new metrics hook
+   - Display real-time data from the database
+   - Show loading states with skeleton UI
+   - Handle and display errors appropriately
+   - Format numbers with proper currency formatting
+
+### Prevention
+To prevent similar issues in the future:
+1. Always implement real data fetching for metrics and summaries
+2. Create dedicated API endpoints for data aggregation
+3. Use React Query for data fetching and caching
+4. Implement proper loading states and error handling
+5. Format numbers appropriately for display
+
+### Related Architectural Decision
+This fix aligns with our decision to use React Query for data fetching and caching, as documented in the architecture.md file.
