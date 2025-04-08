@@ -88,18 +88,25 @@
 - **Implementation**: Created property.ts with shared Property interface.
 - **Rationale**: Ensures type consistency and reduces duplication across the application.
 
-### Decision: Strict Enum Validation
-- **Context**: Need to ensure data consistency and prevent invalid enum values.
-- **Decision**: Implement strict enum validation at multiple levels.
+### Decision: Strict Enum Validation (Updated)
+- **Context**: Need to ensure data consistency and prevent invalid enum values, especially after encountering issues with invalid IssueType values.
+- **Decision**: Implement strict enum validation at multiple levels with proper migration handling.
 - **Implementation**: 
   - Define enums in Prisma schema
   - Create Zod schemas that match Prisma enums exactly
   - Validate data at API boundaries
   - Use TypeScript to enforce enum usage in components
+  - Implement database migrations for fixing invalid enum values
 - **Rationale**: Prevents data inconsistencies and provides clear error messages when invalid values are used.
 - **Consequences**:
-  - Positive: Type safety and data consistency
-  - Negative: Need to handle migration of invalid data
+  - Positive: 
+    - Type safety and data consistency
+    - Clear error messages for invalid values
+    - Proper handling of data migrations
+  - Negative: 
+    - Need to handle migration of invalid data
+    - Additional complexity in database maintenance
+    - Must be careful with enum changes in production
 
 ## Future Considerations
 
@@ -171,4 +178,23 @@ Positive:
 Negative:
 - Additional complexity in the database schema
 - More API endpoints to maintain
-- Increased bundle size from new components 
+- Increased bundle size from new components
+
+## Geocoding Implementation
+
+### Decision: Use Server-Side Geocoding with OpenStreetMap
+- **Context**: Need reliable geocoding for property addresses while avoiding client-side limitations and API key requirements.
+- **Decision**: Implement server-side geocoding using OpenStreetMap's Nominatim API.
+- **Implementation**: 
+  - Created lib/server/geocoding.ts for server-side geocoding functions
+  - Used native fetch API for compatibility with server environment
+  - Implemented rate limiting and error handling
+  - Added API routes for geocoding operations
+- **Rationale**: 
+  - Avoids client-side API key exposure
+  - Provides consistent geocoding across the application
+  - Free and reliable service with good coverage
+  - Better error handling and rate limiting control
+- **Consequences**:
+  - Positive: More reliable geocoding, better security, no API key management
+  - Negative: Slightly increased server load, need to handle rate limiting 
