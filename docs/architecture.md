@@ -76,3 +76,39 @@ re-portfolio-management/
 - React Query for efficient data caching
 - Optimistic updates for better UX
 - Image optimization with Next.js
+
+## Project Structure
+
+```
+src/
+├── app/                    # Next.js app directory
+│   ├── transactions/       # Transactions feature
+│   │   ├── components/    # Transaction-specific components
+│   │   └── page.tsx      # Transactions page
+│   └── properties/        # Properties feature
+│       ├── components/    # Property-specific components
+│       └── page.tsx      # Properties page
+├── hooks/                 # Custom React hooks
+│   ├── useProperties.ts  # Properties data hook
+│   └── useTransactions.ts # Transactions data hook
+└── types/                # TypeScript type definitions
+    ├── property.ts       # Property interface
+    └── transaction.ts    # Transaction interface
+```
+
+## Data Flow
+
+1. **Hooks Layer**
+   - Custom hooks (`useProperties`, `useTransactions`) manage data fetching and state
+   - Hooks provide loading and error states
+   - Currently using mock data, prepared for API integration
+
+2. **Component Layer**
+   - Components consume hooks for data and state
+   - Follow consistent pattern for loading and error handling
+   - Maintain separation of concerns
+
+3. **Type System**
+   - Strong TypeScript typing throughout the application
+   - Shared interfaces in types directory
+   - Ensures type safety across components and hooks
