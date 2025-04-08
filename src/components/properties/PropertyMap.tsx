@@ -29,132 +29,78 @@ export function PropertyMap({ properties, className, ...props }: PropertyMapProp
   // Set isClient to true when component mounts (client-side only)
   React.useEffect(() => {
     setIsClient(true);
-    
-    // Add Leaflet CSS to the document head
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-    link.integrity = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
-    link.crossOrigin = '';
-    document.head.appendChild(link);
-    
-    return () => {
-      // Clean up the link when component unmounts
-      document.head.removeChild(link);
-    };
   }, []);
 
-  // Initialize map only on client-side
+  // Initialize map and add markers
   React.useEffect(() => {
     if (!isClient || !mapContainer.current) return;
 
-    // Dynamically import Leaflet only on client-side
-    import('leaflet').then((L) => {
+    const initializeMap = async () => {
       try {
-        // Fix for Leaflet marker icons in Next.js
-        const icon = L.icon({
-          iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-          iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-          shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-          iconSize: [25, 41],
-          iconAnchor: [12, 41],
-          popupAnchor: [1, -34],
-          shadowSize: [41, 41]
+        // Dynamically import Leaflet
+        const L = await import('leaflet');
+
+        // Initialize the map if not already initialized
+        if (!map.current && mapContainer.current) {
+          // Create map
+          map.current = L.map(mapContainer.current).setView([42.35, -70.9], 9);
+
+          // Add OpenStreetMap tile layer
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }).addTo(map.current);
+        }
+
+        // Clear existing markers
+        markers.current.forEach(marker => marker.remove());
+        markers.current = [];
+
+        // Filter properties with valid coordinates
+        const validProperties = properties.filter(
+          property => 
+            property.latitude !== null && 
+            property.longitude !== null && 
+            !isNaN(property.latitude) && 
+            !isNaN(property.longitude)
+        );
+
+        console.log('Valid properties for markers:', validProperties);
+
+        // Add markers for each property
+        validProperties.forEach((property) => {
+          try {
+            console.log(`Adding marker for property ${property.id} at ${property.latitude}, ${property.longitude}`);
+            const marker = L.marker([property.latitude!, property.longitude!])
+              .bindPopup(`<h3>${property.address}</h3>`)
+              .addTo(map.current);
+            markers.current.push(marker);
+          } catch (error) {
+            console.error(`Error adding marker for property ${property.id}:`, error);
+          }
         });
 
-        // Initialize the map
-        map.current = L.map(mapContainer.current!).setView([42.35, -70.9], 9);
+        // Fit bounds if there are valid properties
+        if (validProperties.length > 0) {
+          const bounds = L.latLngBounds(validProperties.map(p => [p.latitude!, p.longitude!]));
+          map.current.fitBounds(bounds, { padding: [50, 50] });
+        }
 
-        // Add OpenStreetMap tile layer
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map.current);
-
-        // Cleanup on unmount
-        return () => {
-          if (map.current) {
-            map.current.remove();
-          }
-        };
       } catch (error) {
         console.error("Error initializing map:", error);
         setMapError("Failed to initialize map. Please try again.");
       }
-    }).catch(error => {
-      console.error("Error loading Leaflet:", error);
-      setMapError("Failed to load map library. Please try again.");
-    });
-  }, [isClient]);
+    };
 
-  // Update markers when properties change
-  React.useEffect(() => {
-    if (!isClient || !map.current || mapError) return;
+    initializeMap();
 
-    // Dynamically import Leaflet only on client-side
-    import('leaflet').then((L) => {
-      // Clear existing markers
-      markers.current.forEach(marker => marker.remove());
-      markers.current = [];
-
-      // Filter properties with valid coordinates
-      const validProperties = properties.filter(
-        property => 
-          property.latitude !== null && 
-          property.longitude !== null && 
-          !isNaN(property.latitude) && 
-          !isNaN(property.longitude)
-      );
-
-      // Log the filtered properties
-      console.log('Valid properties for markers:', validProperties);
-
-      // Add markers for each property with valid coordinates
-      validProperties.forEach((property) => {
-        try {
-          // Log detailed coordinate information
-          console.log(`Processing property ${property.id}: Lat=${property.latitude}, Lon=${property.longitude}, TypeLat=${typeof property.latitude}, TypeLon=${typeof property.longitude}`);
-          
-          if (typeof property.latitude !== 'number' || typeof property.longitude !== 'number' || isNaN(property.latitude) || isNaN(property.longitude)) {
-            console.error(`Invalid coordinates for property ${property.id}. Skipping marker.`);
-            return; // Skip this property if coordinates are invalid
-          }
-
-          const marker = L.marker([property.latitude, property.longitude], { icon: L.icon({
-            iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-            iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-            shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-            shadowSize: [41, 41]
-          }) })
-            .bindPopup(`<h3>${property.address}</h3>`)
-            .addTo(map.current);
-          
-          markers.current.push(marker);
-        } catch (error) {
-          console.error(`Error adding marker for property ${property.id}:`, error);
-        }
-      });
-
-      // If there are valid properties, fit the map to show all markers
-      if (validProperties.length > 0) {
-        try {
-          const bounds = L.latLngBounds(validProperties.map(p => [p.latitude!, p.longitude!]));
-          map.current.fitBounds(bounds, { padding: [50, 50] });
-        } catch (error) {
-          console.error("Error fitting bounds:", error);
-          // Fallback to default view if bounds fitting fails
-          map.current.setView([42.35, -70.9], 9);
-        }
-      } else {
-        // If no valid properties, set to default view
-        map.current.setView([42.35, -70.9], 9);
+    // Cleanup
+    return () => {
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
       }
-    }).catch(error => {
-      console.error("Error loading Leaflet for markers:", error);
-    });
-  }, [properties, mapError, isClient]);
+    };
+  }, [isClient, properties]);
 
   if (mapError) {
     return (

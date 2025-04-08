@@ -8,8 +8,8 @@ import { ThemeToggle } from "@/components/theme-toggle";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Real Estate Portfolio Management",
-  description: "Personal real estate portfolio management system",
+  title: "RE Portfolio Management",
+  description: "Real Estate Portfolio Management Application",
 };
 
 export default function RootLayout({
@@ -19,6 +19,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossOrigin=""
+        />
+      </head>
       <body className={inter.className}>
         <Providers>
           <div className="min-h-screen bg-background">
