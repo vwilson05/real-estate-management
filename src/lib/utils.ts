@@ -20,3 +20,17 @@ export function formatCurrency(
 ): string {
   return new Intl.NumberFormat("en-US", options).format(amount)
 }
+
+/**
+ * Formats a date string into a localized date string
+ * @param dateString - The date string to format
+ * @returns Formatted date string
+ */
+export function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  });
+}
