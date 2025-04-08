@@ -88,6 +88,19 @@
 - **Implementation**: Created property.ts with shared Property interface.
 - **Rationale**: Ensures type consistency and reduces duplication across the application.
 
+### Decision: Strict Enum Validation
+- **Context**: Need to ensure data consistency and prevent invalid enum values.
+- **Decision**: Implement strict enum validation at multiple levels.
+- **Implementation**: 
+  - Define enums in Prisma schema
+  - Create Zod schemas that match Prisma enums exactly
+  - Validate data at API boundaries
+  - Use TypeScript to enforce enum usage in components
+- **Rationale**: Prevents data inconsistencies and provides clear error messages when invalid values are used.
+- **Consequences**:
+  - Positive: Type safety and data consistency
+  - Negative: Need to handle migration of invalid data
+
 ## Future Considerations
 
 ### Authentication and Authorization

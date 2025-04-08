@@ -44,7 +44,7 @@ async function main() {
         description: 'This is a low priority test issue',
         status: 'BLOCKED',
         priority: 'LOW',
-        type: 'IMPROVEMENT',
+        type: 'OTHER',
         dueDate: new Date('2024-05-01'),
         propertyId: property.id
       }

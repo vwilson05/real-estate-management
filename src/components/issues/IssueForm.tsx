@@ -24,8 +24,31 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useProperties } from "@/hooks/useProperties";
 import { IssueFormData } from "@/lib/schemas/issueSchema";
-import { IssuePriority, IssueStatus, IssueType } from "@prisma/client";
 import { toast } from "sonner";
+
+// Define the enum values directly to avoid Prisma import issues
+const IssueStatus = {
+  OPEN: "OPEN",
+  IN_PROGRESS: "IN_PROGRESS",
+  BLOCKED: "BLOCKED",
+  RESOLVED: "RESOLVED",
+  CLOSED: "CLOSED",
+} as const;
+
+const IssuePriority = {
+  LOW: "LOW",
+  MEDIUM: "MEDIUM",
+  HIGH: "HIGH",
+  URGENT: "URGENT",
+} as const;
+
+const IssueType = {
+  MAINTENANCE: "MAINTENANCE",
+  REPAIR: "REPAIR",
+  COMPLAINT: "COMPLAINT",
+  INSPECTION: "INSPECTION",
+  OTHER: "OTHER",
+} as const;
 
 export function IssueForm() {
   const form = useForm<IssueFormData>({
@@ -37,6 +60,7 @@ export function IssueForm() {
       priority: IssuePriority.MEDIUM,
       type: IssueType.MAINTENANCE,
       dueDate: "",
+      propertyId: "",
     },
   });
 

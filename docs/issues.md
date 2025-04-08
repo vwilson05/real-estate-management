@@ -250,19 +250,30 @@
    - Description: "No QueryClient set, use QueryClientProvider to set one" error when using React Query hooks
    - Status: Resolved
    - Priority: High
-   - Root Cause: Missing QueryClientProvider in the application
-   - Resolution: Added QueryClientProvider to the providers.tsx file
+   - Root Cause: Missing QueryClientProvider in the application root
+   - Resolution: Added QueryClientProvider to the root layout component
 
-9. **Transaction Form Date Validation Error**
-   - Description: Invalid transaction data error when submitting the form due to date format mismatch
+9. **Invalid IssueType Enum Value**
+   - Description: Error when trying to use 'IMPROVEMENT' as an IssueType value
    - Status: Resolved
    - Priority: High
-   - Root Cause: Mismatch between form date input format and API validation requirements
+   - Root Cause: Database contained records with an invalid enum value that wasn't defined in the Prisma schema
    - Resolution: 
-     - Updated API schema to accept YYYY-MM-DD format instead of datetime
-     - Changed form input to use native date picker
+     - Created and ran a migration to update any issues with 'IMPROVEMENT' type to 'OTHER'
+     - Verified that all code paths use the correct enum values from the schema
+     - Updated documentation to reflect the valid enum values
+   - Prevention: Always use the enum values defined in the Prisma schema and validate data before insertion
 
-10. **Missing IssueForm Component**
+10. **Transaction Form Date Validation Error**
+    - Description: Invalid transaction data error when submitting the form due to date format mismatch
+    - Status: Resolved
+    - Priority: High
+    - Root Cause: Mismatch between form date input format and API validation requirements
+    - Resolution: 
+      - Updated API schema to accept YYYY-MM-DD format instead of datetime
+      - Changed form input to use native date picker
+
+11. **Missing IssueForm Component**
     - Description: Error in IssuesClient component: "Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined"
     - Impact: Issues page was not rendering properly
     - Root Cause: Missing IssueForm component implementation
