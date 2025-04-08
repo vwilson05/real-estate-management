@@ -7,9 +7,8 @@ import { cn } from "@/lib/utils";
 interface Property {
   id: string;
   address: string;
-  latitude?: number | null;
-  longitude?: number | null;
-  name: string;
+  latitude: number | null;
+  longitude: number | null;
 }
 
 interface PropertyMapProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -23,6 +22,9 @@ export function PropertyMap({ properties, className, ...props }: PropertyMapProp
   const markers = React.useRef<any[]>([]);
   const [mapError, setMapError] = React.useState<string | null>(null);
   const [isClient, setIsClient] = React.useState(false);
+
+  // Log the received properties
+  console.log('PropertyMap props:', properties);
 
   // Set isClient to true when component mounts (client-side only)
   React.useEffect(() => {
@@ -99,16 +101,25 @@ export function PropertyMap({ properties, className, ...props }: PropertyMapProp
         property => 
           property.latitude !== null && 
           property.longitude !== null && 
-          property.latitude !== undefined && 
-          property.longitude !== undefined && 
           !isNaN(property.latitude) && 
           !isNaN(property.longitude)
       );
 
+      // Log the filtered properties
+      console.log('Valid properties for markers:', validProperties);
+
       // Add markers for each property with valid coordinates
       validProperties.forEach((property) => {
         try {
-          const marker = L.marker([property.latitude!, property.longitude!], { icon: L.icon({
+          // Log detailed coordinate information
+          console.log(`Processing property ${property.id}: Lat=${property.latitude}, Lon=${property.longitude}, TypeLat=${typeof property.latitude}, TypeLon=${typeof property.longitude}`);
+          
+          if (typeof property.latitude !== 'number' || typeof property.longitude !== 'number' || isNaN(property.latitude) || isNaN(property.longitude)) {
+            console.error(`Invalid coordinates for property ${property.id}. Skipping marker.`);
+            return; // Skip this property if coordinates are invalid
+          }
+
+          const marker = L.marker([property.latitude, property.longitude], { icon: L.icon({
             iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
             iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
             shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
@@ -117,7 +128,7 @@ export function PropertyMap({ properties, className, ...props }: PropertyMapProp
             popupAnchor: [1, -34],
             shadowSize: [41, 41]
           }) })
-            .bindPopup(`<h3>${property.name}</h3><p>${property.address}</p>`)
+            .bindPopup(`<h3>${property.address}</h3>`)
             .addTo(map.current);
           
           markers.current.push(marker);

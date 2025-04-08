@@ -21,6 +21,7 @@ const propertySchema = z.object({
 export async function GET() {
   try {
     const properties = await db.property.findMany();
+    console.log('API: Returning properties:', properties);
     return NextResponse.json(properties);
   } catch (error) {
     console.error("Error fetching properties:", error);
