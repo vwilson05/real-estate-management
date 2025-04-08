@@ -27,8 +27,8 @@ interface MonthlyIncome {
   momIncomeChange: number;
   momExpensesChange: number;
   momNetIncomeChange: number;
-  activeRepairs: Repair[];
-  totalRepairCost: number;
+  activeRepairs?: Repair[];
+  totalRepairCost?: number;
 }
 
 export function Overview() {
@@ -105,10 +105,12 @@ export function Overview() {
 
   // Get the most recent month's data for metrics
   const currentMonth = monthlyData[monthlyData.length - 1];
+  const activeRepairs = currentMonth.activeRepairs || [];
+  const totalRepairCost = currentMonth.totalRepairCost || 0;
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Monthly Income</CardTitle>
@@ -151,18 +153,6 @@ export function Overview() {
             <div className="text-2xl font-bold">{formatCurrency(currentMonth.netIncome)}</div>
             <p className="text-xs text-muted-foreground">
               YTD: {formatCurrency(currentMonth.ytdNetIncome)}
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Repairs</CardTitle>
-            <AlertCircle className="h-4 w-4 text-amber-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{currentMonth.activeRepairs.length}</div>
-            <p className="text-xs text-muted-foreground">
-              Total Cost: {formatCurrency(currentMonth.totalRepairCost)}
             </p>
           </CardContent>
         </Card>
@@ -215,32 +205,42 @@ export function Overview() {
           </BarChart>
         </ResponsiveContainer>
       </div>
-      {currentMonth.activeRepairs.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Active Repairs</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {currentMonth.activeRepairs.map((repair) => (
-                <div key={repair.id} className="flex items-center justify-between border-b pb-2">
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium">{repair.item}</p>
-                    <p className="text-xs text-muted-foreground">{repair.location}</p>
-                    <p className="text-xs text-muted-foreground">Est. completion: {formatDate(repair.estimatedCompletionDate)}</p>
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="space-y-4">
+          {/* Left side content can be added here in the future */}
+        </div>
+        {activeRepairs.length > 0 && (
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Active Repairs</CardTitle>
+              <AlertCircle className="h-4 w-4 text-amber-500" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{activeRepairs.length}</div>
+              <p className="text-xs text-muted-foreground mb-4">
+                Total Cost: {formatCurrency(totalRepairCost)}
+              </p>
+              <div className="space-y-4">
+                {activeRepairs.map((repair) => (
+                  <div key={repair.id} className="flex items-center justify-between border-b pb-2">
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">{repair.item}</p>
+                      <p className="text-xs text-muted-foreground">{repair.location}</p>
+                      <p className="text-xs text-muted-foreground">Est. completion: {formatDate(repair.estimatedCompletionDate)}</p>
+                    </div>
+                    <div className="flex flex-col items-end space-y-1">
+                      <Badge className={getStatusColor(repair.status)}>
+                        {repair.status.replace('_', ' ')}
+                      </Badge>
+                      <p className="text-sm font-medium">{formatCurrency(repair.cost)}</p>
+                    </div>
                   </div>
-                  <div className="flex flex-col items-end space-y-1">
-                    <Badge className={getStatusColor(repair.status)}>
-                      {repair.status.replace('_', ' ')}
-                    </Badge>
-                    <p className="text-sm font-medium">{formatCurrency(repair.cost)}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   )
 } 
