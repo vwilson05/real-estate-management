@@ -1,8 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useQuery } from "@tanstack/react-query"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { ArrowRight } from "lucide-react"
 
 interface Transaction {
   id: string;
@@ -17,27 +20,16 @@ interface Transaction {
 }
 
 export function RecentTransactions() {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        const response = await fetch('/api/transactions?limit=5');
-        if (!response.ok) {
-          throw new Error('Failed to fetch transactions');
-        }
-        const data = await response.json();
-        setTransactions(data);
-      } catch (error) {
-        console.error('Error fetching transactions:', error);
-      } finally {
-        setLoading(false);
+  const { data: transactions, isLoading, error } = useQuery<Transaction[]>({
+    queryKey: ["recentTransactions"],
+    queryFn: async () => {
+      const response = await fetch('/api/transactions?limit=5');
+      if (!response.ok) {
+        throw new Error('Failed to fetch transactions');
       }
-    };
-
-    fetchTransactions();
-  }, []);
+      return response.json();
+    },
+  });
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -53,7 +45,7 @@ export function RecentTransactions() {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="space-y-8">
         {[1, 2, 3].map((i) => (
@@ -70,7 +62,15 @@ export function RecentTransactions() {
     );
   }
 
-  if (transactions.length === 0) {
+  if (error) {
+    return (
+      <div className="text-center py-6 text-red-500">
+        Error loading transactions. Please try again later.
+      </div>
+    );
+  }
+
+  if (!transactions || transactions.length === 0) {
     return (
       <div className="text-center py-6 text-muted-foreground">
         No recent transactions found
@@ -79,27 +79,43 @@ export function RecentTransactions() {
   }
 
   return (
-    <div className="space-y-8">
-      {transactions.map((transaction) => (
-        <div key={transaction.id} className="flex items-center">
-          <Avatar className="h-9 w-9">
-            <AvatarFallback>
-              {transaction.type === 'INCOME' ? 'IN' : 'EX'}
-            </AvatarFallback>
-          </Avatar>
-          <div className="ml-4 space-y-1">
-            <p className="text-sm font-medium leading-none">
-              {transaction.category}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              {transaction.property.address} • {formatDate(transaction.date)}
-            </p>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-medium">Recent Transactions</h3>
+        <Link href="/transactions">
+          <Button variant="ghost" size="sm" className="h-8 px-2 lg:px-3">
+            View All
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </Link>
+      </div>
+      <div className="space-y-8">
+        {transactions.map((transaction) => (
+          <div key={transaction.id} className="flex items-center">
+            <Avatar className="h-9 w-9">
+              <AvatarFallback>
+                {transaction.type === 'INCOME' ? 'IN' : 'EX'}
+              </AvatarFallback>
+            </Avatar>
+            <div className="ml-4 space-y-1">
+              <p className="text-sm font-medium leading-none">
+                {transaction.category}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {transaction.property.address} • {formatDate(transaction.date)}
+              </p>
+              {transaction.description && (
+                <p className="text-xs text-muted-foreground">
+                  {transaction.description}
+                </p>
+              )}
+            </div>
+            <div className={`ml-auto font-medium ${transaction.type === 'INCOME' ? 'text-green-600' : 'text-red-600'}`}>
+              {transaction.type === 'INCOME' ? '+' : '-'}{formatCurrency(transaction.amount)}
+            </div>
           </div>
-          <div className={`ml-auto font-medium ${transaction.type === 'INCOME' ? 'text-green-600' : 'text-red-600'}`}>
-            {transaction.type === 'INCOME' ? '+' : '-'}{formatCurrency(transaction.amount)}
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
-  )
+  );
 } 
