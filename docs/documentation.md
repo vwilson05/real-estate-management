@@ -16,14 +16,19 @@ re-portfolio-management/
 │   ├── app/
 │   │   ├── api/            # API routes
 │   │   ├── components/     # Reusable components
+│   │   │   ├── ui/        # UI components (buttons, inputs, etc.)
+│   │   │   └── theme-toggle.tsx # Theme toggle component
 │   │   ├── lib/           # Utility functions and shared logic
 │   │   ├── hooks/         # Custom React hooks
 │   │   ├── properties/    # Properties feature
+│   │   │   └── components/
+│   │   │       └── PropertyForm.tsx # Property form with validation
 │   │   ├── transactions/  # Transactions feature
 │   │   ├── repairs/       # Repairs feature
 │   │   ├── tenants/       # Tenants feature
 │   │   ├── dashboard/     # Dashboard feature
 │   │   ├── layout.tsx     # Root layout with navigation
+│   │   ├── providers.tsx  # Application providers (Theme, QueryClient)
 │   │   └── page.tsx       # Home page (redirects to dashboard)
 ├── prisma/
 │   └── schema.prisma      # Database schema
@@ -38,10 +43,22 @@ re-portfolio-management/
 - **UI Components:** Tailwind CSS, Tremor
 - **State Management:** React Query
 - **Forms:** React Hook Form with Zod validation
+- **Theming:** next-themes for dark/light mode support
+
+## Recent Updates
+- **Theme Support:** Added dark/light mode toggle with proper CSS variable integration
+- **React Query Integration:** Set up QueryClientProvider for data fetching
+- **CSS Improvements:** Fixed CSS class errors and improved theming system
+- **Component Library:** Added reusable UI components with proper styling
+- **Property Management:** Enhanced PropertyForm with comprehensive field validation and improved UX
+- **Form Validation:** Implemented Zod schema validation for property data
+- **UI/UX Improvements:** Added required field indicators and helper text for better user guidance
 
 ## Database Schema
 The application uses the following main entities:
 - **Property:** Real estate properties with their details
+  - Required fields: address, city, state, zipCode, type, marketValue, purchasePrice, purchaseDate
+  - Optional fields: description
 - **Transaction:** Financial transactions (income/expenses)
 - **Repair:** Property maintenance and repairs
 - **Tenant:** Property tenants and lease information
@@ -71,6 +88,8 @@ The application uses the following main entities:
 - [x] Database schema
 - [x] Basic layout and navigation
 - [x] Dashboard page with summary cards
+- [x] Theme support (dark/light mode)
+- [x] React Query integration
 - [ ] Properties management
 - [ ] Transaction tracking
 - [ ] Repair management
@@ -85,6 +104,17 @@ The application uses the following main entities:
 - Use Prisma for all database operations
 - Implement proper error handling
 - Follow REST API best practices for endpoints
+- Use arbitrary value syntax (`[value]`) when applying CSS variables in Tailwind classes
+
+## CSS and Theming
+The application uses a combination of CSS variables and Tailwind CSS for theming:
+
+```css
+/* Example of using CSS variables with Tailwind */
+@apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))];
+```
+
+When using CSS variables in Tailwind classes, always use the arbitrary value syntax to avoid class name errors.
 
 ## Git Workflow
 1. Create a new branch for your feature/fix:
@@ -146,6 +176,48 @@ This document serves as the central repository for technical documentation. It c
 ## Architectural Decisions
 Refer to [architecture.md](./architecture.md) for details on technology stack and design choices.
 
+## Known Issues and Fixes
+Refer to [issues.md](./issues.md) for a comprehensive list of known issues, their resolutions, and ongoing bug tracking.
+
 ## Additional Resources
 - **User Guide:** Instructions for interacting with the app.
 - **Developer Guide:** Technical details for further development and customization.
+
+## Component Documentation
+### PropertyForm
+The PropertyForm component provides a comprehensive interface for creating and editing property records.
+
+#### Features
+- Form validation using Zod schema
+- Responsive grid layout
+- Section-based organization
+- Real-time validation feedback
+- Support for both create and edit modes
+
+#### Required Fields
+- Address
+- City
+- State
+- ZIP Code
+- Property Type
+- Market Value
+- Purchase Price
+- Purchase Date
+
+#### Optional Fields
+- Description
+
+#### Validation Rules
+- All required fields must be filled
+- Numeric fields must be positive
+- Dates must be valid
+- ZIP codes must follow proper format
+
+#### Usage
+```typescript
+<PropertyForm
+  initialData={propertyData} // Optional: For editing existing properties
+  onSubmit={handleSubmit}   // Required: Callback for form submission
+  isLoading={false}         // Optional: Loading state for submit button
+/>
+```
