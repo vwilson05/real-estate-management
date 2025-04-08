@@ -14,7 +14,7 @@
 - Property edit functionality with form reuse
 - Property deletion with confirmation dialog
 - API endpoints for property CRUD operations
-- Geocoding integration for automatic coordinate generation
+- Server-side geocoding integration with OpenStreetMap
 - React Query integration for data fetching and caching
 **Components:**
 - `PropertyList`: Displays properties in a shadcn Table format
@@ -22,17 +22,19 @@
 - `PropertiesClient`: Client-side wrapper for state management
 - `PropertyDetailClient`: Displays property details in a well-structured format
 - `PropertyEditClient`: Handles property editing with form reuse
+- `PropertyMap`: Interactive map with graceful handling of missing coordinates
 **API Endpoints:**
 - GET `/api/properties`: Retrieve all properties
 - POST `/api/properties`: Create a new property
 - GET `/api/properties/[propertyId]`: Retrieve a single property
 - PATCH `/api/properties/[propertyId]`: Update a property
 - DELETE `/api/properties/[propertyId]`: Delete a property
+- GET `/api/geocode`: Geocode an address
+- GET `/api/properties/geocode`: Geocode a property by ID
 **Next Steps:**
 - Implement property search and filtering
 - Add property comparison feature
 - Add property images support
-- Enhance geocoding with error handling and validation
 - Add property performance metrics
 - Implement property history tracking
 
@@ -135,21 +137,46 @@
 - Implement performance metrics
 - Add custom date range selection
 
-### Issue Tracking (In Progress)
-
-Track and manage issues, tasks, and reminders across properties:
-
-- Create, view, and manage issues with title, description, due date, status, priority, and type
-- Link issues to properties, repairs, and tenants
-- Filter issues by property, status, priority, type, and due date
-- Sort issues by various fields
-- Status tracking (Open, In Progress, Done, Blocked)
-- Priority levels (Low, Medium, High)
-- Issue types (Tax, Repair, Tenant Action, Maintenance, Reminder, Other)
+### Issue Tracking
+**Status:** In Progress
+**Description:** Track and manage issues, tasks, and reminders across properties.
+**Implementation:**
+- Issue model with comprehensive fields (title, description, dueDate, status, priority, type)
+- Relations to Property (required), Repair (optional), and Tenant (optional)
+- Issue creation form with Zod validation
+- Issue list view using shadcn Table
+- API endpoints for issue CRUD operations
+- Dashboard integration for active issues
 - Real-time updates using React Query
-- Modern UI with shadcn/ui components
-- Form validation using Zod
-- Responsive layout for all devices
+**Components:**
+- `IssueList`: Displays issues in a shadcn Table format
+- `IssueForm`: Form for creating issues with Zod validation
+- `IssuesClient`: Client-side wrapper for state management
+- `ActiveIssues`: Dashboard component for displaying active issues
+**API Endpoints:**
+- GET `/api/issues`: Retrieve all issues with filtering
+- POST `/api/issues`: Create a new issue
+- PATCH `/api/issues/[id]`: Update an issue
+- DELETE `/api/issues/[id]`: Delete an issue
+- GET `/api/dashboard/issues`: Get active issues for dashboard
+**Features:**
+- Status tracking (Open, In Progress, Resolved, Closed)
+- Priority levels (Low, Medium, High, Urgent)
+- Issue types (Repair, Maintenance, Inspection, Other)
+- Filtering by property, status, priority, type
+- Sorting by various fields
+- Real-time updates
+- Form validation
+- Responsive layout
+**Next Steps:**
+- Implement issue editing
+- Add issue deletion
+- Implement issue status updates
+- Add issue history view
+- Implement issue notifications
+- Add issue comments
+- Implement issue attachments
+- Add issue templates
 
 ## UI Components
 
