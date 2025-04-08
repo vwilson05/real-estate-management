@@ -4,7 +4,7 @@
 
 ### Decision: Use Client Components for Interactive Features
 - **Context**: Next.js 14 uses React Server Components by default, but interactive features require client-side JavaScript.
-- **Decision**: Mark components that use client-side libraries (React Query, React Hook Form, Tremor) with the "use client" directive.
+- **Decision**: Mark components that use client-side libraries (React Query, React Hook Form) with the "use client" directive.
 - **Implementation**: Added "use client" directive to:
   - PropertyList.tsx
   - PropertyForm.tsx
@@ -48,19 +48,25 @@
 - **Implementation**: Created /api/properties route with GET and POST handlers.
 - **Rationale**: Leverages Next.js built-in API routes for a unified development experience.
 
-### Decision: Implement In-Memory Storage for MVP
-- **Context**: Need a simple storage solution for the MVP.
-- **Decision**: Use in-memory array for property storage.
-- **Implementation**: Created an array in the API route to store properties.
-- **Rationale**: Allows rapid development and testing without database setup, with a clear path to replace with a database later.
+### Decision: Use SQLite with Prisma for Data Storage
+- **Context**: Need a simple, file-based database for development and production.
+- **Decision**: Use SQLite with Prisma ORM for data storage.
+- **Implementation**: Created Prisma schema with Property, Transaction, Repair, and Tenant models.
+- **Rationale**: Provides a simple, file-based database that's easy to set up and maintain, with proper type safety and query capabilities.
 
 ## UI Components
 
-### Decision: Use Tremor for UI Components
+### Decision: Standardize on shadcn/ui for UI Components
 - **Context**: Need a modern, responsive UI with minimal custom CSS.
-- **Decision**: Implement Tremor components for UI elements.
-- **Implementation**: Used Tremor components (Card, Table, Button, etc.) throughout the application.
+- **Decision**: Implement shadcn/ui components for UI elements.
+- **Implementation**: Used shadcn/ui components (Card, Table, Button, Form, etc.) throughout the application.
 - **Rationale**: Provides a consistent, modern UI with minimal custom CSS and good developer experience.
+
+### Decision: Use Recharts for Data Visualization
+- **Context**: Need interactive charts for financial data visualization.
+- **Decision**: Implement Recharts for financial charts and graphs.
+- **Implementation**: Used Recharts in the dashboard for income, expenses, and NOI visualization.
+- **Rationale**: Provides flexible, customizable charts with good performance and accessibility.
 
 ## Type Safety
 
@@ -76,11 +82,13 @@
 - **Implementation**: Created propertySchema with Zod and used it for validation.
 - **Rationale**: Provides runtime type validation with good error messages and TypeScript integration.
 
-## Future Considerations
+### Decision: Centralize Type Definitions
+- **Context**: Need consistent type definitions across the application.
+- **Decision**: Create shared type definitions in src/types/ directory.
+- **Implementation**: Created property.ts with shared Property interface.
+- **Rationale**: Ensures type consistency and reduces duplication across the application.
 
-### Database Integration
-- Replace in-memory storage with a proper database (e.g., PostgreSQL with Prisma)
-- Implement proper data persistence and querying
+## Future Considerations
 
 ### Authentication and Authorization
 - Implement user authentication
@@ -101,4 +109,7 @@
 - Implement property editing
 - Add property deletion with confirmation
 - Add sorting and filtering to property list
-- Implement property search 
+- Implement property search
+- Add tenant management features
+- Implement document management
+- Add tax reporting features 

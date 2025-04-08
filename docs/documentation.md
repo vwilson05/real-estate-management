@@ -15,12 +15,7 @@ re-portfolio-management/
 ├── src/
 │   ├── app/
 │   │   ├── api/            # API routes
-│   │   ├── components/     # Reusable components
-│   │   │   ├── ui/        # UI components (buttons, inputs, etc.)
-│   │   │   └── theme-toggle.tsx # Theme toggle component
-│   │   ├── lib/           # Utility functions and shared logic
-│   │   ├── hooks/         # Custom React hooks
-│   │   ├── properties/    # Properties feature
+│   │   ├── properties/     # Properties feature
 │   │   │   └── components/
 │   │   │       └── PropertyForm.tsx # Property form with validation
 │   │   ├── transactions/  # Transactions feature
@@ -30,10 +25,18 @@ re-portfolio-management/
 │   │   ├── layout.tsx     # Root layout with navigation
 │   │   ├── providers.tsx  # Application providers (Theme, QueryClient)
 │   │   └── page.tsx       # Home page (redirects to dashboard)
+│   ├── components/        # Shared components
+│   │   ├── ui/           # shadcn/ui components
+│   │   ├── dashboard/    # Dashboard components
+│   │   ├── properties/   # Property components
+│   │   └── theme-toggle.tsx # Theme toggle component
+│   ├── lib/              # Utility functions and shared logic
+│   ├── hooks/            # Custom React hooks
+│   └── types/            # TypeScript type definitions
 ├── prisma/
-│   └── schema.prisma      # Database schema
-├── docs/                  # Project documentation
-└── package.json          # Project dependencies
+│   └── schema.prisma     # Database schema
+├── docs/                 # Project documentation
+└── package.json         # Project dependencies
 ```
 
 ## Navigation Structure
@@ -51,7 +54,10 @@ Each page focuses on its specific content without duplicating navigation element
 - **Framework:** Next.js 14 with App Router
 - **Language:** TypeScript
 - **Database:** SQLite with Prisma ORM
-- **UI Components:** Tailwind CSS, Tremor
+- **UI Components:** 
+  - shadcn/ui for base components
+  - Recharts for data visualization
+  - Tailwind CSS for styling
 - **State Management:** React Query
 - **Forms:** React Hook Form with Zod validation
 - **Theming:** next-themes for dark/light mode support
@@ -60,22 +66,30 @@ Each page focuses on its specific content without duplicating navigation element
 - **Theme Support:** Added dark/light mode toggle with proper CSS variable integration
 - **React Query Integration:** Set up QueryClientProvider for data fetching
 - **CSS Improvements:** Fixed CSS class errors and improved theming system
-- **Component Library:** Added reusable UI components with proper styling
+- **Component Library:** Standardized on shadcn/ui components
 - **Property Management:** Enhanced PropertyForm with comprehensive field validation and improved UX
 - **Form Validation:** Implemented Zod schema validation for property data
 - **UI/UX Improvements:** Added required field indicators and helper text for better user guidance
 - **Dashboard Metrics:** Implemented real-time metrics from database with loading states and error handling
 - **Transaction Form:** Enhanced date handling with native date picker and aligned validation schemas
 - **API Validation:** Improved date format handling in transaction API endpoints
+- **Type Safety:** Centralized type definitions in src/types/ directory
+- **Repair Management:** Added repair tracking with status and priority management
+- **Geocoding:** Implemented address geocoding for property locations
 
 ## Database Schema
 The application uses the following main entities:
 - **Property:** Real estate properties with their details
   - Required fields: address, city, state, zipCode, type, marketValue, purchasePrice, purchaseDate
-  - Optional fields: description
+  - Optional fields: description, latitude, longitude
 - **Transaction:** Financial transactions (income/expenses)
+  - Required fields: date, amount, type, category, propertyId
+  - Optional fields: description
 - **Repair:** Property maintenance and repairs
+  - Required fields: date, cost, description, status, priority, item, estimatedCompletionDate, propertyId
 - **Tenant:** Property tenants and lease information
+  - Required fields: name, leaseStart, leaseEnd, rentAmount, propertyId
+  - Optional fields: email, phone
 
 ## Getting Started
 1. Clone the repository:
@@ -105,9 +119,9 @@ The application uses the following main entities:
 - [x] Theme support (dark/light mode)
 - [x] React Query integration
 - [x] Dashboard metrics from database
-- [ ] Properties management
-- [ ] Transaction tracking
-- [ ] Repair management
+- [x] Properties management
+- [x] Transaction tracking
+- [x] Repair management
 - [ ] Tenant management
 - [ ] Reports and analytics
 
@@ -120,6 +134,7 @@ The application uses the following main entities:
 - Implement proper error handling
 - Follow REST API best practices for endpoints
 - Use arbitrary value syntax (`[value]`) when applying CSS variables in Tailwind classes
+- Use shared type definitions from src/types/ directory
 
 ## CSS and Theming
 The application uses a combination of CSS variables and Tailwind CSS for theming:
@@ -151,7 +166,6 @@ When using CSS variables in Tailwind classes, always use the arbitrary value syn
 This document serves as the central repository for technical documentation. It covers API endpoints, database schemas, function specifications, and architectural decisions for the Real Estate Portfolio Tracker.
 
 ## API Endpoints
-*(For a RESTful approach, list endpoints such as:)*
 
 | Endpoint                 | Method | Description                                 | Parameters                   | Response                           |
 |--------------------------|--------|---------------------------------------------|------------------------------|------------------------------------|
@@ -159,45 +173,11 @@ This document serves as the central repository for technical documentation. It c
 | `/api/properties`        | POST   | Create a new property                       | Property data in JSON format | Created property object            |
 | `/api/transactions`      | GET    | Retrieve list of income/expense transactions  | `propertyId` (optional)      | Array of transaction objects       |
 | `/api/transactions`      | POST   | Record a new transaction                    | Transaction data in JSON     | Created transaction object         |
+| `/api/repairs`          | GET    | Retrieve list of repairs                    | `propertyId` (optional)      | Array of repair objects            |
+| `/api/repairs`          | POST   | Create a new repair                         | Repair data in JSON          | Created repair object              |
 | `/api/dashboard/metrics` | GET    | Get dashboard metrics                       | `None`                       | Dashboard metrics object           |
-
-## Database Schemas
-### Properties Table
-- **Table Name:** properties
-- **Fields:**
-  - `id`: Unique identifier (Primary Key)
-  - `address`: Property address
-  - `state`: State where the property is located
-  - `type`: E.g., house, MFR, etc.
-  - `purchase_date`: Date of purchase
-  - `value`: Current market value
-
-### Transactions Table
-- **Table Name:** transactions
-- **Fields:**
-  - `id`: Unique transaction ID (Primary Key)
-  - `property_id`: Foreign key linking to properties table
-  - `date`: Transaction date
-  - `category`: Income, expense, tax, repair, rent, etc.
-  - `amount`: Monetary value
-  - `description`: Details about the transaction
-
-## Function Specifications
-### Example: addProperty
-- **Purpose:** Add a new property to the portfolio.
-- **Inputs:** Object containing property details.
-- **Outputs:** Confirmation of the new property record.
-- **Edge Cases:** Handle duplicate properties and invalid input formats.
-
-## Architectural Decisions
-Refer to [architecture.md](./architecture.md) for details on technology stack and design choices.
-
-## Known Issues and Fixes
-Refer to [issues.md](./issues.md) for a comprehensive list of known issues, their resolutions, and ongoing bug tracking.
-
-## Additional Resources
-- **User Guide:** Instructions for interacting with the app.
-- **Developer Guide:** Technical details for further development and customization.
+| `/api/dashboard/repairs` | GET    | Get active repairs                          | `None`                       | Active repairs and total cost      |
+| `/api/dashboard/monthly-income` | GET | Get monthly income data                 | `None`                       | Monthly income, expenses, and NOI  |
 
 ## Component Documentation
 ### PropertyForm
@@ -209,6 +189,7 @@ The PropertyForm component provides a comprehensive interface for creating and e
 - Section-based organization
 - Real-time validation feedback
 - Support for both create and edit modes
+- Automatic geocoding of addresses
 
 #### Required Fields
 - Address
@@ -222,6 +203,8 @@ The PropertyForm component provides a comprehensive interface for creating and e
 
 #### Optional Fields
 - Description
+- Latitude (auto-generated)
+- Longitude (auto-generated)
 
 #### Validation Rules
 - All required fields must be filled
@@ -238,215 +221,30 @@ The PropertyForm component provides a comprehensive interface for creating and e
 />
 ```
 
-### TransactionForm
-- **Purpose:** Allows users to add new income or expense transactions
-- **Location:** `src/app/components/transactions/TransactionForm.tsx`
+### RepairForm
+- **Purpose:** Allows users to add new repairs
+- **Location:** `src/app/repairs/components/RepairForm.tsx`
 - **Features:**
   - Native date picker for better user experience
   - Consistent date format handling (YYYY-MM-DD)
   - Real-time form validation using Zod
   - Property selection dropdown
-  - Amount validation for positive numbers
-  - Transaction type selection (INCOME/EXPENSE)
-  - Category and description fields
-  - Automatic form reset on successful submission
-  - React Query integration for optimistic updates
+  - Cost validation for positive numbers
+  - Status selection (PENDING, IN_PROGRESS, COMPLETED)
+  - Priority selection (LOW, MEDIUM, HIGH)
+  - Estimated completion date tracking
 
-### API Routes
-
-#### Transaction API
-- **Endpoint:** `/api/transactions`
-- **Methods:**
-  - `GET`: Retrieve transactions with optional filtering
-    - Query Parameters:
-      - `propertyId`: Filter by property
-      - `fromDate`: Start date for date range
-      - `toDate`: End date for date range
-      - `limit`: Maximum number of transactions to return
-  - `POST`: Create new transaction
-    - Request Body Schema:
-      ```typescript
-      {
-        amount: number (positive),
-        type: 'INCOME' | 'EXPENSE',
-        category: string,
-        date: string (YYYY-MM-DD format),
-        propertyId: string,
-        description: string
-      }
-      ```
-    - Validation:
-      - Uses Zod for request validation
-      - Converts date strings to Date objects for database storage
-      - Returns detailed validation errors for invalid requests
-
-## Dashboard
-
-The dashboard provides an overview of the real estate portfolio with the following metrics:
-
-### Key Metrics
-
-- **Total Properties**: The number of properties in the portfolio
-- **Portfolio Value**: The total market value of all properties
-- **Monthly Income**: The total rental income for the current month
-- **Active Repairs**: The number of pending or in-progress repairs
-
-### API Endpoints
-
-#### Dashboard Metrics
-
-```
-GET /api/dashboard/metrics
-```
-
-Returns the key metrics for the dashboard:
-- `totalProperties`: Number of properties in the portfolio
-- `totalValue`: Total market value of all properties
-- `monthlyIncome`: Total rental income for the current month
-- `activeRepairs`: Number of pending or in-progress repairs
-
-#### Monthly Income
-
-```
-GET /api/dashboard/monthly-income
-```
-
-Returns monthly income data for the last 6 months:
-- Array of objects with `month` (short month name) and `income` (total income for that month)
-
-## API Response Handling
-
-### Best Practices for Fetch API Responses
-
-When working with the Fetch API in React Query mutations, it's important to follow these best practices:
-
-1. **Parse Response Body Only Once**: The response body can only be read once. After calling `response.json()`, the response stream is consumed and cannot be read again.
-
-   ```tsx
-   // ❌ Incorrect: Parsing response body twice
-   const response = await fetch('/api/endpoint');
-   if (!response.ok) {
-     const errorData = await response.json(); // First parse
-     throw new Error(errorData.error);
-   }
-   return response.json(); // Second parse - will fail
-   
-   // ✅ Correct: Parse response body once and reuse
-   const response = await fetch('/api/endpoint');
-   const responseData = await response.json(); // Parse once
-   if (!response.ok) {
-     throw new Error(responseData.error);
-   }
-   return responseData; // Reuse parsed data
-   ```
-
-2. **Error Handling**: Always check the `response.ok` property before attempting to use the response data.
-
-3. **Type Safety**: Use TypeScript interfaces to define the expected response structure.
-
-4. **Consistent Error Format**: Ensure your API returns errors in a consistent format that can be easily handled by the client.
-
-### Example: Transaction Creation
-
-Here's an example of proper response handling in a transaction creation mutation:
-
-```tsx
-const createTransaction = useMutation({
-  mutationFn: async (data: TransactionFormData) => {
-    const response = await fetch('/api/transactions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-    
-    const responseData = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(responseData.error || 'Failed to create transaction');
-    }
-    
-    return responseData;
-  },
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['transactions'] });
-    toast.success('Transaction created successfully');
-  },
-  onError: (error) => {
-    toast.error(error instanceof Error ? error.message : 'Failed to create transaction');
-  },
-});
-```
-
-## Geocoding
-
-The application includes geocoding functionality to convert addresses to latitude and longitude coordinates. This is used to display properties on a map and for location-based features.
-
-### Client-Side Geocoding
-
-The client-side geocoding module (`src/lib/geocoding.ts`) provides two main functions:
-
-1. `geocodeAddress(address: string)`: Geocodes a single address
-   ```typescript
-   const result = await geocodeAddress("123 Main St, Boston, MA 02108");
-   console.log(result); // { latitude: 42.3601, longitude: -71.0589 }
-   ```
-
-2. `geocodeProperty(propertyId: string)`: Geocodes a property by its ID
-   ```typescript
-   const property = await geocodeProperty("property-id-123");
-   console.log(property); // { id: "property-id-123", latitude: 42.3601, longitude: -71.0589, ... }
-   ```
-
-### Server-Side Geocoding
-
-The server-side geocoding module (`src/lib/server/geocoding.ts`) implements the actual geocoding logic using the OpenStreetMap Nominatim API. It uses the native `fetch` API to make HTTP requests and returns latitude and longitude coordinates for addresses.
-
-### API Routes
-
-The application provides two API routes for geocoding:
-
-1. `/api/geocode`: Geocodes a single address
-   ```typescript
-   // Request
-   POST /api/geocode
-   {
-     "address": "123 Main St, Boston, MA 02108"
-   }
-   
-   // Response
-   {
-     "latitude": 42.3601,
-     "longitude": -71.0589
-   }
-   ```
-
-2. `/api/properties/geocode`: Geocodes a property by its ID
-   ```typescript
-   // Request
-   POST /api/properties/geocode
-   {
-     "propertyId": "property-id-123"
-   }
-   
-   // Response
-   {
-     "id": "property-id-123",
-     "address": "123 Main St",
-     "city": "Boston",
-     "state": "MA",
-     "zipCode": "02108",
-     "latitude": 42.3601,
-     "longitude": -71.0589,
-     ...
-   }
-   ```
-
-### Usage in Components
-
-The geocoding functionality is used in several components:
-
-1. `PropertyForm`: Automatically geocodes addresses as they are entered
-2. `GeocodeButton`: Allows users to geocode all properties at once
-3. `PropertyMap`: Displays properties on a map using their coordinates
+### Dashboard Components
+- **Overview:** Financial metrics and charts
+  - Monthly income, expenses, and NOI
+  - Year-to-date totals
+  - Month-over-month changes
+  - Interactive bar charts using Recharts
+- **Active Repairs:** List of ongoing repairs
+  - Status badges with color coding
+  - Cost tracking
+  - Estimated completion dates
+- **Recent Transactions:** Latest financial activities
+  - Transaction type indicators
+  - Amount formatting
+  - Property association

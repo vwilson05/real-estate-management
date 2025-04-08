@@ -55,81 +55,78 @@
 *   Utilize `cn()` for merging Tailwind classes.
 *   Leverage shadcn/ui components for consistency.
 
+## Task 1: Implement Property Detail View and Edit Functionality
 
-## Task 1: Update Documentation
+**Goal:** Allow users to view the full details of a specific property and edit its information.
 
-**Goal:** Ensure all documentation files in the `docs/` directory are accurate, consistent, and reflect the current state of the project after the cleanup in Task 1.
-
-**Specific Instructions:**
-
-*   **For each file in `docs/`:**
-    *   Read through the content carefully.
-    *   Compare the information against the current codebase (files, structure, dependencies, features, UI components, APIs, database schema).
-    *   Update any outdated information, inaccuracies, or inconsistencies.
-*   **Key Files and Areas to Focus On:**
-    *   **`architecture.md`:**
-        *   Verify the Tech Stack list against `package.json`.
-        *   Clarify UI component usage: Emphasize shadcn/ui as primary, Recharts for charts. Remove/downplay Tremor unless specific components remain in use beyond `PropertyList` (which should be refactored).
-        *   Update the Directory Structure if any changes were made during cleanup.
-        *   Review Architectural Decisions (ADs). Update AD-004 (Tremor). Ensure AD-002 reflects Prisma/SQLite, removing any implication of in-memory storage. Add new ADs for standardization choices made in Task 1.
-    *   **`decisions.md`:**
-        *   Remove or explicitly mark as outdated the decision regarding "In-Memory Storage for MVP".
-        *   Update decisions related to UI components (Tremor vs shadcn/ui).
-        *   Add entries for decisions made during cleanup (e.g., Prisma client consolidation, UI standardization).
-    *   **`documentation.md`:**
-        *   Update Tech Stack.
-        *   Update Project Structure diagram if needed.
-        *   Update API Endpoints section: Add details for `/api/repairs` and `/api/dashboard/repairs`, `/api/dashboard/monthly-income`. Ensure descriptions and parameters match the code.
-        *   Update Database Schema overview to match `prisma/schema.prisma`.
-        *   Update Component Documentation: Reflect the refactoring of `PropertyForm`. Add documentation for `RepairForm` and `RepairList`.
-        *   Ensure API Response Handling section reflects best practices and any fixes made.
-        *   Remove references to temporary file-based storage if applicable.
-    *   **`features.md`:** (This will be more heavily updated in Task 3, but perform a quick consistency check here).
-    *   **`issues.md`:**
-        *   Remove the numerous duplicate "Transaction List UX Fixes" entries at the end of the file.
-        *   Review the "Current Issues" section. Mark issues resolved by Task 1 (e.g., structure cleanup, API errors, potentially UI/UX issues if refactoring addressed them). Update the status of ongoing issues like Form Validation, API Implementation, Performance Optimization.
-        *   Review "Resolved Bugs" to ensure accuracy.
-    *   **`milestones.md`:** Update the status description for Phase 1 based on the current state after Task 1.
-    *   **`ui_ux.md`:**
-        *   Update component descriptions to prioritize shadcn/ui. Remove/clarify Tremor mentions.
-        *   Update Form components section to reflect the use of shadcn `Form`, `Input`, `Label`, `Select`, etc., especially after refactoring `PropertyForm`.
-        *   Ensure the description of theming (CSS variables, Tailwind) matches `globals.css` and `tailwind.config.ts`.
-    *   **`agent.md`, `coding-guidelines.md`, `project-overview.md`:** Review for consistency but expect minor changes.
-
-## Task 3: Enhance `features.md`
-
-**Goal:** Update `docs/features.md` to accurately reflect completed work and add more detail to planned features.
+**Rationale:** This is a core requirement for managing portfolio data. Currently, users can only list and add properties. Viewing details and editing existing entries are fundamental next steps.
 
 **Specific Instructions:**
 
-1.  **Review `docs/features.md`:** Read the current content.
-2.  **Update Status and Implementation Details:**
-    *   **Property Management:**
-        *   Status: Keep "In Progress".
-        *   Implementation: Update list to accurately reflect `Property` model fields, `/api/properties` GET/POST, `useProperties` hook, `PropertyList` (mention refactor to shadcn Table), `PropertyForm` (mention refactor to shadcn Form), `PropertiesClient`, `new` page.
-        *   Next Steps: Keep Edit, Delete, Detail View, Filtering/Sorting.
-    *   **Financial Tracking:**
-        *   Status: Keep "In Progress".
-        *   Implementation: Update list to reflect `Transaction` model, `/api/transactions` GET/POST (mention filtering), `useTransactions` hook, `TransactionList` (shadcn Table), `TransactionForm` (shadcn Form, Zod/RHF, React Query mutation), property relation display.
-        *   Next Steps: Keep Edit/Delete, Advanced Filtering/Sorting, Pagination, Reports, Import/Export.
-    *   **Repair Management:**
-        *   Status: Change to "In Progress".
-        *   Implementation: Add details - `Repair` model defined, API route `/api/repairs` (GET/POST), `RepairList` component (shadcn Table), `RepairForm` component (shadcn Form, Zod/RHF, property dropdown), `RepairsClient` component for state management with React Query.
-        *   Next Steps: Keep Edit, Delete, Status Updates, History View, Schedules.
-    *   **Tenant Management:**
-        *   Status: Keep "Planned".
-        *   Implementation: Keep schema reference.
-        *   Next Steps: Keep existing items. Add detail if possible (e.g., specify fields like contact info, rent due date, payment status).
-    *   **Dashboard & Analytics:**
-        *   Status: Keep "In Progress".
-        *   Implementation: Update list - Dashboard page layout (`dashboard/page.tsx`), `Card` components, API endpoint `/api/dashboard/metrics` (Prisma aggregation), `useDashboardMetrics` hook, Display of metrics (`totalProperties`, `totalValue`, `monthlyIncome`, `occupancyRate` - check if occupancy is actually displayed), Skeleton loading, Formatting utilities, Financial Overview chart (`overview.tsx`, Recharts, `/api/dashboard/monthly-income` - mention data structure/discrepancy fix), Recent Transactions list (`recent-transactions.tsx`, React Query), Active Repairs list (`active-repairs.tsx`, React Query, `/api/dashboard/repairs`), Theme awareness, Error handling.
-        *   Next Steps: Keep More Charts, Filtering, Export, Property Comparison, More Metrics.
-    *   **Technical Features (Data Validation, API Integration, Performance Optimization):** Update status based on work done in Task 1 and current state (e.g., Zod validation is well-implemented, API integration covers basic CRUD for several features, performance uses React Query caching but more could be done).
-3.  **Flesh Out Future Features:**
-    *   Review the "Future Features" and "Features to be fleshed out" sections.
-    *   Integrate the "fleshed out" items into the main "Future Features" list.
-    *   **Property Map Integration:** Add description: "Visual map display of property locations using a library like Leaflet or React Map GL. Allow filtering properties on the map."
-    *   **Issue Tracking:** Add description: "Per-property issue tracker to manage maintenance requests or tenant issues. Fields: Issue Title, Description, Status (Open, In Progress, Resolved), Priority, Assigned To, Last Step Taken, Next Step, Contact Info, Due Date, Follow-up Reminders/Emails."
-    *   **Calendar Integration:** Add description: "Calendar view displaying important dates like lease expirations, rent due dates, maintenance schedules, follow-up reminders. Include email alert functionality for upcoming events."
-    *   Review other future features (Document Management, Tax Reporting, Market Analysis, Mobile App) and add a bit more detail if possible based on the project context.
-4.  **Review and Finalize:** Ensure the entire `features.md` file is consistent, up-to-date, and clearly distinguishes between implemented, in-progress, and planned features.
+1.  **Create Property Detail Page:**
+    *   Create a new dynamic route/page: `src/app/properties/[propertyId]/page.tsx`.
+    *   This page should fetch data for a single property using its `propertyId` from the URL parameters.
+    *   Implement a server component to fetch initial data or use a client component with React Query (`useQuery` with a unique key like `['property', propertyId]`).
+    *   Display all fields of the `Property` model (defined in `prisma/schema.prisma` and `src/types/property.ts`) in a well-structured and readable format. Consider using shadcn `Card` components or a definition list (`dl`, `dt`, `dd`).
+    *   Include loading and error states.
+    *   Add an "Edit" button that links to the edit page (`/properties/[propertyId]/edit`).
+    *   Add a "Delete" button (functionality to be implemented later, but place the button).
+    *   Add a "Back to List" link/button (`<Link href="/properties">`).
+
+2.  **Create Property Edit Page:**
+    *   Create a new dynamic route/page: `src/app/properties/[propertyId]/edit/page.tsx`.
+    *   This page should fetch the data for the specific property being edited, similar to the detail page.
+    *   **Reuse `PropertyForm`:** Import and utilize the `src/app/properties/components/PropertyForm.tsx` component.
+    *   Pass the fetched property data as `initialData` to the `PropertyForm`.
+    *   The `onSubmit` handler for the form should trigger a mutation to update the property.
+    *   Include loading and error states for the page fetch.
+    *   Ensure the submit button in the reused form shows "Update Property" (or similar) and indicates loading state (`isLoading`).
+
+3.  **Implement API Endpoints:**
+    *   **GET Single Property:**
+        *   Create/update an API route `src/app/api/properties/[propertyId]/route.ts`.
+        *   Implement the `GET` handler to fetch a single property by ID using `db.property.findUnique({ where: { id: propertyId } })`.
+        *   Handle cases where the property is not found (return 404).
+        *   Return the property data as JSON.
+    *   **Update Property (PUT/PATCH):**
+        *   In `src/app/api/properties/[propertyId]/route.ts`, implement a `PUT` or `PATCH` handler.
+        *   Accept the updated property data in the request body.
+        *   Validate the incoming data using the `propertySchema` (or a partial version if using PATCH).
+        *   Use `db.property.update({ where: { id: propertyId }, data: validatedData })` to update the property in the database.
+        *   Handle potential errors (e.g., validation errors, property not found).
+        *   Return the updated property data.
+    *   **DELETE Property (Optional - Placeholder):**
+        *   In `src/app/api/properties/[propertyId]/route.ts`, implement a `DELETE` handler.
+        *   Use `db.property.delete({ where: { id: propertyId } })`.
+        *   Handle cases where the property is not found.
+        *   Return a success response (e.g., status 204 No Content or a confirmation message). *Actual delete button functionality on the frontend can be implemented in a subsequent task.*
+
+4.  **Implement React Query Mutations:**
+    *   Create a new hook (e.g., `useProperty`) or extend `useProperties` to include:
+        *   A query function to fetch a single property by ID (`useQuery(['property', propertyId], fetchPropertyById)`).
+        *   A mutation function for updating a property (`useMutation(updateProperty)`).
+        *   A mutation function for deleting a property (`useMutation(deleteProperty)`).
+    *   The `updateProperty` mutation function should call the `PUT`/`PATCH /api/properties/[propertyId]` endpoint.
+    *   On successful update:
+        *   Invalidate the specific property query (`queryClient.invalidateQueries({ queryKey: ['property', propertyId] })`).
+        *   Invalidate the properties list query (`queryClient.invalidateQueries({ queryKey: ['properties'] })`).
+        *   Optionally update the cache directly using `queryClient.setQueryData`.
+        *   Show a success toast notification.
+        *   Redirect the user back to the property detail page (`/properties/[propertyId]`) or the properties list (`/properties`).
+    *   Handle errors appropriately, showing toast notifications.
+
+5.  **Update UI Links:**
+    *   Ensure the "View" button in `PropertyList.tsx` links correctly to `/properties/[propertyId]`.
+    *   Ensure the "Edit" button in `PropertyList.tsx` links correctly to `/properties/[propertyId]/edit`.
+
+6.  **Testing (Conceptual):**
+    *   Verify the detail page displays all property data correctly.
+    *   Test form validation on the edit page.
+    *   Confirm successful property updates are reflected in the database and UI (detail page and list).
+    *   Test error handling for fetching and updating.
+    *   Check that navigation between list, detail, and edit pages works as expected.
+
+7.  **Documentation Updates:**
+    *   **`features.md`:** Update the "Property Management" section to reflect the implementation of Detail View and Edit functionality. Mark these as "In Progress" or "Complete" based on task execution.
+    *   **`documentation.md`:** Add details for the new API endpoints (`GET /api/properties/[propertyId]`, `PUT/PATCH /api/properties/[propertyId]`, `DELETE /api/properties/[propertyId]`). Document the Detail and Edit pages/components.
+    *   **`milestones.md`:** Update progress within Phase 2 Core Features.

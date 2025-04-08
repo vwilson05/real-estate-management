@@ -7,119 +7,133 @@
 **Status:** In Progress
 **Description:** Create, view, edit, and delete properties in the portfolio.
 **Implementation:**
-- Property list view with filtering and sorting
-- Property creation form with validation
-- Property details view
-- Edit and delete functionality
-- Interactive property map with Leaflet and OpenStreetMap integration
-  - Real-time property location visualization
-  - Custom markers with property information popups
-  - Automatic map bounds adjustment to show all properties
-  - Handles properties with missing coordinates gracefully
-  - Filters out invalid coordinates before creating markers
-  - Provides error handling for map initialization issues
-  - Responsive design that adapts to container size
-  - Proper cleanup of map resources on unmount
+- Property model with comprehensive fields (address, city, state, zipCode, type, marketValue, purchasePrice, purchaseDate)
+- Property creation form with Zod validation
+- Property list view using shadcn Table
+- Property detail view with comprehensive information display
+- Property edit functionality with form reuse
+- Property deletion with confirmation dialog
+- API endpoints for property CRUD operations
+- Geocoding integration for automatic coordinate generation
+- React Query integration for data fetching and caching
 **Components:**
-- `PropertyList`: Displays properties in a table format
-- `PropertyForm`: Form for creating and editing properties
-- `PropertyCard`: Card view for property details
-- `PropertyMap`: Interactive map displaying property locations using Leaflet
-  - Uses OpenStreetMap tiles for the base map
-  - Implements custom markers with property information
-  - Handles map initialization and cleanup
-  - Manages marker state and updates
-- `PropertyMapClient`: Client-side wrapper for the map component
-  - Handles data fetching with React Query
-  - Provides loading and error states
-  - Wraps map in a styled card component
-**Dependencies:**
-- Leaflet: For interactive map functionality
-- OpenStreetMap: For map tiles and data
-- React Query: For data fetching and caching
+- `PropertyList`: Displays properties in a shadcn Table format
+- `PropertyForm`: Form for creating and editing properties with Zod validation
+- `PropertiesClient`: Client-side wrapper for state management
+- `PropertyDetailClient`: Displays property details in a well-structured format
+- `PropertyEditClient`: Handles property editing with form reuse
+**API Endpoints:**
+- GET `/api/properties`: Retrieve all properties
+- POST `/api/properties`: Create a new property
+- GET `/api/properties/[propertyId]`: Retrieve a single property
+- PATCH `/api/properties/[propertyId]`: Update a property
+- DELETE `/api/properties/[propertyId]`: Delete a property
 **Next Steps:**
-- Implement property detail views
-- Add property images support
-- Implement property search functionality
+- Implement property search and filtering
 - Add property comparison feature
-- Add clustering for multiple properties in the same area
-- Implement map filters and search
-- Add geocoding to automatically get coordinates from addresses
-- Add custom map styles and themes
-- Implement map controls for zoom and layer selection
+- Add property images support
+- Enhance geocoding with error handling and validation
+- Add property performance metrics
+- Implement property history tracking
 
 ### 2. Financial Tracking
 **Status:** In Progress
 **Description:** Track income, expenses, and financial metrics for each property.
 **Implementation:**
-- Transaction creation and management
-- Income and expense categorization
-- Financial reporting and analytics
-- Cash flow tracking
+- Transaction model with fields (date, amount, type, category, propertyId, description)
+- Transaction creation form with Zod validation
+- Transaction list view using shadcn Table
+- API endpoints for transaction CRUD operations
+- React Query integration for data management
 **Components:**
-- `TransactionList`: Displays transactions in a table format
-- `TransactionForm`: Form for creating and editing transactions
-- `FinancialMetrics`: Displays key financial metrics
+- `TransactionList`: Displays transactions in a shadcn Table format
+- `TransactionForm`: Form for creating transactions with Zod validation
+- `TransactionsClient`: Client-side wrapper for state management
+**API Endpoints:**
+- GET `/api/transactions`: Retrieve all transactions
+- POST `/api/transactions`: Create a new transaction
 **Next Steps:**
-- Implement transaction categories
-- Add recurring transaction support
+- Implement transaction editing
+- Add transaction deletion
+- Implement advanced filtering and sorting
+- Add pagination support
 - Implement financial reports
-- Add budget tracking
+- Add recurring transaction support
+- Implement budget tracking
+- Add transaction categories management
 
 ### 3. Repair Management
-**Status:** Planned
+**Status:** In Progress
 **Description:** Track and manage property repairs and maintenance.
 **Implementation:**
-- Repair request creation
-- Repair status tracking
-- Cost tracking
-- Maintenance scheduling
+- Repair model with fields (date, cost, description, status, priority, item, estimatedCompletionDate, propertyId)
+- Repair creation form with Zod validation
+- Repair list view using shadcn Table
+- API endpoints for repair CRUD operations
+- Dashboard integration for active repairs
 **Components:**
-- `RepairList`: Displays repairs in a table format
-- `RepairForm`: Form for creating and editing repairs
-- `RepairStatus`: Displays repair status and timeline
+- `RepairList`: Displays repairs in a shadcn Table format
+- `RepairForm`: Form for creating repairs with Zod validation
+- `RepairsClient`: Client-side wrapper for state management
+- `ActiveRepairs`: Dashboard component for displaying active repairs
+**API Endpoints:**
+- GET `/api/repairs`: Retrieve all repairs
+- POST `/api/repairs`: Create a new repair
+- GET `/api/dashboard/repairs`: Get active repairs for dashboard
 **Next Steps:**
-- Implement repair request workflow
-- Add maintenance scheduling
-- Implement cost tracking
+- Implement repair editing
+- Add repair deletion
+- Implement repair status updates
 - Add repair history view
+- Implement maintenance scheduling
+- Add repair cost tracking
+- Implement repair request workflow
+- Add repair notifications
 
 ### 4. Tenant Management
 **Status:** Planned
 **Description:** Manage tenant information and lease agreements.
 **Implementation:**
-- Tenant profile creation
-- Lease agreement tracking
-- Rent payment tracking
-- Communication history
-**Components:**
-- `TenantList`: Displays tenants in a table format
-- `TenantForm`: Form for creating and editing tenants
-- `LeaseAgreement`: Displays lease agreement details
+- Tenant model defined in schema
+- Basic fields: name, leaseStart, leaseEnd, rentAmount, propertyId, email, phone
 **Next Steps:**
 - Implement tenant profiles
 - Add lease agreement management
 - Implement rent payment tracking
 - Add communication history
+- Create tenant list view
+- Implement tenant creation form
+- Add tenant search and filtering
+- Implement tenant-property relationship management
 
 ### 5. Dashboard & Analytics
 **Status:** In Progress
 **Description:** Overview of portfolio performance and key metrics.
 **Implementation:**
-- Portfolio overview
-- Financial metrics
-- Property performance
-- Recent activity
+- Dashboard layout with responsive grid
+- Key metrics display (Total Properties, Portfolio Value, Monthly Income, Occupancy Rate)
+- Financial overview chart using Recharts
+- Recent transactions list
+- Active repairs list
+- API endpoints for dashboard data
 **Components:**
 - `Dashboard`: Main dashboard layout
-- `PortfolioMetrics`: Displays portfolio-level metrics
-- `PropertyPerformance`: Displays property-level performance
-- `RecentActivity`: Displays recent transactions and updates
+- `Overview`: Financial metrics and charts
+- `RecentTransactions`: List of recent transactions
+- `ActiveRepairs`: List of active repairs
+**API Endpoints:**
+- GET `/api/dashboard/metrics`: Get portfolio metrics
+- GET `/api/dashboard/monthly-income`: Get monthly financial data
+- GET `/api/dashboard/repairs`: Get active repairs
 **Next Steps:**
 - Implement more detailed analytics
 - Add customizable dashboard widgets
 - Implement export functionality
-- Add data visualization components
+- Add more data visualization components
+- Implement property comparison charts
+- Add trend analysis
+- Implement performance metrics
+- Add custom date range selection
 
 ## UI Components
 
