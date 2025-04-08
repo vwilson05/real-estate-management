@@ -204,6 +204,7 @@ This document serves as the central repository for technical documentation. It c
 | `/api/dashboard/repairs` | GET    | Get active repairs                          | `None`                       | Active repairs and total cost      |
 | `/api/dashboard/issues`  | GET    | Get active issues                           | `None`                       | Active issues and total count      |
 | `/api/dashboard/monthly-income` | GET | Get monthly income data                 | `None`                       | Monthly income, expenses, and NOI  |
+| `/api/debug/transactions` | GET   | Debug endpoint for transactions             | `None`                       | Recent transactions and counts     |
 
 ### Tenants
 
@@ -282,3 +283,93 @@ The PropertyForm component provides a comprehensive interface for creating and e
   - Transaction type indicators
   - Amount formatting
   - Property association
+
+## Dashboard API Endpoints
+
+### `/api/dashboard/metrics`
+Returns key metrics for the dashboard:
+- Total number of properties
+- Total portfolio value (sum of all property market values)
+- Monthly income (sum of income transactions for the current month)
+- Number of active repairs
+
+**Response Format**:
+```json
+{
+  "totalProperties": 5,
+  "totalValue": 2500000,
+  "monthlyIncome": 15000,
+  "activeRepairs": 2
+}
+```
+
+### `/api/dashboard/monthly-income`
+Returns monthly income data for the last 6 months:
+- Monthly income, expenses, and NOI
+- Year-to-date totals
+- Month-over-month changes
+
+**Response Format**:
+```json
+[
+  {
+    "month": "Jan",
+    "income": 15000,
+    "expenses": 5000,
+    "netIncome": 10000,
+    "ytdIncome": 15000,
+    "ytdExpenses": 5000,
+    "ytdNetIncome": 10000,
+    "momIncomeChange": 0,
+    "momExpensesChange": 0,
+    "momNetIncomeChange": 0
+  },
+  // ... more months
+]
+```
+
+### `/api/dashboard/repairs`
+Returns active repairs and total repair cost:
+- List of active repairs with details
+- Total repair cost
+
+**Response Format**:
+```json
+{
+  "activeRepairs": [
+    {
+      "id": "123",
+      "item": "Roof repair",
+      "location": "123 Main St",
+      "status": "IN_PROGRESS",
+      "cost": 5000,
+      "estimatedCompletionDate": "2024-04-15T00:00:00.000Z"
+    }
+  ],
+  "totalRepairCost": 5000
+}
+```
+
+### `/api/dashboard/issues`
+Returns active issues and total count:
+- List of top issues with details
+- Total count of open issues
+
+**Response Format**:
+```json
+{
+  "topIssues": [
+    {
+      "id": "123",
+      "title": "Leaking faucet",
+      "status": "OPEN",
+      "priority": "HIGH",
+      "dueDate": "2024-04-10T00:00:00.000Z",
+      "property": {
+        "address": "123 Main St"
+      }
+    }
+  ],
+  "totalOpenIssues": 5
+}
+```

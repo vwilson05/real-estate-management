@@ -732,42 +732,37 @@ This fix aligns with our architectural decisions regarding:
 ## Dashboard Metrics Fix
 
 ### Issue Description
-**Date**: [Current Date]  
+**Date**: April 8, 2024  
 **Status**: Resolved  
 **Priority**: High  
-**Component**: Dashboard, API, Hooks
+**Component**: Dashboard, API
 
-The dashboard metrics were not reading from the database, showing $0 for total value even after properties were created with values.
+The dashboard metrics were not displaying data from the database correctly. Monthly Income, Monthly Expenses, and Monthly NOI were showing as $0 even though there were transactions in the database.
 
 ### Root Cause
-1. The dashboard was using hardcoded values instead of fetching real data from the database
-2. No API endpoint existed to calculate and return dashboard metrics
-3. No React hook was available to fetch and manage dashboard metrics data
+1. The API routes were not handling case-insensitive comparison for transaction types
+2. The API routes were not handling future dates correctly
+3. The dashboard was not showing the most recent month's data when the current month had no transactions
 
 ### Resolution
-1. Created a new API endpoint `/api/dashboard/metrics` that calculates:
-   - Total number of properties
-   - Total portfolio value (sum of all property market values)
-   - Monthly income (sum of income transactions for the current month)
-   - Number of active repairs (repairs with status "PENDING" or "IN_PROGRESS")
-2. Implemented a new React hook `useDashboardMetrics` to fetch and manage dashboard metrics data
-3. Updated the dashboard page to:
-   - Use the new metrics hook
-   - Display real-time data from the database
-   - Show loading states with skeleton UI
-   - Handle and display errors appropriately
-   - Format numbers with proper currency formatting
+1. Updated the `/api/dashboard/metrics` route to:
+   - Use case-insensitive comparison for transaction types
+   - Fetch the most recent month's data when the current month has no transactions
+   - Properly calculate total portfolio value and monthly income
+
+2. Updated the `/api/dashboard/monthly-income` route to:
+   - Use case-insensitive comparison for transaction types
+   - Fetch the most recent month's data when the current month has no transactions
+   - Properly calculate monthly income, expenses, and NOI
+
+3. Added a debug API endpoint `/api/debug/transactions` to help diagnose transaction data issues
 
 ### Prevention
 To prevent similar issues in the future:
-1. Always implement real data fetching for metrics and summaries
-2. Create dedicated API endpoints for data aggregation
-3. Use React Query for data fetching and caching
-4. Implement proper loading states and error handling
-5. Format numbers appropriately for display
-
-### Related Architectural Decision
-This fix aligns with our decision to use React Query for data fetching and caching, as documented in the architecture.md file.
+1. Always use case-insensitive comparison for string fields that might have different casing
+2. Handle edge cases like future dates or missing data gracefully
+3. Add proper logging to help diagnose issues
+4. Create debug endpoints for troubleshooting
 
 ## Transaction Creation Error
 
