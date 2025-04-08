@@ -17,6 +17,7 @@ export async function GET(request: Request) {
     const propertyId = searchParams.get('propertyId');
     const fromDate = searchParams.get('fromDate');
     const toDate = searchParams.get('toDate');
+    const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined;
 
     const where = {
       ...(propertyId && { propertyId }),
@@ -36,6 +37,7 @@ export async function GET(request: Request) {
       orderBy: {
         date: 'desc',
       },
+      ...(limit && { take: limit }),
     });
 
     return NextResponse.json(transactions);

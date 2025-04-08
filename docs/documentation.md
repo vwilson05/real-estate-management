@@ -224,3 +224,37 @@ The PropertyForm component provides a comprehensive interface for creating and e
   isLoading={false}         // Optional: Loading state for submit button
 />
 ```
+
+## Dashboard
+
+The dashboard provides an overview of the real estate portfolio with the following metrics:
+
+### Key Metrics
+
+- **Total Properties**: The number of properties in the portfolio
+- **Portfolio Value**: The total market value of all properties
+- **Monthly Income**: The total rental income for the current month
+- **Active Repairs**: The number of pending or in-progress repairs
+
+### API Endpoints
+
+#### Dashboard Metrics
+
+```
+GET /api/dashboard/metrics
+```
+
+Returns the key metrics for the dashboard:
+- `totalProperties`: Number of properties in the portfolio
+- `totalValue`: Total market value of all properties
+- `monthlyIncome`: Total rental income for the current month
+- `activeRepairs`: Number of pending or in-progress repairs
+
+#### Monthly Income
+
+```
+GET /api/dashboard/monthly-income
+```
+
+Returns monthly income data for the last 6 months:
+- Array of objects with `month` (short month name) and `income` (total income for that month)

@@ -1,44 +1,54 @@
 "use client"
 
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
+import { useEffect, useState } from "react"
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
+import { Skeleton } from "@/components/ui/skeleton"
 
-const data = [
-  {
-    name: "Jan",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Feb",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Mar",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Apr",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "May",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Jun",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Jul",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-]
+interface MonthlyIncome {
+  month: string;
+  income: number;
+}
 
 export function Overview() {
+  const [monthlyData, setMonthlyData] = useState<MonthlyIncome[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMonthlyIncome = async () => {
+      try {
+        const response = await fetch('/api/dashboard/monthly-income');
+        if (!response.ok) {
+          throw new Error('Failed to fetch monthly income data');
+        }
+        const data = await response.json();
+        setMonthlyData(data);
+      } catch (error) {
+        console.error('Error fetching monthly income data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMonthlyIncome();
+  }, []);
+
+  if (loading) {
+    return <Skeleton className="h-[350px] w-full" />;
+  }
+
+  if (monthlyData.length === 0) {
+    return (
+      <div className="flex h-[350px] items-center justify-center text-muted-foreground">
+        No income data available
+      </div>
+    );
+  }
+
   return (
     <ResponsiveContainer width="100%" height={350}>
-      <BarChart data={data}>
+      <BarChart data={monthlyData}>
         <XAxis
-          dataKey="name"
+          dataKey="month"
           stroke="#888888"
           fontSize={12}
           tickLine={false}
@@ -51,8 +61,12 @@ export function Overview() {
           axisLine={false}
           tickFormatter={(value) => `$${value}`}
         />
+        <Tooltip 
+          formatter={(value: number) => [`$${value}`, 'Income']}
+          cursor={{ fill: 'rgba(0, 0, 0, 0.1)' }}
+        />
         <Bar
-          dataKey="total"
+          dataKey="income"
           fill="currentColor"
           radius={[4, 4, 0, 0]}
           className="fill-primary"
