@@ -9,6 +9,8 @@ This document details the overall architecture of the Real Estate Portfolio Trac
 - **Scalability:** Ensure the design accommodates future property additions or more detailed financial tracking
 - **Maintainability:** Prioritize clear code structure and thorough documentation
 - **Type Safety:** Utilize TypeScript throughout the application for better developer experience
+- **Accessibility:** Ensure the application is usable by people with disabilities
+- **Responsive Design:** Support various screen sizes and devices
 
 ## Tech Stack
 - **Frontend Framework:** Next.js 14 with App Router
@@ -25,12 +27,14 @@ This document details the overall architecture of the Real Estate Portfolio Trac
 - **Data Validation:** Zod 3.24.2
 - **HTTP Client:** Axios 1.8.4
 - **Charts:** Recharts 2.15.2
+- **Theming:** next-themes for dark/light mode support
 
 ## Core Components
 - **Frontend:** 
   - App Router-based routing
   - Server and Client Components
   - Responsive layouts with Tailwind CSS
+  - Theme support with dark/light mode
 - **Backend API:** 
   - Next.js API routes for CRUD operations
   - Prisma Client for database access
@@ -41,6 +45,10 @@ This document details the overall architecture of the Real Estate Portfolio Trac
 - **Reporting Module:** 
   - Tremor components for dashboards
   - Recharts for detailed analytics
+- **UI System:**
+  - CSS variables for theming
+  - Tailwind CSS for utility classes
+  - Reusable UI components
 
 ## Directory Structure
 ```
@@ -49,8 +57,11 @@ re-portfolio-management/
 │   ├── app/
 │   │   ├── api/           # API routes
 │   │   ├── components/    # Shared components
+│   │   │   ├── ui/       # UI components (buttons, inputs, etc.)
+│   │   │   └── theme-toggle.tsx # Theme toggle component
 │   │   ├── lib/          # Utilities and helpers
 │   │   ├── hooks/        # Custom React hooks
+│   │   ├── providers.tsx # Application providers (Theme, QueryClient)
 │   │   └── (routes)/     # Page routes
 ├── prisma/               # Database configuration
 └── docs/                # Documentation
@@ -64,6 +75,8 @@ re-portfolio-management/
 | AD-003     | TanStack Query for data fetching            | Powerful caching, real-time updates, optimistic updates  |
 | AD-004     | Tremor for dashboard components             | Ready-made, customizable analytics components            |
 | AD-005     | Zod for validation                          | TypeScript integration, runtime validation               |
+| AD-006     | CSS variables with Tailwind                 | Flexible theming with utility-first CSS approach         |
+| AD-007     | next-themes for theme management            | Simple dark/light mode implementation with system preference support |
 
 ## Security Considerations
 - Environment variables for sensitive data
@@ -91,6 +104,8 @@ src/
 ├── hooks/                 # Custom React hooks
 │   ├── useProperties.ts  # Properties data hook
 │   └── useTransactions.ts # Transactions data hook
+├── lib/                  # Utility functions
+│   └── utils.ts          # Helper functions (e.g., class name merging)
 └── types/                # TypeScript type definitions
     ├── property.ts       # Property interface
     └── transaction.ts    # Transaction interface
@@ -101,14 +116,36 @@ src/
 1. **Hooks Layer**
    - Custom hooks (`useProperties`, `useTransactions`) manage data fetching and state
    - Hooks provide loading and error states
-   - Currently using mock data, prepared for API integration
+   - React Query for efficient data fetching and caching
+   - Cache control headers to prevent browser caching
+   - Refetch on mount and window focus for fresh data
 
 2. **Component Layer**
    - Components consume hooks for data and state
    - Follow consistent pattern for loading and error handling
    - Maintain separation of concerns
+   - Reusable UI components with consistent styling
 
-3. **Type System**
+3. **API Layer**
+   - Next.js API routes for CRUD operations
+   - File-based storage for data persistence
+   - Zod validation for request data
+   - Comprehensive error handling
+   - Logging for debugging
+
+4. **Storage Layer**
+   - File-based JSON storage for development
+   - Structured for easy migration to database
+   - Helper functions for reading and writing data
+   - Error handling for file operations
+
+5. **Type System**
    - Strong TypeScript typing throughout the application
    - Shared interfaces in types directory
    - Ensures type safety across components and hooks
+
+6. **Theming System**
+   - CSS variables for theme values
+   - Tailwind CSS for utility classes
+   - next-themes for theme management
+   - Dark mode by default with light mode option

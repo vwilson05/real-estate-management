@@ -467,3 +467,108 @@ To prevent similar issues in the future:
 
 ### Related Architectural Decision
 This issue relates to our architectural decision to use React Query for data fetching. The resolution reinforces our approach of centralizing data fetching logic in custom hooks while ensuring proper provider setup for these hooks to function correctly.
+
+## Property Form UX Issues
+
+### Issue: Poor Property Form User Experience
+- **Status:** In Progress
+- **Priority:** High
+- **Description:** The property entry form has several UX issues that make it difficult to use:
+  - Text contrast issues: White text on white background in input fields
+  - Inconsistent grid system: Form layout doesn't follow a clean, consistent grid
+  - Lack of helper text and hints: No guidance for users on how to fill out the form
+  - Dropdown styling issues: Property type dropdown has styling and contrast problems
+  - No visual indication of required fields
+  - No clear error handling or validation feedback
+  - White shadowing/glow effect when opening the form
+  - Property type dropdown still has poor contrast and usability
+  - Entire form appears white with no proper contrast against the background
+- **Impact:** Users struggle to enter property information correctly, leading to frustration and potential data entry errors
+- **Solution:** Implement comprehensive form improvements including:
+  - Complete overhaul of form styling using direct CSS instead of Tailwind classes
+  - Fix text contrast in all input fields by using proper text color classes
+  - Implement a consistent grid system for form layout
+  - Add helper text and hints for each field
+  - Improve dropdown styling and usability with proper contrast
+  - Add visual indicators for required fields
+  - Enhance error handling and validation feedback
+  - Remove white shadowing/glow effect by fixing CSS classes
+  - Ensure proper styling for the property type dropdown
+  - Use CSS variables directly instead of Tailwind classes for better control
+- **Related Components:** PropertyForm.tsx, NewPropertyPage.tsx
+- **Assigned To:** UI/UX Team
+- **Target Resolution:** Sprint 3
+
+## Property Save and Display Fix
+
+### Issue Description
+**Date**: [Current Date]  
+**Status**: Resolved  
+**Priority**: High  
+**Component**: Multiple (API, Hooks, UI)
+
+Properties were not being saved or displayed on the dashboard after creation. This was caused by several issues:
+1. In-memory storage in the API route
+2. Improper cache invalidation in React Query
+3. Basic error handling in the UI
+
+### Root Cause
+1. The API route was using in-memory storage (`const properties: Property[] = []`), which meant data was lost on server restart
+2. The React Query cache wasn't being properly updated after property creation
+3. Error handling was basic and didn't provide good feedback to users
+
+### Resolution
+1. **API Route Improvements**:
+   - Implemented file-based storage for persistence
+   - Added comprehensive error handling
+   - Added logging for debugging
+   - Prepared for future database integration
+
+2. **React Query Improvements**:
+   - Set `staleTime: 0` to always fetch fresh data
+   - Added cache control headers to prevent browser caching
+   - Implemented optimistic updates for better UX
+   - Added proper error handling and type safety
+   - Improved cache management with forced refetching
+   - Added refetchOnMount and refetchOnWindowFocus options
+
+3. **UI Improvements**:
+   - Added loading spinner
+   - Improved error state with retry button
+   - Added empty state with call-to-action
+   - Wrapped list in Card component for consistent styling
+
+### Prevention
+To prevent similar issues in the future:
+1. Always implement proper error handling at all layers
+2. Use optimistic updates for better UX
+3. Provide clear feedback to users during loading and error states
+4. Use persistent storage solutions instead of in-memory storage
+5. Implement proper cache control headers for API requests
+6. Configure React Query to refetch data when components mount or window regains focus
+
+### Related Architectural Decision
+This fix aligns with our architectural decisions regarding:
+- Client-Server Component Architecture
+- State Management with React Query
+- Error Handling and User Feedback
+- UI Component Consistency
+- Data Persistence
+
+### Implementation Details
+1. **File-based Storage**:
+   - Created a `data` directory in the project root
+   - Implemented `properties.json` file for storing property data
+   - Added helper functions for reading and writing to the file
+   - Ensured the data directory and file exist before operations
+
+2. **React Query Configuration**:
+   - Added cache control headers to prevent browser caching
+   - Set `refetchOnMount: true` to ensure fresh data when components mount
+   - Set `refetchOnWindowFocus: true` to refresh data when the window regains focus
+   - Implemented both optimistic updates and forced refetching for reliability
+
+3. **Error Handling**:
+   - Added comprehensive error handling in the API route
+   - Improved error messages in the UI
+   - Added retry functionality for failed requests

@@ -15,9 +15,18 @@ export type Property = z.infer<typeof propertySchema> & {
 };
 
 async function fetchProperties(): Promise<Property[]> {
-  const response = await fetch("/api/properties");
+  const response = await fetch("/api/properties", {
+    // Add cache control headers to prevent caching
+    headers: {
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+    },
+  });
+  
   if (!response.ok) {
-    throw new Error("Failed to fetch properties");
+    const error = await response.json();
+    throw new Error(error.error || "Failed to fetch properties");
   }
   return response.json();
 }
@@ -33,9 +42,12 @@ async function createProperty(data: Omit<Property, "id">): Promise<Property> {
     },
     body: JSON.stringify(data),
   });
+  
   if (!response.ok) {
-    throw new Error("Failed to create property");
+    const error = await response.json();
+    throw new Error(error.error || "Failed to create property");
   }
+  
   return response.json();
 }
 
@@ -45,19 +57,33 @@ export function useProperties() {
   const { data: properties, isLoading, error } = useQuery({
     queryKey: ["properties"],
     queryFn: fetchProperties,
+    staleTime: 0, // Always fetch fresh data
+    retry: 1, // Only retry once on failure
+    refetchOnMount: true, // Refetch when component mounts
+    refetchOnWindowFocus: true, // Refetch when window regains focus
   });
 
   const createPropertyMutation = useMutation({
     mutationFn: createProperty,
-    onSuccess: () => {
+    onSuccess: (newProperty) => {
+      // Update the cache with the new property
+      queryClient.setQueryData<Property[]>(["properties"], (old) => {
+        if (!old) return [newProperty];
+        return [...old, newProperty];
+      });
+      
+      // Force a refetch to ensure we have the latest data
       queryClient.invalidateQueries({ queryKey: ["properties"] });
+    },
+    onError: (error) => {
+      console.error("Error creating property:", error);
     },
   });
 
   return {
-    properties,
+    properties: properties || [],
     isLoading,
-    error,
+    error: error instanceof Error ? error.message : null,
     createProperty: createPropertyMutation.mutate,
     isCreating: createPropertyMutation.isPending,
   };

@@ -1,6 +1,6 @@
 "use client";
 
-import { Table, TableHead, TableRow, TableHeaderCell, TableBody, TableCell, Button } from "@tremor/react";
+import { Table, TableHead, TableRow, TableHeaderCell, TableBody, TableCell, Button, Card } from "@tremor/react";
 import Link from "next/link";
 import { useProperties, Property } from "../../hooks/useProperties";
 
@@ -8,15 +8,51 @@ export default function PropertyList() {
   const { properties, isLoading, error } = useProperties();
 
   if (isLoading) {
-    return <div>Loading properties...</div>;
+    return (
+      <Card className="mt-6">
+        <div className="flex items-center justify-center p-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+            <p className="mt-4 text-muted-foreground">Loading properties...</p>
+          </div>
+        </div>
+      </Card>
+    );
   }
 
   if (error) {
-    return <div>Error loading properties: {error.message}</div>;
+    return (
+      <Card className="mt-6">
+        <div className="flex items-center justify-center p-8">
+          <div className="text-center text-destructive">
+            <p>Error loading properties: {error}</p>
+            <Button
+              className="mt-4"
+              onClick={() => window.location.reload()}
+            >
+              Retry
+            </Button>
+          </div>
+        </div>
+      </Card>
+    );
+  }
+
+  if (!properties.length) {
+    return (
+      <Card className="mt-6">
+        <div className="flex flex-col items-center justify-center p-8">
+          <p className="text-muted-foreground">No properties found</p>
+          <Link href="/properties/new" className="mt-4">
+            <Button>Add Your First Property</Button>
+          </Link>
+        </div>
+      </Card>
+    );
   }
 
   return (
-    <div>
+    <Card className="mt-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Property List</h2>
         <Link href="/properties/new">
@@ -34,7 +70,7 @@ export default function PropertyList() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {properties?.map((property: Property) => (
+          {properties.map((property: Property) => (
             <TableRow key={property.id}>
               <TableCell>{property.address}</TableCell>
               <TableCell>{property.state}</TableCell>
@@ -54,6 +90,6 @@ export default function PropertyList() {
           ))}
         </TableBody>
       </Table>
-    </div>
+    </Card>
   );
 } 
