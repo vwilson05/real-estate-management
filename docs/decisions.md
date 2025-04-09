@@ -197,4 +197,37 @@ Negative:
   - Better error handling and rate limiting control
 - **Consequences**:
   - Positive: More reliable geocoding, better security, no API key management
-  - Negative: Slightly increased server load, need to handle rate limiting 
+  - Negative: Slightly increased server load, need to handle rate limiting
+
+### Decision: Implement Client-Side Rate Limiting for Batch Geocoding
+- **Context**: Batch geocoding operations could overwhelm both our server and the external Nominatim service.
+- **Decision**: Add client-side rate limiting with a 100ms delay between requests.
+- **Implementation**: 
+  - Added sleep utility function in GeocodeButton component
+  - Implemented delay between consecutive geocoding requests
+  - Enhanced error handling and logging
+- **Rationale**: 
+  - Prevents overwhelming server resources
+  - Respects Nominatim's rate limits
+  - Improves reliability of batch operations
+  - Better user experience with progress feedback
+- **Consequences**:
+  - Positive: More reliable batch operations, better service compliance
+  - Negative: Slightly longer processing time for batch operations
+
+## Form State Management
+
+### Decision: Improve Form Submission State Handling
+- **Context**: Form submission state could reset prematurely in components like TenantForm.
+- **Decision**: Implement more robust form submission state handling.
+- **Implementation**: 
+  - Move setIsSubmitting(true) before try block
+  - Ensure proper async/await usage in form submissions
+  - Maintain consistent state throughout async operations
+- **Rationale**: 
+  - Prevents UI inconsistencies during form submission
+  - Better user feedback during async operations
+  - More reliable form state management
+- **Consequences**:
+  - Positive: More reliable form submissions, better UX
+  - Negative: None significant 

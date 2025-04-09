@@ -87,6 +87,9 @@ Each page focuses on its specific content without duplicating navigation element
 - **Property Map:** Enhanced property map with graceful handling of invalid coordinates
 - **Dashboard Metrics:** Fixed dashboard metrics calculation and display
 - **Repair Form:** Fixed repair creation by adding required item and estimatedCompletionDate fields
+- **Geocoding Improvements:** Enhanced batch geocoding with rate limiting protection (100ms delay between requests)
+- **Form Submission:** Fixed TenantForm submission state handling to prevent premature state updates
+- **Type Safety:** Verified and documented proper type usage in IssueList color mappings
 
 ## Database Schema
 The application uses the following main entities:
