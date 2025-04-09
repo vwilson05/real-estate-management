@@ -13,6 +13,9 @@ const createEventSchema = z.object({
   allDay: z.boolean(),
   type: z.enum(["REPAIR", "MAINTENANCE", "INSPECTION", "TAX", "OTHER"]),
   propertyId: z.string().min(1, "Property is required"),
+  createTodo: z.boolean().optional(),
+  todoPriority: z.enum(["LOW", "MEDIUM", "HIGH"]).optional(),
+  todoStatus: z.enum(["OPEN", "IN_PROGRESS", "COMPLETED"]).optional(),
 });
 
 export async function GET(request: Request) {
@@ -65,18 +68,51 @@ export async function POST(request: Request) {
     const body = await request.json();
     const validatedData = createEventSchema.parse(body);
 
-    const event = await prisma.calendarEvent.create({
-      data: {
-        ...validatedData,
-        start: new Date(validatedData.start),
-        end: validatedData.end ? new Date(validatedData.end) : null,
-      },
-      include: {
-        property: true,
-      },
+    // Start a transaction to create both event and todo
+    const result = await prisma.$transaction(async (tx) => {
+      // Create the calendar event
+      const event = await tx.calendarEvent.create({
+        data: {
+          title: validatedData.title,
+          description: validatedData.description,
+          start: new Date(validatedData.start),
+          end: validatedData.end ? new Date(validatedData.end) : null,
+          allDay: validatedData.allDay,
+          type: validatedData.type,
+          propertyId: validatedData.propertyId,
+        },
+        include: {
+          property: true,
+        },
+      });
+
+      // If createTodo is true, create a todo
+      if (validatedData.createTodo) {
+        const todo = await tx.todo.create({
+          data: {
+            title: validatedData.title,
+            description: validatedData.description,
+            status: validatedData.todoStatus || "OPEN",
+            priority: validatedData.todoPriority || "MEDIUM",
+            type: validatedData.type,
+            propertyId: validatedData.propertyId,
+            dueDate: validatedData.end ? new Date(validatedData.end) : new Date(validatedData.start),
+            calendarEventId: event.id, // Link the todo to the calendar event
+          },
+          include: {
+            property: true,
+          },
+        });
+
+        // Return both event and todo
+        return { event, todo };
+      }
+
+      // If no todo was created, just return the event
+      return { event };
     });
 
-    return NextResponse.json(event);
+    return NextResponse.json(result);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(

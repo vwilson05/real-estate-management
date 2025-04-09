@@ -1,6 +1,8 @@
 import { Property } from '@prisma/client';
 
-export type CalendarEventType = 'REPAIR' | 'MAINTENANCE' | 'INSPECTION' | 'TAX' | 'OTHER';
+export type CalendarEventType = "REPAIR" | "MAINTENANCE" | "INSPECTION" | "TAX" | "OTHER";
+export type TodoPriority = "LOW" | "MEDIUM" | "HIGH";
+export type TodoStatus = "OPEN" | "IN_PROGRESS" | "COMPLETED";
 
 export interface CalendarEvent {
   id: string;
@@ -24,6 +26,9 @@ export interface CreateCalendarEventInput {
   allDay?: boolean;
   type: CalendarEventType;
   propertyId: string;
+  createTodo?: boolean;
+  todoPriority?: TodoPriority;
+  todoStatus?: TodoStatus;
 }
 
 export interface UpdateCalendarEventInput extends Partial<CreateCalendarEventInput> {

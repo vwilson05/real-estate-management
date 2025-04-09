@@ -7,22 +7,29 @@ datasource db {
   url      = "file:./dev.db"
 }
 
-model Issue {
-  id          String    @id @default(cuid())
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+model Todo {
+  id          String   @id @default(cuid())
   title       String
   description String?
+  status      String   @default("OPEN")
+  priority    String   @default("MEDIUM")
+  type        String   @default("GENERAL")
   dueDate     DateTime?
-  status      String    @default("OPEN")
-  priority    String    @default("MEDIUM")
-  type        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   propertyId  String
+  property    Property @relation(fields: [propertyId], references: [id])
   repairId    String?
+  repair      Repair?  @relation(fields: [repairId], references: [id])
   tenantId    String?
-  property    Property  @relation(fields: [propertyId], references: [id])
-  repair      Repair?   @relation(fields: [repairId], references: [id])
-  tenant      Tenant?   @relation(fields: [tenantId], references: [id])
+  tenant      Tenant?  @relation(fields: [tenantId], references: [id])
+  calendarEventId String?
+  calendarEvent CalendarEvent? @relation(fields: [calendarEventId], references: [id])
+
+  @@index([propertyId])
+  @@index([repairId])
+  @@index([tenantId])
+  @@index([calendarEventId])
 }
 
 model Property {
@@ -41,7 +48,7 @@ model Property {
   latitude       Float?
   longitude      Float?
   calendarEvents CalendarEvent[]
-  issues         Issue[]
+  todos          Todo[]
   repairs        Repair[]
   tenants        Tenant[]
   transactions   Transaction[]
@@ -72,7 +79,7 @@ model Repair {
   item                    String
   estimatedCompletionDate DateTime
   propertyId              String
-  issues                  Issue[]
+  todos                   Todo[]
   property                Property @relation(fields: [propertyId], references: [id])
 }
 
@@ -87,7 +94,7 @@ model Tenant {
   leaseEnd   DateTime
   rentAmount Float
   propertyId String
-  issues     Issue[]
+  todos      Todo[]
   property   Property @relation(fields: [propertyId], references: [id])
 }
 
@@ -103,4 +110,5 @@ model CalendarEvent {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   property    Property  @relation(fields: [propertyId], references: [id])
+  todo        Todo[]
 }

@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Overview } from "@/components/dashboard/overview"
 import { RecentTransactions } from "@/components/dashboard/recent-transactions"
 import { ActiveRepairs } from "@/components/dashboard/active-repairs"
-import { ActiveIssues } from "@/components/dashboard/active-issues"
+import { ActiveTodos } from "@/components/dashboard/active-todos"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useQuery } from "@tanstack/react-query"
@@ -48,22 +48,22 @@ export default function DashboardPage() {
 
   if (error) {
     return (
-      <div className="flex h-[450px] items-center justify-center">
-        <div className="text-center">
-          <h3 className="text-lg font-semibold text-red-500">Error Loading Dashboard</h3>
-          <p className="text-sm text-muted-foreground">Please try refreshing the page</p>
+      <div className="flex h-[450px] items-center justify-center rounded-md border border-dashed">
+        <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
+          <AlertCircle className="h-10 w-10 text-muted-foreground" />
+          <h3 className="mt-4 text-lg font-semibold">Something went wrong</h3>
+          <p className="mb-4 mt-2 text-sm text-muted-foreground">
+            {error.message}
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="flex-1 space-y-4 p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Real Estate Portfolio Dashboard</h2>
-        <div className="flex items-center space-x-2">
-          <Button>Export Report</Button>
-        </div>
+        <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
@@ -74,96 +74,95 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <Skeleton className="h-8 w-24" />
+              <Skeleton className="h-8 w-[100px]" />
             ) : (
-              <>
-                <div className="text-2xl font-bold">{metrics?.totalProperties || 0}</div>
-                <p className="text-xs text-muted-foreground">
-                  Properties in portfolio
-                </p>
-              </>
+              <div className="text-2xl font-bold">{metrics?.totalProperties}</div>
             )}
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Portfolio Value
+              Total Portfolio Value
             </CardTitle>
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <Skeleton className="h-8 w-24" />
+              <Skeleton className="h-8 w-[100px]" />
             ) : (
-              <>
-                <div className="text-2xl font-bold">{formatCurrency(metrics?.totalValue || 0)}</div>
-                <p className="text-xs text-muted-foreground">
-                  Current market value
-                </p>
-              </>
+              <div className="text-2xl font-bold">
+                {formatCurrency(metrics?.totalValue || 0)}
+              </div>
             )}
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Monthly Income</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Monthly Income
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <Skeleton className="h-8 w-24" />
+              <Skeleton className="h-8 w-[100px]" />
             ) : (
-              <>
-                <div className="text-2xl font-bold">{formatCurrency(metrics?.monthlyIncome || 0)}</div>
-                <p className="text-xs text-muted-foreground">
-                  This month&apos;s rental income
-                </p>
-              </>
+              <div className="text-2xl font-bold">
+                {formatCurrency(metrics?.monthlyIncome || 0)}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Active Repairs
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <Skeleton className="h-8 w-[100px]" />
+            ) : (
+              <div className="text-2xl font-bold">{metrics?.activeRepairs}</div>
             )}
           </CardContent>
         </Card>
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-7">
+        <Card className="col-span-4">
           <CardHeader>
-            <CardTitle>Financial Overview</CardTitle>
-            <CardDescription>
-              Rental income, expenses, NOI, and repair trends over time
-            </CardDescription>
+            <CardTitle>Overview</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pl-2">
             <Overview />
           </CardContent>
         </Card>
-        <Card className="col-span-4">
+        <Card className="col-span-3">
           <CardHeader>
             <CardTitle>Recent Transactions</CardTitle>
-            <CardDescription>
-              Latest income and expense activity
-            </CardDescription>
           </CardHeader>
           <CardContent>
             <RecentTransactions />
           </CardContent>
         </Card>
-        <Card className="col-span-3">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Repairs</CardTitle>
-            <AlertCircle className="h-4 w-4 text-amber-500" />
+      </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Active Repairs</CardTitle>
           </CardHeader>
           <CardContent>
             <ActiveRepairs />
           </CardContent>
         </Card>
-        <Card className="col-span-3">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Issues</CardTitle>
-            <AlertCircle className="h-4 w-4 text-red-500" />
+        <Card>
+          <CardHeader>
+            <CardTitle>Active Todos</CardTitle>
           </CardHeader>
           <CardContent>
-            <ActiveIssues />
+            <ActiveTodos />
           </CardContent>
         </Card>
       </div>
     </div>
-  )
+  );
 } 

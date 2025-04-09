@@ -64,10 +64,10 @@ export default function RootLayout({
                         Repairs
                       </Link>
                       <Link
-                        href="/issues"
+                        href="/todos"
                         className="text-foreground/60 transition-colors hover:text-foreground/80"
                       >
-                        Issues
+                        Todos
                       </Link>
                       <Link
                         href="/tenants"

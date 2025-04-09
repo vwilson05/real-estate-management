@@ -55,6 +55,52 @@ async function main() {
     });
   }
 
+  // Create test todos
+  const todos = [
+    {
+      title: "Fix leaking faucet",
+      description: "Kitchen sink faucet is leaking",
+      status: "OPEN",
+      priority: "HIGH",
+      type: "REPAIR",
+      dueDate: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+      propertyId: property.id
+    },
+    {
+      title: "Schedule annual inspection",
+      description: "Annual property inspection due",
+      status: "IN_PROGRESS",
+      priority: "MEDIUM",
+      type: "INSPECTION",
+      dueDate: new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000), // 14 days from now
+      propertyId: property.id
+    },
+    {
+      title: "Replace air filter",
+      description: "HVAC air filter needs replacement",
+      status: "BLOCKED",
+      priority: "LOW",
+      type: "MAINTENANCE",
+      dueDate: new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+      propertyId: property.id
+    },
+    {
+      title: "Respond to tenant complaint",
+      description: "Tenant reported noise from upstairs unit",
+      status: "OPEN",
+      priority: "HIGH",
+      type: "COMPLAINT",
+      dueDate: new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000), // 2 days from now
+      propertyId: property.id
+    }
+  ];
+
+  for (const todo of todos) {
+    await prisma.todo.create({
+      data: todo
+    });
+  }
+
   console.log('Test data seeded successfully');
 }
 
