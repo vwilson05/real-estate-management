@@ -33,9 +33,8 @@ This section serves as the central source of truth for the current development c
 *   **Feature Gap:** Reporting and analytics are minimal.
 
 ### 1.4. Priorities for This Cycle
-1.  **Implement "To Do" Feature:** Replace the existing "Issues" system entirely. This is the primary focus.
-2.  **Bug Fixes:** Address the identified bugs (Geocoding delay, TenantForm await, IssueList enum types, Date handling).
-3.  **Documentation:** Update all documentation to reflect the "To Do" feature and other changes. Ensure consistency across all `/docs/` files.
+1.  **Bug Fixes:** Address the identified bugs (Geocoding delay, TenantForm await, IssueList enum types, Date handling).
+2.  **Documentation:** Update all documentation to reflect the "To Do" feature and other changes. Ensure consistency across all `/docs/` files.
 
 
 ## 3. Identify and Repair Bugs
