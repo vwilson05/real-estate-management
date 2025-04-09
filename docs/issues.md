@@ -130,6 +130,37 @@
      - Added better error messages for invalid dates
      - Updated documentation to reflect the changes
 
+13. **Batch Geocoding Rate Limiting**
+   - Status: Resolved
+   - Description: Potential rate limiting issues in batch geocoding due to rapid API calls
+   - Impact: Risk of overwhelming the server and external Nominatim service
+   - Root Cause: No delay between consecutive geocoding requests in GeocodeButton component
+   - Resolution:
+     - Added 100ms delay between geocoding requests
+     - Implemented sleep utility function
+     - Improved error handling and logging
+     - Updated documentation
+
+14. **TenantForm Submission State Bug**
+   - Status: Resolved
+   - Description: Form submission state could reset prematurely
+   - Impact: Submit button could become enabled before the operation completed
+   - Root Cause: setIsSubmitting(false) was called in finally block before async operations completed
+   - Resolution:
+     - Moved setIsSubmitting(true) before try block
+     - Ensured proper async/await usage
+     - Improved error handling
+     - Updated documentation
+
+15. **IssueList Color Mapping Types**
+   - Status: Verified - No Fix Required
+   - Description: Potential type inconsistency in IssueList color mappings
+   - Impact: None - types were already correct
+   - Investigation Results:
+     - Confirmed proper use of Prisma enums (IssueStatus, IssuePriority)
+     - Verified correct type definitions in color mapping objects
+     - Documentation updated to reflect current implementation
+
 ### Medium Priority
 1. **API Implementation**
    - Status: In Progress
