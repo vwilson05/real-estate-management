@@ -59,9 +59,8 @@ export function TenantForm({ initialData, tenantId, onSuccess }: TenantFormProps
   });
 
   const onSubmit = async (data: TenantFormData) => {
+    setIsSubmitting(true);
     try {
-      setIsSubmitting(true);
-      
       if (tenantId) {
         await updateTenant.mutateAsync({ id: tenantId, data });
       } else {
