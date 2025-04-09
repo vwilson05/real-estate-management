@@ -5,7 +5,11 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { geocodeProperty } from '@/lib/geocoding';
-import { useProperties, Property } from '@/app/hooks/useProperties';
+import { useProperties } from '@/app/hooks/useProperties';
+import { Property } from '@/types/property';
+
+// Utility function to add delay between requests
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export function GeocodeButton() {
   const [isLoading, setIsLoading] = useState(false);
@@ -60,6 +64,8 @@ export function GeocodeButton() {
           const result = await geocodeProperty(property.id);
           console.log('Geocoding result:', result);
           successCount++;
+          // Add a 100ms delay between requests to prevent overwhelming the server
+          await sleep(100);
         } catch (error) {
           console.error(`Failed to geocode property ${property.id}:`, error);
           failCount++;
